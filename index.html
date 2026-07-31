@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prefeitura de Avaré - Controle de AFs</title>
-    <!-- XLSX Library para Importar/Exportar planilhas Excel -->
+    <!-- XLSX Library -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -70,6 +72,10 @@
         th { background: #f1f5f9; font-weight: 600; color: #334155; }
         tr:hover { background: #f8fafc; }
 
+        /* Status Conexão */
+        .status-online { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 12px; }
+        .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
+
         /* Badges de Setor */
         .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
         .setor-basica { background-color: var(--setor-basica); }
@@ -81,11 +87,9 @@
         .history-list { font-size: 0.75rem; color: #64748b; margin-top: 4px; max-height: 80px; overflow-y: auto; background: #f8fafc; padding: 4px; border-radius: 4px; border: 1px solid #f1f5f9; }
         .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
         
-        /* Modal Estilizado para Parciais */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 450px; }
 
-        /* Estilo de Impressão */
         @media print {
             body { background: white; padding: 0; }
             .no-print, .excel-actions, .controls, .card, button, .actions-cell { display: none !important; }
@@ -104,9 +108,9 @@
             <h1>Prefeitura da Estância Turística de Avaré</h1>
             <h2>Almoxarifado da Saúde — Controle Interno de AFs</h2>
         </div>
-        <div class="no-print" style="display: flex; gap: 8px;">
+        <div class="no-print" style="display: flex; gap: 8px; align-items: center;">
+            <span class="status-online"><span class="status-dot"></span> Tempo Real Ativo</span>
             <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Imprimir Relatório</button>
-            <button type="button" class="btn btn-outline" onclick="exportBackupJSON()">💾 Backup Dados</button>
         </div>
     </div>
 
@@ -286,49 +290,60 @@
 </div>
 
 <script>
-    let afs = JSON.parse(localStorage.getItem('afs_db_v5')) || [];
+    // Conexão Supabase
+    const SUPABASE_URL = "https://adunochvwwfynngzsszg.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_wzosuw4QDpJfthg3pPpE3g_wv8GwNw6";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById('afForm').addEventListener('submit', function(e) {
+    let afs = [];
+
+    // Carregar AFs iniciais
+    async function fetchAfs() {
+        const { data, error } = await _supabase.from('afs').select('*');
+        if (error) {
+            console.error("Erro ao carregar do Supabase:", error);
+            return;
+        }
+        afs = data || [];
+        saveAndRenderLocal();
+    }
+
+    // Escutar Atualizações em Tempo Real (Realtime WebSockets)
+    _supabase.channel('public:afs')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'afs' }, payload => {
+            fetchAfs();
+        })
+        .subscribe();
+
+    document.getElementById('afForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const editId = document.getElementById('editAfId').value;
 
+        const payload = {
+            numAf: document.getElementById('numAf').value.trim(),
+            numEmpenho: document.getElementById('numEmpenho').value.trim(),
+            setor: document.getElementById('setor').value,
+            fornecedor: document.getElementById('fornecedor').value.trim(),
+            valorTotal: parseFloat(document.getElementById('valorTotal').value) || 0,
+            vigenciaAta: document.getElementById('vigenciaAta').value,
+            prazoEntrega: document.getElementById('prazoEntrega').value,
+            statusSancao: document.getElementById('statusSancao').value,
+            observacoes: document.getElementById('observacoes').value.trim()
+        };
+
         if (editId) {
-            const af = afs.find(item => item.id == editId);
-            if (af) {
-                af.numAf = document.getElementById('numAf').value.trim();
-                af.numEmpenho = document.getElementById('numEmpenho').value.trim();
-                af.setor = document.getElementById('setor').value;
-                af.fornecedor = document.getElementById('fornecedor').value.trim();
-                af.valorTotal = parseFloat(document.getElementById('valorTotal').value) || 0;
-                af.vigenciaAta = document.getElementById('vigenciaAta').value;
-                af.prazoEntrega = document.getElementById('prazoEntrega').value;
-                af.statusSancao = document.getElementById('statusSancao').value;
-                af.observacoes = document.getElementById('observacoes').value.trim();
-            }
+            await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
         } else {
-            const newAf = {
-                id: Date.now(),
-                numAf: document.getElementById('numAf').value.trim(),
-                numEmpenho: document.getElementById('numEmpenho').value.trim(),
-                setor: document.getElementById('setor').value,
-                fornecedor: document.getElementById('fornecedor').value.trim(),
-                valorTotal: parseFloat(document.getElementById('valorTotal').value) || 0,
-                vigenciaAta: document.getElementById('vigenciaAta').value,
-                prazoEntrega: document.getElementById('prazoEntrega').value,
-                statusSancao: document.getElementById('statusSancao').value,
-                observacoes: document.getElementById('observacoes').value.trim(),
-                cobrancas: [],
-                parciais: [],
-                dataNotificacao: null,
-                dataAdvertencia: null,
-                createdAt: new Date().toISOString()
-            };
-            afs.push(newAf);
+            payload.id = Date.now();
+            payload.cobrancas = [];
+            payload.parciais = [];
+            payload.createdAt = new Date().toISOString();
+            await _supabase.from('afs').insert([payload]);
         }
 
         resetForm();
-        saveAndRender();
+        fetchAfs();
     });
 
     function editAf(id) {
@@ -361,7 +376,6 @@
         document.getElementById('btnCancelEdit').style.display = 'none';
     }
 
-    /* Modal de Entrega Parcial */
     function openModalParcial(id) {
         document.getElementById('modalAfId').value = id;
         document.getElementById('parcialData').value = new Date().toISOString().split('T')[0];
@@ -374,7 +388,7 @@
         document.getElementById('parcialValor').value = '';
     }
 
-    function saveParcial() {
+    async function saveParcial() {
         const id = parseInt(document.getElementById('modalAfId').value);
         const nf = document.getElementById('parcialNf').value.trim();
         const valor = parseFloat(document.getElementById('parcialValor').value) || 0;
@@ -387,55 +401,56 @@
 
         const af = afs.find(item => item.id === id);
         if(af) {
-            if(!af.parciais) af.parciais = [];
-            af.parciais.push({ nf, valor, data });
-            if(af.statusSancao !== 'Entregue') {
-                af.statusSancao = 'Entrega Parcial';
-            }
-            saveAndRender();
+            const parciais = af.parciais || [];
+            parciais.push({ nf, valor, data });
+            const statusSancao = (af.statusSancao !== 'Entregue') ? 'Entrega Parcial' : 'Entregue';
+
+            await _supabase.from('afs').update({ parciais, statusSancao }).eq('id', id);
             closeModalParcial();
+            fetchAfs();
         }
     }
 
-    function addCobranca(id) {
+    async function addCobranca(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
 
-        if(!af.cobrancas) af.cobrancas = [];
+        const cobrancas = af.cobrancas || [];
         const dataHoje = new Date().toLocaleDateString('pt-BR');
-        af.cobrancas.push(dataHoje);
+        cobrancas.push(dataHoje);
 
-        if(af.cobrancas.length >= 3 && (af.statusSancao === 'Regular' || af.statusSancao === 'Cobrar')) {
-            af.statusSancao = 'Notificar';
-            af.dataNotificacao = new Date().toISOString();
-            alert(`⚠️ Esta AF atingiu ${af.cobrancas.length} cobranças! O status mudou para NOTIFICAR.`);
-        } else {
-            alert(`✅ Cobrança registrada em ${dataHoje}. Total: ${af.cobrancas.length} cobrança(s).`);
+        let statusSancao = af.statusSancao;
+        let dataNotificacao = af.dataNotificacao;
+
+        if(cobrancas.length >= 3 && (statusSancao === 'Regular' || statusSancao === 'Cobrar')) {
+            statusSancao = 'Notificar';
+            dataNotificacao = new Date().toISOString();
         }
 
-        saveAndRender();
+        await _supabase.from('afs').update({ cobrancas, statusSancao, dataNotificacao }).eq('id', id);
+        fetchAfs();
     }
 
-    function alterarStatusManual(id, novoStatus) {
+    async function alterarStatusManual(id, novoStatus) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
 
-        af.statusSancao = novoStatus;
-        if(novoStatus === 'Notificar' && !af.dataNotificacao) af.dataNotificacao = new Date().toISOString();
-        if(novoStatus === 'Advertir' && !af.dataAdvertencia) af.dataAdvertencia = new Date().toISOString();
+        const payload = { statusSancao: novoStatus };
+        if(novoStatus === 'Notificar' && !af.dataNotificacao) payload.dataNotificacao = new Date().toISOString();
+        if(novoStatus === 'Advertir' && !af.dataAdvertencia) payload.dataAdvertencia = new Date().toISOString();
 
-        saveAndRender();
+        await _supabase.from('afs').update(payload).eq('id', id);
+        fetchAfs();
     }
 
-    function deleteAf(id) {
+    async function deleteAf(id) {
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
-            afs = afs.filter(af => af.id !== id);
-            saveAndRender();
+            await _supabase.from('afs').delete().eq('id', id);
+            fetchAfs();
         }
     }
 
-    function saveAndRender() {
-        localStorage.setItem('afs_db_v5', JSON.stringify(afs));
+    function saveAndRenderLocal() {
         verificarRegrasEAlertas();
         renderTable();
     }
@@ -456,7 +471,6 @@
             const prazo = af.prazoEntrega ? new Date(af.prazoEntrega + 'T00:00:00') : null;
             const cobrancasCount = af.cobrancas ? af.cobrancas.length : 0;
 
-            // Soma Saldo Pendente Financeiro
             const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
             const pendenteRs = Math.max(0, (af.valorTotal || 0) - entregueRs);
             totalPendenteRs += pendenteRs;
@@ -547,12 +561,10 @@
                 }
             }
 
-            // Cálculos Financeiros da AF
             const valTotal = af.valorTotal || 0;
             const totalParcial = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
             const valPendente = Math.max(0, valTotal - totalParcial);
 
-            // Cobranças e Parciais Lista
             const cobrancasCount = af.cobrancas ? af.cobrancas.length : 0;
             const ultimasCobrancas = af.cobrancas ? af.cobrancas.slice(-2).join(', ') : '';
 
@@ -611,18 +623,6 @@
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
 
-    /* Exportar e Backup JSON */
-    function exportBackupJSON() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(afs));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `Backup_AFs_Avare_${new Date().toISOString().split('T')[0]}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-    }
-
-    /* Exportar e Modelo Excel */
     function exportExcel() {
         if (afs.length === 0) {
             alert('Não há registros para exportar!');
@@ -672,12 +672,12 @@
         XLSX.writeFile(workbook, "Modelo_Importacao_AFs.xlsx");
     }
 
-    function importExcel(event) {
+    async function importExcel(event) {
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array', cellDates: true });
             
@@ -685,7 +685,7 @@
             const worksheet = workbook.Sheets[firstSheetName];
             const jsonRows = XLSX.utils.sheet_to_json(worksheet, { raw: false });
 
-            let importedCount = 0;
+            let newRows = [];
 
             jsonRows.forEach((row, index) => {
                 const setor = row['Setor'] || 'Básica/Rede';
@@ -699,7 +699,7 @@
                 const obs = row['Observações'] || row['Obs'] || '';
 
                 if (numAf && fornecedor) {
-                    afs.push({
+                    newRows.push({
                         id: Date.now() + index,
                         setor: cleanSetor(setor),
                         numAf: String(numAf).trim(),
@@ -714,13 +714,13 @@
                         parciais: [],
                         createdAt: new Date().toISOString()
                     });
-                    importedCount++;
                 }
             });
 
-            if (importedCount > 0) {
-                saveAndRender();
-                alert(`✅ Sucesso! ${importedCount} registros foram importados.`);
+            if (newRows.length > 0) {
+                await _supabase.from('afs').insert(newRows);
+                alert(`✅ Sucesso! ${newRows.length} registros foram importados para o banco de dados.`);
+                fetchAfs();
             } else {
                 alert('⚠️ Nenhum registro válido encontrado na planilha.');
             }
@@ -763,7 +763,7 @@
     }
 
     // Inicialização
-    saveAndRender();
+    fetchAfs();
 </script>
 
 </body>
