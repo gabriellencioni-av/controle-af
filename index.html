@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Interno de AFs e Atas</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { margin-bottom: 20px; color: #1e293b; font-size: 1.8rem; }
+
+        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
+        input, select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+        
+        button { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+
+        .controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 15px; margin-bottom: 15px; }
+        .controls div { display: flex; gap: 10px; align-items: center; }
+
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        th, td { padding: 12px 15px; text-align: left; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        th { background: #f1f5f9; font-weight: 600; color: #334155; }
+        tr:hover { background: #f8fafc; }
+
+        /* Badges de Status */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .regular { background: #dcfce7; color: #166534; }
+        .cobrar { background: #fef9c3; color: #854d0e; }
+        .notificar { background: #ffedd5; color: #9a3412; }
+        .advertir { background: #fed7aa; color: #c2410c; }
+        .multar { background: #fee2e2; color: #991b1b; }
+        
+        .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📋 Controle de Autorizações de Fornecimento (AF) e Atas</h1>
+
+    <!-- Formularío de Cadastro -->
+    <div class="card">
+        <h3>Cadastrar Nova Autorização</h3>
+        <br>
+        <form id="afForm">
+            <div class="form-grid">
+                <div>
+                    <label>Nº da AF / Processo</label>
+                    <input type="text" id="numAf" required placeholder="Ex: AF 102/2026">
+                </div>
+                <div>
+                    <label>Fornecedor</label>
+                    <input type="text" id="fornecedor" required placeholder="Razão Social">
+                </div>
+                <div>
+                    <label>Vigência da Ata/Contrato</label>
+                    <input type="date" id="vigenciaAta" required>
+                </div>
+                <div>
+                    <label>Prazo de Entrega</label>
+                    <input type="date" id="prazoEntrega" required>
+                </div>
+                <div>
+                    <label>Status / Fase de Sanção</label>
+                    <select id="statusSancao">
+                        <option value="Regular">Em Dia / Regular</option>
+                        <option value="Cobrar">Cobrar Fornecedor</option>
+                        <option value="Notificar">Notificar</option>
+                        <option value="Advertir">Advertir</option>
+                        <option value="Multar">Multar</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit">Salvar AF</button>
+        </form>
+    </div>
+
+    <!-- Controles de Filtro e Ordenação -->
+    <div class="controls">
+        <div>
+            <label>Buscar:</label>
+            <input type="text" id="searchInput" placeholder="Fornecedor ou Nº da AF..." oninput="renderTable()">
+        </div>
+        <div>
+            <label>Ordenar por:</label>
+            <select id="sortSelect" onchange="renderTable()">
+                <option value="criacao">Data de Criação (Recentes)</option>
+                <option value="fornecedor">Fornecedor (A-Z)</option>
+                <option value="prazo">Prazo de Entrega (Próximos)</option>
+                <option value="vigencia">Vigência da Ata (Próximos)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabela de Registros -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nº AF</th>
+                <th>Fornecedor</th>
+                <th>Vigência Ata</th>
+                <th>Prazo Entrega</th>
+                <th>Situação / Sanção</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="afTableBody">
+            <!-- Dados inseridos via JS -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let afs = JSON.parse(localStorage.getItem('afs_db')) || [];
+
+    document.getElementById('afForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const newAf = {
+            id: Date.now(),
+            numAf: document.getElementById('numAf').value,
+            fornecedor: document.getElementById('fornecedor').value,
+            vigenciaAta: document.getElementById('vigenciaAta').value,
+            prazoEntrega: document.getElementById('prazoEntrega').value,
+            statusSancao: document.getElementById('statusSancao').value,
+            createdAt: new Date().toISOString()
+        };
+
+        afs.push(newAf);
+        saveAndRender();
+        this.reset();
+    });
+
+    function deleteAf(id) {
+        if(confirm('Tem certeza que deseja excluir esta AF?')) {
+            afs = afs.filter(af => af.id !== id);
+            saveAndRender();
+        }
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('afs_db', JSON.stringify(afs));
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('afTableBody');
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const sortBy = document.getElementById('sortSelect').value;
+
+        tbody.innerHTML = '';
+
+        // Filtrar
+        let filtered = afs.filter(af => 
+            af.fornecedor.toLowerCase().includes(search) || 
+            af.numAf.toLowerCase().includes(search)
+        );
+
+        // Ordenar
+        filtered.sort((a, b) => {
+            if (sortBy === 'fornecedor') return a.fornecedor.localeCompare(b.fornecedor);
+            if (sortBy === 'prazo') return new Date(a.prazoEntrega) - new Date(b.prazoEntrega);
+            if (sortBy === 'vigencia') return new Date(a.vigenciaAta) - new Date(b.vigenciaAta);
+            return b.id - a.id; // criacao (default)
+        });
+
+        // Renderizar linhas
+        filtered.forEach(af => {
+            const tr = document.createElement('tr');
+            
+            const badgeClass = {
+                'Regular': 'regular',
+                'Cobrar': 'cobrar',
+                'Notificar': 'notificar',
+                'Advertir': 'advertir',
+                'Multar': 'multar'
+            }[af.statusSancao] || 'regular';
+
+            tr.innerHTML = `
+                <td><strong>${af.numAf}</strong></td>
+                <td>${af.fornecedor}</td>
+                <td>${formatDate(af.vigenciaAta)}</td>
+                <td>${formatDate(af.prazoEntrega)}</td>
+                <td><span class="badge ${badgeClass}">${af.statusSancao}</span></td>
+                <td>
+                    <button class="btn-delete" onclick="deleteAf(${af.id})">Excluir</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function formatDate(dateStr) {
+        if(!dateStr) return '-';
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    // Renderiza ao carregar a página
+    renderTable();
+</script>
+
+</body>
+</html>
