@@ -159,7 +159,7 @@
     <div class="excel-actions">
         <div class="controls-group">
             <strong>📥 Importar / Exportar:</strong>
-            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importExcel(event)">
+            <input type="file" id="excelFileInput" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv" style="display: none;" onchange="importExcel(event)">
             <button type="button" class="btn btn-outline" onclick="document.getElementById('excelFileInput').click()">📁 Selecionar Planilha</button>
             <button type="button" class="btn btn-outline" onclick="downloadModelo()">📄 Modelo Excel</button>
         </div>
