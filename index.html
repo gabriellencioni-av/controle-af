@@ -3,21 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle Interno de AFs e Atas</title>
+    <title>Controle de Autorizações de Fornecimento (AF)</title>
+    <!-- XLSX Library para Importar/Exportar planilhas Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
+            --success: #16a34a;
+            --warning: #eab308;
+            --danger: #dc2626;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --text: #0f172a;
             --border: #e2e8f0;
+
+            /* Cores dos Setores */
+            --setor-basica: #2563eb;      /* Azul */
+            --setor-ps: #f97316;          /* Laranja */
+            --setor-judicial: #a855f7;    /* Roxo */
+            --setor-enfermagem: #eab308;  /* Amarelo */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
         
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1300px; margin: 0 auto; }
         h1 { margin-bottom: 20px; color: #1e293b; font-size: 1.8rem; }
+
+        /* Dashboard / Seção de Avisos Rápidos */
+        .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .alert-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border-left: 5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .alert-card.atraso { border-left-color: #f97316; background: #fff7ed; }
+        .alert-card.notificar { border-left-color: #ea580c; background: #ffedd5; }
+        .alert-card.advertir { border-left-color: #dc2626; background: #fef2f2; }
+        .alert-card.multar { border-left-color: #991b1b; background: #fee2e2; }
+        .alert-card h4 { font-size: 0.85rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .alert-card .count { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
 
         .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
@@ -25,34 +46,69 @@
         label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
         input, select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
         
-        button { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        button:hover { opacity: 0.9; }
+        button, .btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; }
+        button:hover, .btn:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); }
+        .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-cobranca { background: #0284c7; }
+        .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
 
-        .controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 15px; margin-bottom: 15px; }
-        .controls div { display: flex; gap: 10px; align-items: center; }
+        .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+        .excel-actions { display: flex; gap: 10px; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 
         table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-        th, td { padding: 12px 15px; text-align: left; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
         th { background: #f1f5f9; font-weight: 600; color: #334155; }
         tr:hover { background: #f8fafc; }
 
-        /* Badges de Status */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        /* Badges de Setor */
+        .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
+        .setor-basica { background-color: var(--setor-basica); }
+        .setor-ps { background-color: var(--setor-ps); }
+        .setor-judicial { background-color: var(--setor-judicial); }
+        .setor-enfermagem { background-color: var(--setor-enfermagem); color: #0f172a; }
+
+        /* Badges de Status / Sanção */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
         .regular { background: #dcfce7; color: #166534; }
-        .cobrar { background: #fef9c3; color: #854d0e; }
-        .notificar { background: #ffedd5; color: #9a3412; }
-        .advertir { background: #fed7aa; color: #c2410c; }
-        .multar { background: #fee2e2; color: #991b1b; }
+        .cobrar { background: #ffedd5; color: #c2410c; }
+        .notificar { background: #fed7aa; color: #9a3412; }
+        .advertir { background: #fca5a5; color: #991b1b; }
+        .multar { background: #fee2e2; color: #7f1d1d; border: 1px solid #ef4444; }
         
-        .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.8rem; }
+        .alert-icon { font-size: 1.1rem; margin-left: 4px; vertical-align: middle; cursor: help; }
+        .history-list { font-size: 0.75rem; color: #64748b; margin-top: 4px; max-height: 50px; overflow-y: auto; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📋 Controle de Autorizações de Fornecimento (AF) e Atas</h1>
+    <h1>📋 Controle de Autorizações de Fornecimento (AF) e Sanções</h1>
 
-    <!-- Formularío de Cadastro -->
+    <!-- Dashboard de Avisos de Atraso e Sanções -->
+    <div class="alerts-grid">
+        <div class="alert-card atraso">
+            <h4>🚚 Entregas Atrasadas (Cobrar)</h4>
+            <div class="count" id="countAtrasadas">0</div>
+        </div>
+        <div class="alert-card notificar">
+            <h4>✉️ Requer Notificação</h4>
+            <div class="count" id="countNotificar">0</div>
+        </div>
+        <div class="alert-card advertir">
+            <h4>⚠️ Requer Advertência</h4>
+            <div class="count" id="countAdvertir">0</div>
+        </div>
+        <div class="alert-card multar">
+            <h4>🚫 Requer Multa</h4>
+            <div class="count" id="countMultar">0</div>
+        </div>
+    </div>
+
+    <!-- Formulário de Cadastro -->
     <div class="card">
         <h3>Cadastrar Nova Autorização</h3>
         <br>
@@ -61,6 +117,15 @@
                 <div>
                     <label>Nº da AF / Processo</label>
                     <input type="text" id="numAf" required placeholder="Ex: AF 102/2026">
+                </div>
+                <div>
+                    <label>Setor Responsável</label>
+                    <select id="setor" required>
+                        <option value="Básica/Rede">Básica/Rede (Azul)</option>
+                        <option value="Pronto-socorro">Pronto-socorro (Laranja)</option>
+                        <option value="Mandado Judicial/Case">Mandado Judicial/Case (Roxo)</option>
+                        <option value="Enfermagem">Enfermagem (Amarelo)</option>
+                    </select>
                 </div>
                 <div>
                     <label>Fornecedor</label>
@@ -75,9 +140,10 @@
                     <input type="date" id="prazoEntrega" required>
                 </div>
                 <div>
-                    <label>Status / Fase de Sanção</label>
+                    <label>Status Inicial</label>
                     <select id="statusSancao">
                         <option value="Regular">Em Dia / Regular</option>
+                        <option value="Entregue">Concluído / Entregue</option>
                         <option value="Cobrar">Cobrar Fornecedor</option>
                         <option value="Notificar">Notificar</option>
                         <option value="Advertir">Advertir</option>
@@ -89,19 +155,42 @@
         </form>
     </div>
 
+    <!-- Seção de Importação e Exportação Excel -->
+    <div class="excel-actions">
+        <div class="controls-group">
+            <strong>📥 Importar / Exportar:</strong>
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importExcel(event)">
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('excelFileInput').click()">📁 Selecionar Planilha</button>
+            <button type="button" class="btn btn-outline" onclick="downloadModelo()">📄 Modelo Excel</button>
+        </div>
+        <div class="controls-group">
+            <button type="button" class="btn btn-success" onclick="exportExcel()">📊 Exportar para Excel</button>
+        </div>
+    </div>
+
     <!-- Controles de Filtro e Ordenação -->
     <div class="controls">
-        <div>
+        <div class="controls-group">
+            <label>Filtrar Setor:</label>
+            <select id="filterSetor" onchange="renderTable()">
+                <option value="TODOS">Todos os Setores</option>
+                <option value="Básica/Rede">Básica/Rede</option>
+                <option value="Pronto-socorro">Pronto-socorro</option>
+                <option value="Mandado Judicial/Case">Mandado Judicial/Case</option>
+                <option value="Enfermagem">Enfermagem</option>
+            </select>
+
             <label>Buscar:</label>
-            <input type="text" id="searchInput" placeholder="Fornecedor ou Nº da AF..." oninput="renderTable()">
+            <input type="text" id="searchInput" placeholder="Fornecedor ou Nº AF..." oninput="renderTable()">
         </div>
-        <div>
+
+        <div class="controls-group">
             <label>Ordenar por:</label>
             <select id="sortSelect" onchange="renderTable()">
-                <option value="criacao">Data de Criação (Recentes)</option>
+                <option value="prazo">Prazo de Entrega (Próximos/Atrasados)</option>
                 <option value="fornecedor">Fornecedor (A-Z)</option>
-                <option value="prazo">Prazo de Entrega (Próximos)</option>
-                <option value="vigencia">Vigência da Ata (Próximos)</option>
+                <option value="vigencia">Vigência da Ata (Próximos do Vencimento)</option>
+                <option value="criacao">Data de Criação (Recentes)</option>
             </select>
         </div>
     </div>
@@ -110,33 +199,39 @@
     <table>
         <thead>
             <tr>
+                <th>Setor</th>
                 <th>Nº AF</th>
                 <th>Fornecedor</th>
                 <th>Vigência Ata</th>
                 <th>Prazo Entrega</th>
+                <th>Cobranças / Registros</th>
                 <th>Situação / Sanção</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody id="afTableBody">
-            <!-- Dados inseridos via JS -->
+            <!-- Linhas geradas via JavaScript -->
         </tbody>
     </table>
 </div>
 
 <script>
-    let afs = JSON.parse(localStorage.getItem('afs_db')) || [];
+    let afs = JSON.parse(localStorage.getItem('afs_db_v3')) || [];
 
     document.getElementById('afForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const newAf = {
             id: Date.now(),
-            numAf: document.getElementById('numAf').value,
-            fornecedor: document.getElementById('fornecedor').value,
+            numAf: document.getElementById('numAf').value.trim(),
+            setor: document.getElementById('setor').value,
+            fornecedor: document.getElementById('fornecedor').value.trim(),
             vigenciaAta: document.getElementById('vigenciaAta').value,
             prazoEntrega: document.getElementById('prazoEntrega').value,
             statusSancao: document.getElementById('statusSancao').value,
+            cobrancas: [],
+            dataNotificacao: null,
+            dataAdvertencia: null,
             createdAt: new Date().toISOString()
         };
 
@@ -144,6 +239,37 @@
         saveAndRender();
         this.reset();
     });
+
+    function addCobranca(id) {
+        const af = afs.find(item => item.id === id);
+        if(!af) return;
+
+        if(!af.cobrancas) af.cobrancas = [];
+        const dataHoje = new Date().toLocaleDateString('pt-BR');
+        af.cobrancas.push(dataHoje);
+
+        // Atualização automática de Status com base nas cobranças
+        if(af.cobrancas.length >= 3 && af.statusSancao === 'Regular') {
+            af.statusSancao = 'Notificar';
+            af.dataNotificacao = new Date().toISOString();
+            alert(`⚠️ Esta AF atingiu ${af.cobrancas.length} cobranças! O status foi alterado para NOTIFICAR.`);
+        } else {
+            alert(`✅ Cobrança registrada para a AF ${af.numAf} em ${dataHoje}. Total: ${af.cobrancas.length} cobrança(s).`);
+        }
+
+        saveAndRender();
+    }
+
+    function alterarStatusManual(id, novoStatus) {
+        const af = afs.find(item => item.id === id);
+        if(!af) return;
+
+        af.statusSancao = novoStatus;
+        if(novoStatus === 'Notificar' && !af.dataNotificacao) af.dataNotificacao = new Date().toISOString();
+        if(novoStatus === 'Advertir' && !af.dataAdvertencia) af.dataAdvertencia = new Date().toISOString();
+
+        saveAndRender();
+    }
 
     function deleteAf(id) {
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
@@ -153,37 +279,126 @@
     }
 
     function saveAndRender() {
-        localStorage.setItem('afs_db', JSON.stringify(afs));
+        localStorage.setItem('afs_db_v3', JSON.stringify(afs));
+        verificarRegrasEAlertas();
         renderTable();
+    }
+
+    function verificarRegrasEAlertas() {
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+
+        let countAtrasadas = 0;
+        let countNotificar = 0;
+        let countAdvertir = 0;
+        let countMultar = 0;
+
+        afs.forEach(af => {
+            if(af.statusSancao === 'Entregue') return;
+
+            const prazo = af.prazoEntrega ? new Date(af.prazoEntrega + 'T00:00:00') : null;
+            const cobrancasCount = af.cobrancas ? af.cobrancas.length : 0;
+
+            // Regra 1: Atraso de 1 dia do prazo
+            if (prazo && prazo < hoje) {
+                countAtrasadas++;
+                if (af.statusSancao === 'Regular') {
+                    af.statusSancao = 'Cobrar';
+                }
+            }
+
+            // Regra 2: 3 Cobranças -> Sugere Notificação
+            if (cobrancasCount >= 3 && (af.statusSancao === 'Regular' || af.statusSancao === 'Cobrar')) {
+                af.statusSancao = 'Notificar';
+                if(!af.dataNotificacao) af.dataNotificacao = new Date().toISOString();
+            }
+
+            // Regra 3: 3 Dias após Notificação -> Sugere Advertência
+            if (af.statusSancao === 'Notificar' && af.dataNotificacao) {
+                const diasNotif = (hoje - new Date(af.dataNotificacao)) / (1000 * 60 * 60 * 24);
+                if (diasNotif >= 3) {
+                    af.statusSancao = 'Advertir';
+                    if(!af.dataAdvertencia) af.dataAdvertencia = new Date().toISOString();
+                }
+            }
+
+            // Regra 4: 3 Dias após Advertência -> Sugere Multa
+            if (af.statusSancao === 'Advertir' && af.dataAdvertencia) {
+                const diasAdv = (hoje - new Date(af.dataAdvertencia)) / (1000 * 60 * 60 * 24);
+                if (diasAdv >= 3) {
+                    af.statusSancao = 'Multar';
+                }
+            }
+
+            // Contadores do Painel Superior
+            if (af.statusSancao === 'Cobrar') countAtrasadas++;
+            if (af.statusSancao === 'Notificar') countNotificar++;
+            if (af.statusSancao === 'Advertir') countAdvertir++;
+            if (af.statusSancao === 'Multar') countMultar++;
+        });
+
+        document.getElementById('countAtrasadas').innerText = countAtrasadas;
+        document.getElementById('countNotificar').innerText = countNotificar;
+        document.getElementById('countAdvertir').innerText = countAdvertir;
+        document.getElementById('countMultar').innerText = countMultar;
     }
 
     function renderTable() {
         const tbody = document.getElementById('afTableBody');
         const search = document.getElementById('searchInput').value.toLowerCase();
+        const setorFilter = document.getElementById('filterSetor').value;
         const sortBy = document.getElementById('sortSelect').value;
 
         tbody.innerHTML = '';
 
-        // Filtrar
-        let filtered = afs.filter(af => 
-            af.fornecedor.toLowerCase().includes(search) || 
-            af.numAf.toLowerCase().includes(search)
-        );
-
-        // Ordenar
-        filtered.sort((a, b) => {
-            if (sortBy === 'fornecedor') return a.fornecedor.localeCompare(b.fornecedor);
-            if (sortBy === 'prazo') return new Date(a.prazoEntrega) - new Date(b.prazoEntrega);
-            if (sortBy === 'vigencia') return new Date(a.vigenciaAta) - new Date(b.vigenciaAta);
-            return b.id - a.id; // criacao (default)
+        let filtered = afs.filter(af => {
+            const matchesSearch = af.fornecedor.toLowerCase().includes(search) || af.numAf.toLowerCase().includes(search);
+            const matchesSetor = (setorFilter === 'TODOS') || (af.setor === setorFilter);
+            return matchesSearch && matchesSetor;
         });
 
-        // Renderizar linhas
+        // Ordenação
+        filtered.sort((a, b) => {
+            if (sortBy === 'fornecedor') return a.fornecedor.localeCompare(b.fornecedor);
+            if (sortBy === 'prazo') return new Date(a.prazoEntrega || '9999-12-31') - new Date(b.prazoEntrega || '9999-12-31');
+            if (sortBy === 'vigencia') return new Date(a.vigenciaAta || '9999-12-31') - new Date(b.vigenciaAta || '9999-12-31');
+            return b.id - a.id;
+        });
+
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+
         filtered.forEach(af => {
             const tr = document.createElement('tr');
             
+            // Classe e Cor do Setor
+            const setorClass = {
+                'Básica/Rede': 'setor-basica',
+                'Pronto-socorro': 'setor-ps',
+                'Mandado Judicial/Case': 'setor-judicial',
+                'Enfermagem': 'setor-enfermagem'
+            }[af.setor] || 'setor-basica';
+
+            // Alerta de Vigência de Ata (< 30 dias)
+            let vigenciaAtaText = formatDate(af.vigenciaAta);
+            if (af.vigenciaAta) {
+                const dtVig = new Date(af.vigenciaAta + 'T00:00:00');
+                const diffDias = Math.ceil((dtVig - hoje) / (1000 * 60 * 60 * 24));
+                if (diffDias <= 0) {
+                    vigenciaAtaText += ' <span class="alert-icon" title="Ata Vencida!">🚨</span>';
+                } else if (diffDias <= 30) {
+                    vigenciaAtaText += ' <span class="alert-icon" title="Vencimento Próximo (menos de 30 dias)">⚠️</span>';
+                }
+            }
+
+            // Histórico de Cobranças
+            const cobrancasCount = af.cobrancas ? af.cobrancas.length : 0;
+            const ultimasCobrancas = af.cobrancas ? af.cobrancas.slice(-2).join(', ') : '';
+
+            // Badge do Status
             const badgeClass = {
                 'Regular': 'regular',
+                'Entregue': 'regular',
                 'Cobrar': 'cobrar',
                 'Notificar': 'notificar',
                 'Advertir': 'advertir',
@@ -191,11 +406,25 @@
             }[af.statusSancao] || 'regular';
 
             tr.innerHTML = `
+                <td><span class="setor-badge ${setorClass}">${af.setor || 'Básica/Rede'}</span></td>
                 <td><strong>${af.numAf}</strong></td>
                 <td>${af.fornecedor}</td>
-                <td>${formatDate(af.vigenciaAta)}</td>
+                <td>${vigenciaAtaText}</td>
                 <td>${formatDate(af.prazoEntrega)}</td>
-                <td><span class="badge ${badgeClass}">${af.statusSancao}</span></td>
+                <td>
+                    <button class="btn btn-cobranca" onclick="addCobranca(${af.id})">📞 Cobrar (${cobrancasCount})</button>
+                    ${ultimasCobrancas ? `<div class="history-list">Últimas: ${ultimasCobrancas}</div>` : ''}
+                </td>
+                <td>
+                    <select onchange="alterarStatusManual(${af.id}, this.value)" style="width: auto; font-weight: bold;">
+                        <option value="Regular" ${af.statusSancao === 'Regular' ? 'selected' : ''}>Regular</option>
+                        <option value="Cobrar" ${af.statusSancao === 'Cobrar' ? 'selected' : ''}>Cobrar</option>
+                        <option value="Notificar" ${af.statusSancao === 'Notificar' ? 'selected' : ''}>Notificar</option>
+                        <option value="Advertir" ${af.statusSancao === 'Advertir' ? 'selected' : ''}>Advertir</option>
+                        <option value="Multar" ${af.statusSancao === 'Multar' ? 'selected' : ''}>Multar</option>
+                        <option value="Entregue" ${af.statusSancao === 'Entregue' ? 'selected' : ''}>Entregue / Concluído</option>
+                    </select>
+                </td>
                 <td>
                     <button class="btn-delete" onclick="deleteAf(${af.id})">Excluir</button>
                 </td>
@@ -206,12 +435,144 @@
 
     function formatDate(dateStr) {
         if(!dateStr) return '-';
-        const [year, month, day] = dateStr.split('-');
-        return `${day}/${month}/${year}`;
+        const parts = dateStr.split('-');
+        if(parts.length !== 3) return dateStr;
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
 
-    // Renderiza ao carregar a página
-    renderTable();
+    // --- IMPORTAR E EXPORTAR EXCEL ---
+    function exportExcel() {
+        if (afs.length === 0) {
+            alert('Não há registros para exportar!');
+            return;
+        }
+
+        const dataToExport = afs.map(af => ({
+            'Setor': af.setor,
+            'Nº AF': af.numAf,
+            'Fornecedor': af.fornecedor,
+            'Vigência Ata': formatDate(af.vigenciaAta),
+            'Prazo Entrega': formatDate(af.prazoEntrega),
+            'Nº de Cobranças': af.cobrancas ? af.cobrancas.length : 0,
+            'Status / Sanção': af.statusSancao
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "AFs Cadastradas");
+        XLSX.writeFile(workbook, "Controle_AFs_Completo.xlsx");
+    }
+
+    function downloadModelo() {
+        const modelo = [
+            {
+                'Setor': 'Básica/Rede',
+                'Nº AF': 'AF 001/2026',
+                'Fornecedor': 'Exemplo Distribuidora LTDA',
+                'Vigência Ata': '31/12/2026',
+                'Prazo Entrega': '15/08/2026',
+                'Status': 'Regular'
+            },
+            {
+                'Setor': 'Pronto-socorro',
+                'Nº AF': 'AF 002/2026',
+                'Fornecedor': 'Comercial Hospitalar EIRELI',
+                'Vigência Ata': '20/10/2026',
+                'Prazo Entrega': '01/08/2026',
+                'Status': 'Cobrar'
+            }
+        ];
+
+        const worksheet = XLSX.utils.json_to_sheet(modelo);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Modelo_AFs");
+        XLSX.writeFile(workbook, "Modelo_Importacao_AFs.xlsx");
+    }
+
+    function importExcel(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+            
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonRows = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+
+            let importedCount = 0;
+
+            jsonRows.forEach((row, index) => {
+                const setor = row['Setor'] || 'Básica/Rede';
+                const numAf = row['Nº AF'] || row['AF'] || row['Processo'];
+                const fornecedor = row['Fornecedor'] || row['Empresa'];
+                let vigenciaAta = row['Vigência Ata'] || row['Vigencia'];
+                let prazoEntrega = row['Prazo Entrega'] || row['Prazo'];
+                let statusSancao = row['Status'] || row['Situação'] || 'Regular';
+
+                if (numAf && fornecedor) {
+                    afs.push({
+                        id: Date.now() + index,
+                        setor: cleanSetor(setor),
+                        numAf: String(numAf).trim(),
+                        fornecedor: String(fornecedor).trim(),
+                        vigenciaAta: formatToYYYYMMDD(vigenciaAta),
+                        prazoEntrega: formatToYYYYMMDD(prazoEntrega),
+                        statusSancao: cleanStatus(statusSancao),
+                        cobrancas: [],
+                        createdAt: new Date().toISOString()
+                    });
+                    importedCount++;
+                }
+            });
+
+            if (importedCount > 0) {
+                saveAndRender();
+                alert(`✅ Sucesso! ${importedCount} registros foram importados.`);
+            } else {
+                alert('⚠️ Nenhum registro válido encontrado na planilha.');
+            }
+            
+            event.target.value = '';
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    function cleanSetor(val) {
+        if(!val) return 'Básica/Rede';
+        const str = String(val).toLowerCase();
+        if(str.includes('pronto') || str.includes('ps')) return 'Pronto-socorro';
+        if(str.includes('judic') || str.includes('case')) return 'Mandado Judicial/Case';
+        if(str.includes('enferm')) return 'Enfermagem';
+        return 'Básica/Rede';
+    }
+
+    function formatToYYYYMMDD(val) {
+        if (!val) return '';
+        if (typeof val === 'string' && val.includes('/')) {
+            const parts = val.split('/');
+            if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+        if (typeof val === 'string' && val.includes('-')) return val.substring(0, 10);
+        return '';
+    }
+
+    function cleanStatus(val) {
+        if (!val) return 'Regular';
+        const str = String(val).toLowerCase();
+        if (str.includes('cobr')) return 'Cobrar';
+        if (str.includes('notif')) return 'Notificar';
+        if (str.includes('advert')) return 'Advertir';
+        if (str.includes('mult')) return 'Multar';
+        if (str.includes('entreg')) return 'Entregue';
+        return 'Regular';
+    }
+
+    // Inicialização
+    saveAndRender();
 </script>
 
 </body>
