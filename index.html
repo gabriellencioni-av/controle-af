@@ -93,24 +93,34 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
+        /* IMPRESSÃO ISOLADA */
         @media print {
-            body { background: white; padding: 0; color: #000; }
-            .no-print, .excel-actions, .controls, .card, button, .actions-cell { display: none !important; }
-            .container { max-width: 100%; }
+            body { background: white !important; padding: 0 !important; color: #000 !important; }
+            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal { display: none !important; }
+            .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
             
-            .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
-            .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; letter-spacing: 0.5px; }
-            .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; margin-top: 2px; }
-            .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+            /* RELATÓRIO */
+            body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
+            body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
+            body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
+            body.printing-relatorio .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+            body.printing-relatorio table { display: table !important; width: 100% !important; border: none !important; margin-top: 10px; }
+            body.printing-relatorio th { background: #f8fafc !important; color: #0f172a !important; border-bottom: 2px solid #cbd5e1 !important; font-size: 0.75rem !important; }
+            body.printing-relatorio td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
+            body.printing-relatorio .print-oficio-template { display: none !important; }
 
-            table { border: none !important; margin-top: 10px; }
-            th { background: #f8fafc !important; color: #0f172a !important; border-bottom: 2px solid #cbd5e1 !important; font-size: 0.75rem !important; text-transform: uppercase; }
-            td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
-            tr.row-entregue, tr.row-parcial, tr.row-cancelado { background-color: transparent !important; }
-            .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
-
-            .print-oficio-template { display: block !important; }
+            /* NOTIFICAÇÃO (OFÍCIO) */
+            body.printing-oficio #mainHeader,
+            body.printing-oficio #mainAlerts,
+            body.printing-oficio #mainCardForm,
+            body.printing-oficio #mainExcelActions,
+            body.printing-oficio #mainControls,
+            body.printing-oficio #mainTable,
+            body.printing-oficio #printHeaderMinimal { display: none !important; }
+            
+            body.printing-oficio .print-oficio-template { display: block !important; }
         }
+        
         .print-header-minimal, .print-oficio-template { display: none; }
     </style>
 </head>
@@ -136,13 +146,13 @@
 </div>
 
 <div class="container">
-    <!-- MODELO DE NOTIFICAÇÃO AJUSTADO (ENDEREÇO RUA MINAS GERAIS, 1.742 + SEM RODAPÉ DE RELATÓRIO) -->
-    <div id="oficioTemplate" class="print-oficio-template" style="padding: 40px 30px; font-family: 'Times New Roman', serif; color: #000;">
+    <!-- MODELO DE NOTIFICAÇÃO SEM ASSINATURA E SEM RODAPÉ -->
+    <div id="oficioTemplate" class="print-oficio-template" style="padding: 20px; font-family: 'Times New Roman', serif; color: #000;">
         <!-- Cabeçalho Oficial -->
-        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
-            <h2 id="oficioPrefNome" style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ</h2>
-            <h3 id="oficioDeptoNome" style="font-size: 1.1rem; font-weight: normal;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE</h3>
-            <p style="font-size: 0.85rem; color: #333;">Rua Minas Gerais, 1.742 - Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 25px;">
+            <h2 id="oficioPrefNome" style="font-size: 1.25rem; text-transform: uppercase; margin-bottom: 4px; font-weight: bold;">PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ</h2>
+            <h3 id="oficioDeptoNome" style="font-size: 1.05rem; font-weight: bold; margin-bottom: 4px;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE</h3>
+            <p style="font-size: 0.85rem; color: #111;">Rua Minas Gerais, 1.742 - Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
         </div>
 
         <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
@@ -155,21 +165,13 @@
             <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
         </div>
 
-        <!-- Corpo do Texto -->
-        <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 60px;">
+        <div style="text-align: justify; line-height: 1.8; font-size: 1rem;">
             Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
             Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de adoção das medidas administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
         </div>
-
-        <!-- Assinatura Direta -->
-        <div style="margin-top: 120px; text-align: center;">
-            ____________________________________________________<br>
-            <strong>Almoxarifado Central da Saúde</strong><br>
-            Responsável: <span id="oficioUsuarioEmissor">-</span>
-        </div>
     </div>
 
-    <!-- Cabeçalho Oficial do Relatório Minimalista -->
+    <!-- Cabeçalho do Relatório Minimalista -->
     <div id="printHeaderMinimal" class="print-header-minimal">
         <h1>Prefeitura da Estância Turística de Avaré</h1>
         <h2>Relatório Gerencial de Autorizações de Fornecimento (AF) — Almoxarifado da Saúde</h2>
@@ -884,12 +886,11 @@
         renderTableForPrint(tipo, setorSel);
         closeModalRelatorio();
         
-        // Garante que o cabeçalho do relatório apareça na impressão de relatórios
-        document.getElementById('printHeaderMinimal').style.display = 'block';
+        document.body.className = 'printing-relatorio';
         window.print();
         
         setTimeout(() => {
-            document.getElementById('printHeaderMinimal').style.display = 'none';
+            document.body.className = '';
             renderTable();
         }, 1000);
     }
@@ -926,7 +927,7 @@
         });
     }
 
-    /* 📄 Gerar Notificação no Modelo Limpo Solicitado */
+    /* 📄 Gerar Notificação no Modelo Limpo sem Assinatura e sem Rodapé */
     function gerarOficioNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
@@ -943,32 +944,15 @@
         document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
         document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
         document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
-        document.getElementById('oficioUsuarioEmissor').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
 
         registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
 
-        // Oculta painel web e cabeçalhos secundários de relatório
-        document.getElementById('mainHeader').style.display = 'none';
-        document.getElementById('mainAlerts').style.display = 'none';
-        document.getElementById('mainCardForm').style.display = 'none';
-        document.getElementById('mainExcelActions').style.display = 'none';
-        document.getElementById('mainControls').style.display = 'none';
-        document.getElementById('mainTable').style.display = 'none';
-        document.getElementById('printHeaderMinimal').style.display = 'none';
-
-        document.getElementById('oficioTemplate').style.display = 'block';
+        document.body.className = 'printing-oficio';
 
         window.print();
 
-        // Restaura tela do sistema
         setTimeout(() => {
-            document.getElementById('mainHeader').style.display = 'flex';
-            document.getElementById('mainAlerts').style.display = 'grid';
-            document.getElementById('mainCardForm').style.display = 'block';
-            document.getElementById('mainExcelActions').style.display = 'flex';
-            document.getElementById('mainControls').style.display = 'flex';
-            document.getElementById('mainTable').style.display = 'table';
-            document.getElementById('oficioTemplate').style.display = 'none';
+            document.body.className = '';
         }, 500);
     }
 
