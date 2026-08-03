@@ -384,19 +384,41 @@
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const userIn = document.getElementById('loginUsuario').value.trim();
+        const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const passIn = document.getElementById('loginSenha').value.trim();
 
-        const { data, error } = await _supabase.from('usuarios').select('*').eq('usuario', userIn).eq('senha', passIn);
-
-        if (data && data.length > 0) {
-            usuarioLogado = data[0];
+        // 1. Verificação de emergência local (Garante o acesso imediato)
+        if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
+            usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
             fetchAfs();
-        } else {
-            alert("❌ Usuário ou senha incorretos!");
+            return;
+        }
+
+        // 2. Consulta ao Supabase
+        const { data, error } = await _supabase.from('usuarios').select('*');
+        
+        let found = false;
+        if (data && data.length > 0) {
+            const userMatch = data.find(u => 
+                String(u.usuario || '').trim().toLowerCase() === userIn && 
+                String(u.senha || '').trim() === passIn
+            );
+
+            if (userMatch) {
+                usuarioLogado = userMatch;
+                sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+                found = true;
+                fetchAfs();
+            }
+        }
+
+        if (!found) {
+            alert("❌ Usuário ou senha incorretos!\n\nUtilize 'admin' e '123' para o primeiro acesso.");
         }
     });
 
