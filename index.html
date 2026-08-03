@@ -62,6 +62,7 @@
         .btn-outline:hover { background: #f1f5f9; }
         .btn-cobranca { background: #0284c7; padding: 4px 8px; font-size: 0.75rem; }
         .btn-parcial { background: #8b5cf6; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
         .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
         .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
 
@@ -78,6 +79,12 @@
         .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
 
         .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
+        
+        /* Badges de Contagem Regressiva de Prazo */
+        .badge-prazo { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
+        .badge-ok { background: #dcfce7; color: #16a34a; }
+        .badge-hoje { background: #fef9c3; color: #ca8a04; }
+        .badge-atrasado { background: #fee2e2; color: #dc2626; }
 
         .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 90px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
         .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
@@ -85,7 +92,7 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
-        /* Estilização Exclusiva do Relatório Minimalista na Impressão */
+        /* Estilização Exclusiva do Relatório e Ofício de Notificação para Impressão */
         @media print {
             body { background: white; padding: 0; color: #000; }
             .no-print, .excel-actions, .controls, .card, button, .actions-cell { display: none !important; }
@@ -101,8 +108,11 @@
             td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
             tr.row-entregue, tr.row-parcial { background-color: transparent !important; }
             .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
+
+            /* Template de Ofício */
+            .print-oficio-template { display: block !important; }
         }
-        .print-header-minimal { display: none; }
+        .print-header-minimal, .print-oficio-template { display: none; }
     </style>
 </head>
 <body>
@@ -127,7 +137,37 @@
 </div>
 
 <div class="container">
-    <!-- Cabeçalho Oficial do Relatório Minimalista (Impressão / PDF) -->
+    <!-- Template Imprimível de Ofício Formal de Notificação -->
+    <div id="oficioTemplate" class="print-oficio-template" style="padding: 30px; font-family: 'Times New Roman', serif;">
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
+            <h2 style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">Prefeitura da Estância Turística de Avaré</h2>
+            <h3 style="font-size: 1.1rem; font-weight: normal;">Secretaria Municipal da Saúde — Almoxarifado Central</h3>
+            <p style="font-size: 0.85rem; color: #333;">Praça Juca Novaes, 1169 — Avaré/SP — CNPJ: 46.634.168/0001-50</p>
+        </div>
+
+        <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
+
+        <p style="font-size: 1rem; font-weight: bold; margin-bottom: 20px;">OFÍCIO DE NOTIFICAÇÃO DE ATRASO Nº <span id="oficioNumero">-</span>/2026</p>
+
+        <div style="margin-bottom: 25px; line-height: 1.6; font-size: 1rem;">
+            <strong>À Empresa:</strong> <span id="oficioEmpresa">-</span><br>
+            <strong>Assunto:</strong> NOTIFICAÇÃO POR DESCUMPRIMENTO DE PRAZO DE ENTREGA<br>
+            <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
+        </div>
+
+        <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 30px;">
+            Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
+            Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de aplicação das sanções administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
+        </div>
+
+        <div style="margin-top: 80px; text-align: center;">
+            ____________________________________________________<br>
+            <strong>Almoxarifado Central da Saúde</strong><br>
+            Responsável: <span id="oficioUsuarioEmissor">-</span>
+        </div>
+    </div>
+
+    <!-- Cabeçalho Oficial do Relatório Minimalista -->
     <div class="print-header-minimal">
         <h1>Prefeitura da Estância Turística de Avaré</h1>
         <h2>Relatório Gerencial de Autorizações de Fornecimento (AF) — Almoxarifado da Saúde</h2>
@@ -145,6 +185,7 @@
         </div>
         <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <span class="status-online"><span class="status-dot"></span> <span id="loggedUserName">Usuário</span></span>
+            <button type="button" class="btn" style="background: #475569;" onclick="openModalLogs()">📜 Histórico / Logs</button>
             <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Gerenciar Setores</button>
             <button type="button" class="btn" style="background: #8b5cf6;" onclick="openModalUsuarios()">👥 Funcionários</button>
             <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Gerar Relatório</button>
@@ -152,7 +193,7 @@
         </div>
     </div>
 
-    <!-- Dashboard de Avisos de Atraso e Financeiro -->
+    <!-- Dashboard de Alertas e Financeiro -->
     <div class="alerts-grid no-print">
         <div class="alert-card atraso">
             <h4>🚚 Entregas Atrasadas</h4>
@@ -193,9 +234,7 @@
                 </div>
                 <div>
                     <label>Setor Responsável</label>
-                    <select id="setor" required>
-                        <!-- Dinâmico via JavaScript -->
-                    </select>
+                    <select id="setor" required></select>
                 </div>
                 <div>
                     <label>Fornecedor</label>
@@ -263,7 +302,6 @@
             <label>Filtrar Setor:</label>
             <select id="filterSetor" onchange="renderTable()">
                 <option value="TODOS">Todos os Setores</option>
-                <!-- Dinâmico via JS -->
             </select>
 
             <label>Status:</label>
@@ -296,17 +334,40 @@
                 <th>Fornecedor / Produtos</th>
                 <th>Valores (R$)</th>
                 <th>Vigência Ata</th>
-                <th>Prazo Entrega</th>
+                <th>Prazo Entrega / Alerta</th>
                 <th>Entregas Parciais / NF</th>
                 <th>Histórico & Cobranças</th>
                 <th>Situação / Sanção</th>
                 <th class="no-print">Ações</th>
             </tr>
         </thead>
-        <tbody id="afTableBody">
-            <!-- Linhas geradas via JavaScript -->
-        </tbody>
+        <tbody id="afTableBody"></tbody>
     </table>
+</div>
+
+<!-- Modal Histórico de Logs de Auditoria -->
+<div id="modalLogs" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <h3>📜 Histórico Completo de Auditoria (Logs)</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Registro em tempo real de todas as ações realizadas pelos funcionários no sistema:</p>
+        <br>
+        <div style="max-height: 350px; overflow-y: auto;">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Funcionário</th>
+                        <th>Ação Realizada</th>
+                        <th>Nº AF Ref.</th>
+                    </tr>
+                </thead>
+                <tbody id="logsTableBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="button" class="btn-outline" onclick="closeModalLogs()">Fechar</button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Gerar Relatório Selecionado -->
@@ -326,9 +387,7 @@
         </div>
         <div id="relatorioSetorContainer" style="margin-bottom: 15px; display: none;">
             <label>Selecione o Setor</label>
-            <select id="relatorioSetorSelect">
-                <!-- Dinâmico JS -->
-            </select>
+            <select id="relatorioSetorSelect"></select>
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button type="button" class="btn-outline" onclick="closeModalRelatorio()">Cancelar</button>
@@ -371,9 +430,7 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="setoresTableBody">
-                    <!-- Gerado JS -->
-                </tbody>
+                <tbody id="setoresTableBody"></tbody>
             </table>
         </div>
         
@@ -532,6 +589,41 @@
         await fetchAfs();
     }
 
+    /* Registo de Log de Auditoria */
+    async function registrarLog(acao, numAf = '-') {
+        const payload = {
+            usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema',
+            acao: acao,
+            numaf: numAf,
+            data_hora: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')
+        };
+        await _supabase.from('logs_auditoria').insert([payload]);
+    }
+
+    async function openModalLogs() {
+        document.getElementById('modalLogs').style.display = 'flex';
+        const { data } = await _supabase.from('logs_auditoria').select('*').order('id', { ascending: false }).limit(50);
+        const tbody = document.getElementById('logsTableBody');
+        tbody.innerHTML = '';
+
+        if (data && data.length > 0) {
+            data.forEach(l => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><small>${l.data_hora}</small></td>
+                        <td><b>${l.usuario}</b></td>
+                        <td>${l.acao}</td>
+                        <td><code>${l.numaf || '-'}</code></td>
+                    </tr>
+                `;
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4">Nenhum log registrado até o momento.</td></tr>';
+        }
+    }
+
+    function closeModalLogs() { document.getElementById('modalLogs').style.display = 'none'; }
+
     /* Gestão de Setores */
     async function fetchSetores() {
         const { data } = await _supabase.from('setores').select('*');
@@ -565,16 +657,16 @@
         const tbody = document.getElementById('setoresTableBody');
         tbody.innerHTML = '';
         setores.forEach(s => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b>${s.nome}</b></td>
-                <td><span style="display:inline-block; width:20px; height:20px; background:${s.cor}; border-radius:4px; vertical-align:middle;"></span> <code>${s.cor}</code></td>
-                <td>
-                    <button class="btn btn-edit" onclick="editSetor(${s.id}, '${s.nome}', '${s.cor}')">✏️ Editar</button>
-                    <button class="btn-delete" onclick="deleteSetor(${s.id})">Excluir</button>
-                </td>
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${s.nome}</b></td>
+                    <td><span style="display:inline-block; width:20px; height:20px; background:${s.cor}; border-radius:4px; vertical-align:middle;"></span> <code>${s.cor}</code></td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editSetor(${s.id}, '${s.nome}', '${s.cor}')">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deleteSetor(${s.id})">Excluir</button>
+                    </td>
+                </tr>
             `;
-            tbody.appendChild(tr);
         });
     }
 
@@ -602,8 +694,10 @@
 
         if (editId) {
             await _supabase.from('setores').update({ nome, cor }).eq('id', parseInt(editId));
+            registrarLog(`Editou o setor: ${nome}`);
         } else {
             await _supabase.from('setores').insert([{ nome, cor }]);
+            registrarLog(`Criou novo setor: ${nome}`);
         }
         resetSetorForm();
         fetchSetores();
@@ -612,6 +706,7 @@
     async function deleteSetor(id) {
         if(confirm('Tem certeza que deseja excluir este setor?')) {
             await _supabase.from('setores').delete().eq('id', id);
+            registrarLog(`Excluiu setor id: ${id}`);
             fetchSetores();
         }
     }
@@ -638,11 +733,12 @@
         document.getElementById('printUsuario').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
         document.getElementById('printDataHora').innerText = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
 
-        // Filtra temporariamente para impressão
+        registrarLog(`Gerou Relatório: ${labelFiltro}`);
+
         renderTableForPrint(tipo, setorSel);
         closeModalRelatorio();
         window.print();
-        setTimeout(() => renderTable(), 1000); // Restaura visão web normal
+        setTimeout(() => renderTable(), 1000);
     }
 
     function renderTableForPrint(tipo, setorSel) {
@@ -679,6 +775,34 @@
         });
     }
 
+    /* Gerar Ofício Automático em PDF/Impressão */
+    function gerarOficioNotificacao(id) {
+        const af = afs.find(item => item.id === id);
+        if(!af) return;
+
+        document.getElementById('oficioDataHoje').innerText = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        document.getElementById('oficioNumero').innerText = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('oficioEmpresa').innerText = af.fornecedor || '-';
+        document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
+        document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
+        document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
+        document.getElementById('oficioUsuarioEmissor').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
+
+        registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
+
+        // Oculta tabela e imprime ofício
+        document.querySelector('.container > .header-official').style.display = 'none';
+        document.querySelector('table').style.display = 'none';
+        document.getElementById('oficioTemplate').style.display = 'block';
+
+        window.print();
+
+        // Restaura visão
+        document.querySelector('.container > .header-official').style.display = 'flex';
+        document.querySelector('table').style.display = 'table';
+        document.getElementById('oficioTemplate').style.display = 'none';
+    }
+
     /* Modal Usuários */
     async function openModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'flex'; fetchUsuarios(); }
     function closeModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'none'; }
@@ -702,6 +826,7 @@
         const cargo = document.getElementById('newCargo').value.trim() || 'Almoxarife';
 
         await _supabase.from('usuarios').insert([{ nome, usuario, senha, cargo }]);
+        registrarLog(`Cadastrou o funcionário: ${nome}`);
         alert(`✅ Funcionário "${nome}" cadastrado!`);
         document.getElementById('userAddForm').reset();
         fetchUsuarios();
@@ -739,12 +864,14 @@
 
         if (editId) {
             await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
+            registrarLog(`Atualizou AF: ${payload.numaf}`, payload.numaf);
         } else {
             payload.id = Date.now();
             payload.cobrancas = [];
             payload.parciais = [];
             payload.createdat = new Date().toISOString();
             await _supabase.from('afs').insert([payload]);
+            registrarLog(`Cadastrou nova AF: ${payload.numaf}`, payload.numaf);
         }
         resetForm();
         fetchAfs();
@@ -803,6 +930,7 @@
             if(cobrancas.length >= 3 && (statussancao === 'Regular' || statussancao === 'Cobrar')) statussancao = 'Notificar';
 
             await _supabase.from('afs').update({ cobrancas, statussancao }).eq('id', id);
+            registrarLog(`Registrou cobrança na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             closeModalCobranca();
             fetchAfs();
         }
@@ -829,21 +957,26 @@
             const statussancao = (af.statussancao !== 'Entregue') ? 'Entrega Parcial' : 'Entregue';
 
             await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
+            registrarLog(`Registrou entrega parcial NF ${nf} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             closeModalParcial();
             fetchAfs();
         }
     }
 
     async function alterarStatusManual(id, novoStatus) {
+        const af = afs.find(item => item.id === id);
         const payload = { statussancao: novoStatus };
         if(novoStatus === 'Entregue') payload.data_conclusao = new Date().toISOString();
         await _supabase.from('afs').update(payload).eq('id', id);
+        if(af) registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
         fetchAfs();
     }
 
     async function deleteAf(id) {
+        const af = afs.find(item => item.id === id);
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
             await _supabase.from('afs').delete().eq('id', id);
+            if(af) registrarLog(`Excluiu a AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             fetchAfs();
         }
     }
@@ -886,6 +1019,8 @@
 
         tbody.innerHTML = '';
         const agora = new Date();
+        const hojeZero = new Date();
+        hojeZero.setHours(0,0,0,0);
 
         let filtered = afs.filter(af => {
             const numAf = af.numaf || af.numAf || '';
@@ -918,13 +1053,30 @@
             if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
             if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
 
-            // Busca cor dinâmica do setor cadastrado
             const setorObj = setores.find(s => s.nome === af.setor);
             const setorCor = setorObj ? setorObj.cor : '#2563eb';
 
             const valTotal = af.valortotal || af.valorTotal || 0;
             const totalParcial = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
             const valPendente = Math.max(0, valTotal - totalParcial);
+
+            // Cálculo do Alerta de Prazo
+            let prazoBadgeHtml = '';
+            const dtPrazoStr = af.prazoentrega || af.prazoEntrega;
+            if (dtPrazoStr) {
+                const dtPrazo = new Date(dtPrazoStr + 'T00:00:00');
+                const diffDias = Math.ceil((dtPrazo - hojeZero) / (1000 * 60 * 60 * 24));
+
+                if (currentStatus !== 'Entregue') {
+                    if (diffDias < 0) {
+                        prazoBadgeHtml = `<br><span class="badge-prazo badge-atrasado">🔴 Atrasado há ${Math.abs(diffDias)}d</span>`;
+                    } else if (diffDias === 0) {
+                        prazoBadgeHtml = `<br><span class="badge-prazo badge-hoje">🟡 Vence Hoje!</span>`;
+                    } else {
+                        prazoBadgeHtml = `<br><span class="badge-prazo badge-ok">🟢 +${diffDias}d restantes</span>`;
+                    }
+                }
+            }
 
             let cobrancasHtml = '';
             if (af.cobrancas && af.cobrancas.length > 0) {
@@ -946,7 +1098,7 @@
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
                 <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
-                <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
+                <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id})">📦 Reg. Parcial</button>
                     ${parciaisHtml ? `<div class="history-list">${parciaisHtml}</div>` : ''}
@@ -969,6 +1121,7 @@
                 </td>
                 <td class="actions-cell no-print">
                     <button class="btn btn-edit" onclick="editAf(${af.id})">✏️ Editar</button>
+                    ${(currentStatus === 'Notificar' || currentStatus === 'Advertir' || currentStatus === 'Multar' || currentStatus === 'Cobrar') ? `<button class="btn btn-oficio" onclick="gerarOficioNotificacao(${af.id})">📄 Gerar Ofício</button>` : ''}
                     <button class="btn-delete" onclick="deleteAf(${af.id})">Excluir</button>
                 </td>
             `;
@@ -1026,6 +1179,7 @@
             });
             if (newRows.length > 0) {
                 await _supabase.from('afs').insert(newRows);
+                registrarLog(`Importou ${newRows.length} AFs via Excel`);
                 alert(`✅ ${newRows.length} registros importados!`);
                 fetchAfs();
             }
