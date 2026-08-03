@@ -18,11 +18,6 @@
             --card-bg: #ffffff;
             --text: #0f172a;
             --border: #e2e8f0;
-
-            --setor-basica: #2563eb;
-            --setor-ps: #f97316;
-            --setor-judicial: #a855f7;
-            --setor-enfermagem: #eab308;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -35,8 +30,8 @@
         .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
         /* Destaques de Linha por Status */
-        tr.row-entregue { background-color: #dcfce7 !important; } /* Verde */
-        tr.row-parcial { background-color: #fef9c3 !important; }  /* Amarelo */
+        tr.row-entregue { background-color: #dcfce7 !important; } 
+        tr.row-parcial { background-color: #fef9c3 !important; }  
 
         /* Cabeçalho Oficial */
         .header-official { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
@@ -83,10 +78,6 @@
         .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
 
         .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
-        .setor-basica { background-color: var(--setor-basica); }
-        .setor-ps { background-color: var(--setor-ps); }
-        .setor-judicial { background-color: var(--setor-judicial); }
-        .setor-enfermagem { background-color: var(--setor-enfermagem); color: #0f172a; }
 
         .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 90px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
         .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
@@ -94,15 +85,24 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
+        /* Estilização Exclusiva do Relatório Minimalista na Impressão */
         @media print {
-            body { background: white; padding: 0; }
+            body { background: white; padding: 0; color: #000; }
             .no-print, .excel-actions, .controls, .card, button, .actions-cell { display: none !important; }
             .container { max-width: 100%; }
-            table { border: 1px solid #000; }
-            th, td { border: 1px solid #000; font-size: 0.75rem; }
-            .print-header { display: block !important; margin-bottom: 15px; font-size: 0.8rem; border-bottom: 1px solid #000; padding-bottom: 5px; }
+            
+            .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
+            .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; letter-spacing: 0.5px; }
+            .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; margin-top: 2px; }
+            .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+
+            table { border: none !important; margin-top: 10px; }
+            th { background: #f8fafc !important; color: #0f172a !important; border-bottom: 2px solid #cbd5e1 !important; font-size: 0.75rem !important; text-transform: uppercase; }
+            td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
+            tr.row-entregue, tr.row-parcial { background-color: transparent !important; }
+            .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
         }
-        .print-header { display: none; }
+        .print-header-minimal { display: none; }
     </style>
 </head>
 <body>
@@ -127,13 +127,17 @@
 </div>
 
 <div class="container">
-    <!-- Cabeçalho de Impressão (Auditoria) -->
-    <div class="print-header">
-        <strong>PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ — ALMOXARIFADO DA SAÚDE</strong><br>
-        Relatório Emitido por: <span id="printUsuario">-</span> | Data/Hora: <span id="printDataHora">-</span>
+    <!-- Cabeçalho Oficial do Relatório Minimalista (Impressão / PDF) -->
+    <div class="print-header-minimal">
+        <h1>Prefeitura da Estância Turística de Avaré</h1>
+        <h2>Relatório Gerencial de Autorizações de Fornecimento (AF) — Almoxarifado da Saúde</h2>
+        <div class="print-meta">
+            <span>Filtro Aplicado: <strong id="printFiltroNome">Todas as AFs</strong></span>
+            <span>Emitido por: <strong id="printUsuario">-</strong> | <span id="printDataHora">-</span></span>
+        </div>
     </div>
 
-    <!-- Cabeçalho Oficial -->
+    <!-- Cabeçalho Oficial Web -->
     <div class="header-official">
         <div>
             <h1>Prefeitura da Estância Turística de Avaré</h1>
@@ -141,8 +145,9 @@
         </div>
         <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <span class="status-online"><span class="status-dot"></span> <span id="loggedUserName">Usuário</span></span>
+            <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Gerenciar Setores</button>
             <button type="button" class="btn" style="background: #8b5cf6;" onclick="openModalUsuarios()">👥 Funcionários</button>
-            <button type="button" class="btn btn-outline" onclick="gerarRelatorioPrint()">🖨️ Imprimir Relatório</button>
+            <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Gerar Relatório</button>
             <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
         </div>
     </div>
@@ -189,10 +194,7 @@
                 <div>
                     <label>Setor Responsável</label>
                     <select id="setor" required>
-                        <option value="Básica/Rede">Básica/Rede (Azul)</option>
-                        <option value="Pronto-socorro">Pronto-socorro (Laranja)</option>
-                        <option value="Mandado Judicial/Case">Mandado Judicial/Case (Roxo)</option>
-                        <option value="Enfermagem">Enfermagem (Amarelo)</option>
+                        <!-- Dinâmico via JavaScript -->
                     </select>
                 </div>
                 <div>
@@ -261,10 +263,7 @@
             <label>Filtrar Setor:</label>
             <select id="filterSetor" onchange="renderTable()">
                 <option value="TODOS">Todos os Setores</option>
-                <option value="Básica/Rede">Básica/Rede</option>
-                <option value="Pronto-socorro">Pronto-socorro</option>
-                <option value="Mandado Judicial/Case">Mandado Judicial/Case</option>
-                <option value="Enfermagem">Enfermagem</option>
+                <!-- Dinâmico via JS -->
             </select>
 
             <label>Status:</label>
@@ -310,7 +309,81 @@
     </table>
 </div>
 
-<!-- Modal Gestão de Funcionários / Usuários -->
+<!-- Modal Gerar Relatório Selecionado -->
+<div id="modalRelatorio" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3>🖨️ Emitir Relatório Personalizado</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Escolha o escopo do relatório minimalista que deseja imprimir:</p>
+        <br>
+        <div style="margin-bottom: 15px;">
+            <label>Tipo de Relatório</label>
+            <select id="relatorioTipo" onchange="toggleRelatorioSetorSelect()">
+                <option value="TODAS">Todas as AFs Cadastradas</option>
+                <option value="ATRASADAS">Apenas AFs Atrasadas / Com Sanção</option>
+                <option value="ENTREGUES">Apenas AFs Concluídas / Entregues</option>
+                <option value="SETOR">Filtrar por Setor Específico...</option>
+            </select>
+        </div>
+        <div id="relatorioSetorContainer" style="margin-bottom: 15px; display: none;">
+            <label>Selecione o Setor</label>
+            <select id="relatorioSetorSelect">
+                <!-- Dinâmico JS -->
+            </select>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn-outline" onclick="closeModalRelatorio()">Cancelar</button>
+            <button type="button" class="btn" style="background: var(--primary);" onclick="confirmarEImprimirRelatorio()">🖨️ Imprimir / Salvar PDF</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gestão de Setores e Cores -->
+<div id="modalSetores" class="modal">
+    <div class="modal-content">
+        <h3>🎨 Gestão de Setores e Cores</h3>
+        <br>
+        <form id="setorAddForm" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
+            <strong style="font-size: 0.9rem;">Adicionar / Editar Setor:</strong>
+            <input type="hidden" id="editSetorId" value="">
+            <div class="form-grid" style="margin-top: 10px;">
+                <div>
+                    <label>Nome do Setor</label>
+                    <input type="text" id="setorNome" required placeholder="Ex: Farmácia Judicial">
+                </div>
+                <div>
+                    <label>Cor do Destaque (Badge)</label>
+                    <input type="color" id="setorCor" value="#2563eb" style="height: 38px; padding: 2px;">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" class="btn btn-success" style="width: 100%;">Salvar Setor</button>
+                <button type="button" id="btnCancelSetorEdit" class="btn-outline" style="display:none;" onclick="resetSetorForm()">Cancelar</button>
+            </div>
+        </form>
+
+        <h4>Setores Ativos:</h4>
+        <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Identificador</th>
+                        <th>Cor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="setoresTableBody">
+                    <!-- Gerado JS -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="button" class="btn-outline" onclick="closeModalSetores()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gestão de Funcionários -->
 <div id="modalUsuarios" class="modal">
     <div class="modal-content">
         <h3>👥 Gestão de Funcionários do Almoxarifado</h3>
@@ -348,9 +421,7 @@
                         <th>Cargo</th>
                     </tr>
                 </thead>
-                <tbody id="usuariosTableBody">
-                    <!-- Usuários gerados via JS -->
-                </tbody>
+                <tbody id="usuariosTableBody"></tbody>
             </table>
         </div>
         
@@ -360,7 +431,7 @@
     </div>
 </div>
 
-<!-- Modal Alterar/Registrar Cobrança -->
+<!-- Modal Registrar Cobrança -->
 <div id="modalCobranca" class="modal">
     <div class="modal-content">
         <h3>📞 Registrar / Editar Cobrança</h3>
@@ -381,7 +452,7 @@
     </div>
 </div>
 
-<!-- Modal Registro de Entrega Parcial -->
+<!-- Modal Entrega Parcial -->
 <div id="modalParcial" class="modal">
     <div class="modal-content">
         <h3>📦 Registrar Entrega Parcial</h3>
@@ -412,6 +483,7 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let afs = [];
+    let setores = [];
     let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
 
     if (usuarioLogado) {
@@ -429,31 +501,25 @@
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
-            fetchAfs();
+            initApp();
             return;
         }
 
-        const { data, error } = await _supabase.from('usuarios').select('*');
+        const { data } = await _supabase.from('usuarios').select('*');
         let found = false;
         if (data && data.length > 0) {
-            const userMatch = data.find(u => 
-                String(u.usuario || '').trim().toLowerCase() === userIn && 
-                String(u.senha || '').trim() === passIn
-            );
-
+            const userMatch = data.find(u => String(u.usuario || '').trim().toLowerCase() === userIn && String(u.senha || '').trim() === passIn);
             if (userMatch) {
                 usuarioLogado = userMatch;
                 sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
                 found = true;
-                fetchAfs();
+                initApp();
             }
         }
 
-        if (!found) {
-            alert("❌ Usuário ou senha incorretos!\n\nUtilize 'admin' e '123' para o primeiro acesso.");
-        }
+        if (!found) alert("❌ Usuário ou senha incorretos!");
     });
 
     function logout() {
@@ -461,33 +527,170 @@
         location.reload();
     }
 
-    /* Modal de Gestão de Usuários */
-    async function openModalUsuarios() {
-        document.getElementById('modalUsuarios').style.display = 'flex';
-        fetchUsuarios();
+    async function initApp() {
+        await fetchSetores();
+        await fetchAfs();
     }
 
-    function closeModalUsuarios() {
-        document.getElementById('modalUsuarios').style.display = 'none';
+    /* Gestão de Setores */
+    async function fetchSetores() {
+        const { data } = await _supabase.from('setores').select('*');
+        setores = data || [
+            { id: 1, nome: 'Básica/Rede', cor: '#2563eb' },
+            { id: 2, nome: 'Pronto-socorro', cor: '#f97316' },
+            { id: 3, nome: 'Mandado Judicial/Case', cor: '#a855f7' },
+            { id: 4, nome: 'Enfermagem', cor: '#eab308' }
+        ];
+        populateSetoresDropdowns();
+        renderSetoresTable();
     }
 
-    async function fetchUsuarios() {
-        const { data, error } = await _supabase.from('usuarios').select('*');
-        const tbody = document.getElementById('usuariosTableBody');
+    function populateSetoresDropdowns() {
+        const formSelect = document.getElementById('setor');
+        const filterSelect = document.getElementById('filterSetor');
+        const relatorioSelect = document.getElementById('relatorioSetorSelect');
+
+        formSelect.innerHTML = '';
+        filterSelect.innerHTML = '<option value="TODOS">Todos os Setores</option>';
+        relatorioSelect.innerHTML = '';
+
+        setores.forEach(s => {
+            formSelect.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
+            filterSelect.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
+            relatorioSelect.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
+        });
+    }
+
+    function renderSetoresTable() {
+        const tbody = document.getElementById('setoresTableBody');
+        tbody.innerHTML = '';
+        setores.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>${s.nome}</b></td>
+                <td><span style="display:inline-block; width:20px; height:20px; background:${s.cor}; border-radius:4px; vertical-align:middle;"></span> <code>${s.cor}</code></td>
+                <td>
+                    <button class="btn btn-edit" onclick="editSetor(${s.id}, '${s.nome}', '${s.cor}')">✏️ Editar</button>
+                    <button class="btn-delete" onclick="deleteSetor(${s.id})">Excluir</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function openModalSetores() { document.getElementById('modalSetores').style.display = 'flex'; }
+    function closeModalSetores() { document.getElementById('modalSetores').style.display = 'none'; resetSetorForm(); }
+
+    function editSetor(id, nome, cor) {
+        document.getElementById('editSetorId').value = id;
+        document.getElementById('setorNome').value = nome;
+        document.getElementById('setorCor').value = cor;
+        document.getElementById('btnCancelSetorEdit').style.display = 'inline-flex';
+    }
+
+    function resetSetorForm() {
+        document.getElementById('setorAddForm').reset();
+        document.getElementById('editSetorId').value = '';
+        document.getElementById('btnCancelSetorEdit').style.display = 'none';
+    }
+
+    document.getElementById('setorAddForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const editId = document.getElementById('editSetorId').value;
+        const nome = document.getElementById('setorNome').value.trim();
+        const cor = document.getElementById('setorCor').value;
+
+        if (editId) {
+            await _supabase.from('setores').update({ nome, cor }).eq('id', parseInt(editId));
+        } else {
+            await _supabase.from('setores').insert([{ nome, cor }]);
+        }
+        resetSetorForm();
+        fetchSetores();
+    });
+
+    async function deleteSetor(id) {
+        if(confirm('Tem certeza que deseja excluir este setor?')) {
+            await _supabase.from('setores').delete().eq('id', id);
+            fetchSetores();
+        }
+    }
+
+    /* Modal Relatórios Personalizados */
+    function openModalRelatorio() { document.getElementById('modalRelatorio').style.display = 'flex'; }
+    function closeModalRelatorio() { document.getElementById('modalRelatorio').style.display = 'none'; }
+
+    function toggleRelatorioSetorSelect() {
+        const tipo = document.getElementById('relatorioTipo').value;
+        document.getElementById('relatorioSetorContainer').style.display = (tipo === 'SETOR') ? 'block' : 'none';
+    }
+
+    function confirmarEImprimirRelatorio() {
+        const tipo = document.getElementById('relatorioTipo').value;
+        const setorSel = document.getElementById('relatorioSetorSelect').value;
+        
+        let labelFiltro = "Todas as AFs";
+        if (tipo === 'ATRASADAS') labelFiltro = "Apenas AFs Atrasadas / Sanções";
+        if (tipo === 'ENTREGUES') labelFiltro = "Apenas AFs Concluídas / Entregues";
+        if (tipo === 'SETOR') labelFiltro = `Apenas Setor: ${setorSel}`;
+
+        document.getElementById('printFiltroNome').innerText = labelFiltro;
+        document.getElementById('printUsuario').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
+        document.getElementById('printDataHora').innerText = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
+
+        // Filtra temporariamente para impressão
+        renderTableForPrint(tipo, setorSel);
+        closeModalRelatorio();
+        window.print();
+        setTimeout(() => renderTable(), 1000); // Restaura visão web normal
+    }
+
+    function renderTableForPrint(tipo, setorSel) {
+        const tbody = document.getElementById('afTableBody');
         tbody.innerHTML = '';
 
-        if (data && data.length > 0) {
+        let filtered = afs.filter(af => {
+            const status = af.statussancao || af.statusSancao;
+            if (tipo === 'ATRASADAS') return status !== 'Regular' && status !== 'Entregue';
+            if (tipo === 'ENTREGUES') return status === 'Entregue';
+            if (tipo === 'SETOR') return af.setor === setorSel;
+            return true;
+        });
+
+        filtered.forEach(af => {
+            const tr = document.createElement('tr');
+            const numAf = af.numaf || af.numAf || '';
+            const numEmpenho = af.numempenho || af.numEmpenho || '';
+            const valTotal = af.valortotal || af.valorTotal || 0;
+
+            tr.innerHTML = `
+                <td><span class="setor-badge">${af.setor || '-'}</span></td>
+                <td><strong>${numAf}</strong>${numEmpenho ? `<br><small>Emp: ${numEmpenho}</small>` : ''}</td>
+                <td><b>${af.fornecedor || ''}</b>${af.produtos ? `<br><small>Itens: ${af.produtos}</small>` : ''}</td>
+                <td>R$ ${valTotal.toFixed(2)}</td>
+                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
+                <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
+                <td>-</td>
+                <td>${af.observacoes || '-'}</td>
+                <td><strong>${af.statussancao || af.statusSancao}</strong></td>
+                <td class="actions-cell no-print"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    /* Modal Usuários */
+    async function openModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'flex'; fetchUsuarios(); }
+    function closeModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'none'; }
+
+    async function fetchUsuarios() {
+        const { data } = await _supabase.from('usuarios').select('*');
+        const tbody = document.getElementById('usuariosTableBody');
+        tbody.innerHTML = '';
+        if (data) {
             data.forEach(u => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><b>${u.nome}</b></td>
-                    <td><code>${u.usuario}</code></td>
-                    <td>${u.cargo || 'Almoxarife'}</td>
-                `;
-                tbody.appendChild(tr);
+                tbody.innerHTML += `<tr><td><b>${u.nome}</b></td><td><code>${u.usuario}</code></td><td>${u.cargo || 'Almoxarife'}</td></tr>`;
             });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="3">Nenhum funcionário extra cadastrado.</td></tr>';
         }
     }
 
@@ -498,36 +701,23 @@
         const senha = document.getElementById('newSenha').value.trim();
         const cargo = document.getElementById('newCargo').value.trim() || 'Almoxarife';
 
-        const { error } = await _supabase.from('usuarios').insert([{ nome, usuario, senha, cargo }]);
-
-        if (error) {
-            alert("❌ Erro ao cadastrar funcionário: " + error.message);
-        } else {
-            alert(`✅ Funcionário "${nome}" cadastrado com sucesso!`);
-            document.getElementById('userAddForm').reset();
-            fetchUsuarios();
-        }
+        await _supabase.from('usuarios').insert([{ nome, usuario, senha, cargo }]);
+        alert(`✅ Funcionário "${nome}" cadastrado!`);
+        document.getElementById('userAddForm').reset();
+        fetchUsuarios();
     });
 
+    /* CRUD AFs */
     async function fetchAfs() {
-        const { data, error } = await _supabase.from('afs').select('*');
-        if (error) {
-            console.error("Erro ao carregar dados:", error);
-            return;
-        }
+        const { data } = await _supabase.from('afs').select('*');
         afs = data || [];
         saveAndRenderLocal();
     }
 
-    _supabase.channel('public:afs')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'afs' }, payload => {
-            fetchAfs();
-        })
-        .subscribe();
+    _supabase.channel('public:afs').on('postgres_changes', { event: '*', schema: 'public', table: 'afs' }, () => fetchAfs()).subscribe();
 
     document.getElementById('afForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const editId = document.getElementById('editAfId').value;
         const valTotalInput = document.getElementById('valorTotal').value;
 
@@ -545,27 +735,19 @@
             usuario_cadastro: usuarioLogado ? usuarioLogado.nome : 'Sistema'
         };
 
-        if(payload.statussancao === 'Entregue') {
-            payload.data_conclusao = new Date().toISOString();
-        }
+        if(payload.statussancao === 'Entregue') payload.data_conclusao = new Date().toISOString();
 
-        let result;
         if (editId) {
-            result = await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
+            await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
         } else {
             payload.id = Date.now();
             payload.cobrancas = [];
             payload.parciais = [];
             payload.createdat = new Date().toISOString();
-            result = await _supabase.from('afs').insert([payload]);
+            await _supabase.from('afs').insert([payload]);
         }
-
-        if (result.error) {
-            alert("❌ Erro ao salvar: " + result.error.message);
-        } else {
-            resetForm();
-            fetchAfs();
-        }
+        resetForm();
+        fetchAfs();
     });
 
     function editAf(id) {
@@ -575,7 +757,7 @@
         document.getElementById('editAfId').value = af.id;
         document.getElementById('numAf').value = af.numaf || af.numAf || '';
         document.getElementById('numEmpenho').value = af.numempenho || af.numEmpenho || '';
-        document.getElementById('setor').value = af.setor || 'Básica/Rede';
+        document.getElementById('setor').value = af.setor || '';
         document.getElementById('fornecedor').value = af.fornecedor || '';
         document.getElementById('valorTotal').value = af.valortotal || af.valorTotal || '';
         document.getElementById('vigenciaAta').value = af.vigenciaata || af.vigenciaAta || '';
@@ -587,7 +769,6 @@
         document.getElementById('formTitle').innerText = '✏️ Editar Autorização de Fornecimento';
         document.getElementById('btnSubmitForm').innerText = 'Atualizar AF';
         document.getElementById('btnCancelEdit').style.display = 'inline-flex';
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -599,62 +780,41 @@
         document.getElementById('btnCancelEdit').style.display = 'none';
     }
 
+    /* Modal Cobrança */
     function openModalCobranca(id) {
         document.getElementById('cobrancaAfId').value = id;
         document.getElementById('cobrancaData').value = new Date().toISOString().split('T')[0];
         document.getElementById('modalCobranca').style.display = 'flex';
     }
-
-    function closeModalCobranca() {
-        document.getElementById('modalCobranca').style.display = 'none';
-        document.getElementById('cobrancaObs').value = '';
-    }
+    function closeModalCobranca() { document.getElementById('modalCobranca').style.display = 'none'; }
 
     async function saveCobranca() {
         const id = parseInt(document.getElementById('cobrancaAfId').value);
         const dataCob = document.getElementById('cobrancaData').value;
         const obsCob = document.getElementById('cobrancaObs').value.trim();
 
-        if(!dataCob) return;
-
         const af = afs.find(item => item.id === id);
-        if(af) {
+        if(af && dataCob) {
             const cobrancas = af.cobrancas || [];
             const parts = dataCob.split('-');
-            const dataFmt = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            
-            cobrancas.push({
-                data: dataFmt,
-                usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife',
-                obs: obsCob
-            });
+            cobrancas.push({ data: `${parts[2]}/${parts[1]}/${parts[0]}`, usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife', obs: obsCob });
 
             let statussancao = af.statussancao || af.statusSancao;
-            let datanotificacao = af.datanotificacao || af.dataNotificacao;
+            if(cobrancas.length >= 3 && (statussancao === 'Regular' || statussancao === 'Cobrar')) statussancao = 'Notificar';
 
-            if(cobrancas.length >= 3 && (statussancao === 'Regular' || statussancao === 'Cobrar')) {
-                statussancao = 'Notificar';
-                datanotificacao = new Date().toISOString();
-            }
-
-            const { error } = await _supabase.from('afs').update({ cobrancas, statussancao, datanotificacao }).eq('id', id);
-            if(error) alert("Erro: " + error.message);
+            await _supabase.from('afs').update({ cobrancas, statussancao }).eq('id', id);
             closeModalCobranca();
             fetchAfs();
         }
     }
 
+    /* Modal Parcial */
     function openModalParcial(id) {
         document.getElementById('modalAfId').value = id;
         document.getElementById('parcialData').value = new Date().toISOString().split('T')[0];
         document.getElementById('modalParcial').style.display = 'flex';
     }
-
-    function closeModalParcial() {
-        document.getElementById('modalParcial').style.display = 'none';
-        document.getElementById('parcialNf').value = '';
-        document.getElementById('parcialValor').value = '';
-    }
+    function closeModalParcial() { document.getElementById('modalParcial').style.display = 'none'; }
 
     async function saveParcial() {
         const id = parseInt(document.getElementById('modalAfId').value);
@@ -662,40 +822,28 @@
         const valor = parseFloat(document.getElementById('parcialValor').value) || 0;
         const data = document.getElementById('parcialData').value;
 
-        if(!nf || !data) return;
-
         const af = afs.find(item => item.id === id);
-        if(af) {
+        if(af && nf && data) {
             const parciais = af.parciais || [];
             parciais.push({ nf, valor, data, usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife' });
-            const currentStatus = af.statussancao || af.statusSancao;
-            const statussancao = (currentStatus !== 'Entregue') ? 'Entrega Parcial' : 'Entregue';
+            const statussancao = (af.statussancao !== 'Entregue') ? 'Entrega Parcial' : 'Entregue';
 
-            const { error } = await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
-            if(error) alert("Erro: " + error.message);
+            await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
             closeModalParcial();
             fetchAfs();
         }
     }
 
     async function alterarStatusManual(id, novoStatus) {
-        const af = afs.find(item => item.id === id);
-        if(!af) return;
-
         const payload = { statussancao: novoStatus };
-        if(novoStatus === 'Notificar' && !af.datanotificacao) payload.datanotificacao = new Date().toISOString();
-        if(novoStatus === 'Advertir' && !af.dataadvertencia) payload.dataadvertencia = new Date().toISOString();
         if(novoStatus === 'Entregue') payload.data_conclusao = new Date().toISOString();
-
-        const { error } = await _supabase.from('afs').update(payload).eq('id', id);
-        if(error) alert("Erro: " + error.message);
+        await _supabase.from('afs').update(payload).eq('id', id);
         fetchAfs();
     }
 
     async function deleteAf(id) {
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
-            const { error } = await _supabase.from('afs').delete().eq('id', id);
-            if(error) alert("Erro ao excluir: " + error.message);
+            await _supabase.from('afs').delete().eq('id', id);
             fetchAfs();
         }
     }
@@ -706,11 +854,7 @@
     }
 
     function verificarRegrasEAlertas() {
-        let countAtrasadas = 0;
-        let countNotificar = 0;
-        let countAdvertir = 0;
-        let countMultar = 0;
-        let totalPendenteRs = 0;
+        let countAtrasadas = 0, countNotificar = 0, countAdvertir = 0, countMultar = 0, totalPendenteRs = 0;
 
         afs.forEach(af => {
             const status = af.statussancao || af.statusSancao;
@@ -718,8 +862,7 @@
 
             const valTot = af.valortotal || af.valorTotal || 0;
             const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
-            const pendenteRs = Math.max(0, valTot - entregueRs);
-            totalPendenteRs += pendenteRs;
+            totalPendenteRs += Math.max(0, valTot - entregueRs);
 
             if (status === 'Cobrar') countAtrasadas++;
             if (status === 'Notificar') countNotificar++;
@@ -751,10 +894,7 @@
             const produtos = af.produtos || '';
             const currentStatus = af.statussancao || af.statusSancao || 'Regular';
 
-            const matchesSearch = fornecedor.toLowerCase().includes(search) || 
-                                  numAf.toLowerCase().includes(search) || 
-                                  numEmpenho.toLowerCase().includes(search) ||
-                                  produtos.toLowerCase().includes(search);
+            const matchesSearch = fornecedor.toLowerCase().includes(search) || numAf.toLowerCase().includes(search) || numEmpenho.toLowerCase().includes(search) || produtos.toLowerCase().includes(search);
             const matchesSetor = (setorFilter === 'TODOS') || (af.setor === setorFilter);
 
             if (statusFilter === 'ATIVOS' && currentStatus === 'Entregue' && af.data_conclusao) {
@@ -766,13 +906,8 @@
         });
 
         filtered.sort((a, b) => {
-            const fornA = a.fornecedor || '';
-            const fornB = b.fornecedor || '';
-            const prazoA = a.prazoentrega || a.prazoEntrega || '9999-12-31';
-            const prazoB = b.prazoentrega || b.prazoEntrega || '9999-12-31';
-
-            if (sortBy === 'fornecedor') return fornA.localeCompare(fornB);
-            if (sortBy === 'prazo') return new Date(prazoA) - new Date(prazoB);
+            if (sortBy === 'fornecedor') return (a.fornecedor || '').localeCompare(b.fornecedor || '');
+            if (sortBy === 'prazo') return new Date(a.prazoentrega || '9999-12-31') - new Date(b.prazoentrega || '9999-12-31');
             return b.id - a.id;
         });
 
@@ -783,15 +918,9 @@
             if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
             if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
 
-            const setorClass = {
-                'Básica/Rede': 'setor-basica',
-                'Pronto-socorro': 'setor-ps',
-                'Mandado Judicial/Case': 'setor-judicial',
-                'Enfermagem': 'setor-enfermagem'
-            }[af.setor] || 'setor-basica';
-
-            const vigenciaStr = af.vigenciaata || af.vigenciaAta;
-            let vigenciaAtaText = formatDate(vigenciaStr);
+            // Busca cor dinâmica do setor cadastrado
+            const setorObj = setores.find(s => s.nome === af.setor);
+            const setorCor = setorObj ? setorObj.cor : '#2563eb';
 
             const valTotal = af.valortotal || af.valorTotal || 0;
             const totalParcial = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
@@ -799,10 +928,7 @@
 
             let cobrancasHtml = '';
             if (af.cobrancas && af.cobrancas.length > 0) {
-                cobrancasHtml = af.cobrancas.map(c => {
-                    if(typeof c === 'object') return `<div>• ${c.data} (${c.usuario || 'Almoxarife'}) ${c.obs ? `- ${c.obs}` : ''}</div>`;
-                    return `<div>• ${c}</div>`;
-                }).join('');
+                cobrancasHtml = af.cobrancas.map(c => `<div>• ${c.data || c} ${c.usuario ? `(${c.usuario})` : ''} ${c.obs ? `- ${c.obs}` : ''}</div>`).join('');
             }
 
             let parciaisHtml = '';
@@ -810,25 +936,16 @@
                 parciaisHtml = af.parciais.map(p => `<div>• <b>${p.nf}</b>: R$ ${p.valor.toFixed(2)} (${p.usuario || 'User'})</div>`).join('');
             }
 
-            const numAf = af.numaf || af.numAf || '';
-            const numEmpenho = af.numempenho || af.numEmpenho || '';
-
             tr.innerHTML = `
-                <td><span class="setor-badge ${setorClass}">${af.setor || 'Básica/Rede'}</span></td>
-                <td>
-                    <strong>${numAf}</strong>
-                    ${numEmpenho ? `<br><small style="color:#64748b;">Emp: ${numEmpenho}</small>` : ''}
-                </td>
-                <td>
-                    <b>${af.fornecedor || ''}</b>
-                    ${af.produtos ? `<div style="font-size:0.75rem; color:#475569; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}
-                </td>
+                <td><span class="setor-badge" style="background-color: ${setorCor};">${af.setor || 'Geral'}</span></td>
+                <td><strong>${af.numaf || af.numAf}</strong>${af.numempenho ? `<br><small style="color:#64748b;">Emp: ${af.numempenho}</small>` : ''}</td>
+                <td><b>${af.fornecedor || ''}</b>${af.produtos ? `<div style="font-size:0.75rem; color:#475569; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}</td>
                 <td>
                     <small>Total: ${valTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
                     <small style="color: #16a34a;">Entregue: ${totalParcial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
-                <td>${vigenciaAtaText}</td>
+                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id})">📦 Reg. Parcial</button>
@@ -866,23 +983,9 @@
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
 
-    function gerarRelatorioPrint() {
-        document.getElementById('printUsuario').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
-        document.getElementById('printDataHora').innerText = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
-        window.print();
-    }
-
     function exportExcel() {
         if (afs.length === 0) return;
-        const dataToExport = afs.map(af => ({
-            'Setor': af.setor,
-            'Nº AF': af.numaf || af.numAf,
-            'Nº Empenho': af.numempenho || af.numEmpenho || '-',
-            'Fornecedor': af.fornecedor,
-            'Valor Total (R$)': af.valortotal || af.valorTotal || 0,
-            'Status': af.statussancao || af.statusSancao,
-            'Produtos': af.produtos || ''
-        }));
+        const dataToExport = afs.map(af => ({ 'Setor': af.setor, 'Nº AF': af.numaf || af.numAf, 'Fornecedor': af.fornecedor, 'Valor Total': af.valortotal || 0, 'Status': af.statussancao }));
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "AFs");
@@ -930,7 +1033,7 @@
         reader.readAsArrayBuffer(file);
     }
 
-    if(usuarioLogado) fetchAfs();
+    if(usuarioLogado) initApp();
 </script>
 
 </body>
