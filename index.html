@@ -99,7 +99,6 @@
             .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal { display: none !important; }
             .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
             
-            /* RELATÓRIO COMPLETO COM PRODUTOS E COBRANÇAS */
             body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
             body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
             body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
@@ -110,7 +109,6 @@
             body.printing-relatorio .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
             body.printing-relatorio .history-list { border: none; padding: 0; background: transparent; }
 
-            /* NOTIFICAÇÃO (OFÍCIO) */
             body.printing-oficio #mainHeader,
             body.printing-oficio #mainAlerts,
             body.printing-oficio #mainCardForm,
@@ -884,7 +882,7 @@
         }, 1000);
     }
 
-    /* 🖨️ RENDERIZAR TABELA DO RELATÓRIO COM DETALHES DE PRODUTOS, COBRANÇAS E PENALIDADES */
+    /* 🖨️ RENDERIZAR TABELA DO RELATÓRIO CORRIGIDA - ORDEM DAS COLUNAS AJUSTADA */
     function renderTableForPrint(tipo, setorSel) {
         const tbody = document.getElementById('afTableBody');
         tbody.innerHTML = '';
@@ -903,13 +901,19 @@
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '-';
 
-            // Histórico de Cobranças para o Relatório
+            // 1. Entregas Parciais
+            let parciaisPrint = '-';
+            if (af.parciais && af.parciais.length > 0) {
+                parciaisPrint = af.parciais.map(p => `• NF ${p.nf}: R$ ${p.valor.toFixed(2)}`).join('<br>');
+            }
+
+            // 2. Histórico de Cobranças (Colocadas na coluna correta)
             let cobrancasPrint = '-';
             if (af.cobrancas && af.cobrancas.length > 0) {
                 cobrancasPrint = af.cobrancas.map(c => `• ${c.data || c} ${c.obs ? `(${c.obs})` : ''}`).join('<br>');
             }
 
-            // Status e Observação da Sanção
+            // 3. Status e Observação da Sanção
             let statusPrint = `<b>${af.statussancao || 'Regular'}</b>`;
             if (af.obs_sancao) statusPrint += `<br><small style="color:#dc2626;">Obs: ${af.obs_sancao}</small>`;
 
@@ -923,9 +927,9 @@
                 <td>R$ ${valTotal.toFixed(2)}</td>
                 <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
+                <td>${parciaisPrint}</td>
                 <td>${cobrancasPrint}</td>
-                <td>${af.observacoes || '-'}</td>
-                <td>${statusPrint}</td>
+                <td>${af.observacoes || '-'}<br>${statusPrint}</td>
                 <td class="actions-cell no-print"></td>
             `;
             tbody.appendChild(tr);
