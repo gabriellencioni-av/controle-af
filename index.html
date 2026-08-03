@@ -136,34 +136,65 @@
 </div>
 
 <div class="container">
-    <!-- Template Imprimível de Ofício Formal de Notificação -->
-    <div id="oficioTemplate" class="print-oficio-template" style="padding: 30px; font-family: 'Times New Roman', serif;">
-        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
-            <h2 id="oficioPrefNome" style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">Prefeitura da Estância Turística de Avaré</h2>
-            <h3 id="oficioDeptoNome" style="font-size: 1.1rem; font-weight: normal;">Secretaria Municipal da Saúde — Almoxarifado Central</h3>
-            <p style="font-size: 0.85rem; color: #333;">CNPJ: <span id="oficioCnpj">-</span></p>
+    <!-- Modelo Oficial de Notificação da Prefeitura de Avaré -->
+    <div id="oficioTemplate" class="print-oficio-template" style="padding: 40px 30px; font-family: 'Times New Roman', Times, serif; color: #000;">
+        <!-- Cabeçalho Oficial -->
+        <div style="text-align: center; margin-bottom: 25px;">
+            <p style="font-size: 0.8rem; letter-spacing: 1px; font-weight: bold; margin-bottom: 2px;">ESTÂNCIA TURÍSTICA</p>
+            <p style="font-size: 0.75rem; letter-spacing: 0.5px; margin-bottom: 5px;">TERRA DO VERDE, DA ÁGUA E DO SOL</p>
+            <h2 style="font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin-bottom: 2px;">PREFEITURA MUNICIPAL DE AVARÉ</h2>
+            <h3 style="font-size: 1.05rem; text-transform: uppercase; font-weight: bold;">SECRETARIA MUNICIPAL DA SAÚDE</h3>
         </div>
 
-        <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
+        <p style="text-align: left; font-size: 1rem; margin-bottom: 25px;">
+            Estância Turística de Avaré, <span id="oficioDataHoje">-</span>.
+        </p>
 
-        <p style="font-size: 1rem; font-weight: bold; margin-bottom: 20px;">OFÍCIO DE NOTIFICAÇÃO DE ATRASO Nº <span id="oficioNumero">-</span>/2026</p>
-
-        <div style="margin-bottom: 25px; line-height: 1.6; font-size: 1rem;">
-            <strong>À Empresa:</strong> <span id="oficioEmpresa">-</span><br>
-            <strong>Assunto:</strong> NOTIFICAÇÃO POR DESCUMPRIMENTO DE PRAZO DE ENTREGA<br>
-            <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
+        <div style="margin-bottom: 20px; font-size: 1rem; line-height: 1.4;">
+            À Empresa<br>
+            <strong id="oficioEmpresa" style="text-transform: uppercase;">-</strong>
         </div>
 
-        <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 30px;">
-            Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
-            Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de aplicação das sanções administrativas, multas e advertências previstas na legislação municipal vigente.<br><br>
-            <strong>Observações do Processo:</strong> <span id="oficioObsSancao">-</span>
+        <p style="font-size: 1.05rem; font-weight: bold; margin-bottom: 25px; text-transform: uppercase;">
+            NOTIFICAÇÃO <span id="oficioNumero">-</span>/26
+        </p>
+
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px;">
+            Considerando as Comunicações via e-mail e mensagens de cobrança previamente registradas;
         </div>
 
-        <div style="margin-top: 80px; text-align: center;">
-            ____________________________________________________<br>
-            <strong>Almoxarifado Central da Saúde</strong><br>
-            Responsável: <span id="oficioUsuarioEmissor">-</span>
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
+            Viemos, por meio desta, notificá-los formalmente de que, até o presente momento, a contratada não realizou a entrega dos itens constantes na Autorização de Fornecimento nº <strong><span id="oficioAf">-</span></strong>${Boolean(document.getElementById('oficioEmpenho')) ? '' : ''}, bem como das demais Autorizações de Fornecimento pendentes, já reiteradamente cobradas por meio de e-mails e mensagens via WhatsApp.
+        </div>
+
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
+            Ressaltamos que, embora haja retorno aos nossos contatos, as pendências não têm sido devidamente regularizadas dentro dos prazos estabelecidos, o que vem impactando diretamente nossas operações, especialmente no que se refere ao atendimento de demandas decorrentes de Mandado Judicial e da rede de atenção básica.
+        </div>
+
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
+            Diante do exposto, solicitamos a entrega imediata do referido pedido, bem como dos demais, na maior quantidade de itens possível, a fim de regularizar o volume de solicitações em aberto e sanar o desabastecimento de medicamentos e insumos, ocasionado por recorrentes falhas no cumprimento dos prazos previamente acordados.
+        </div>
+
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
+            Reforçamos a necessidade de regularização dessas inconsistências com a máxima urgência, considerando o atual cenário de desabastecimento e a elevada demanda pelos itens no município.
+        </div>
+
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
+            Dessa forma, fica a empresa <strong id="oficioEmpresaTexto" style="text-transform: uppercase;">-</strong> formalmente <strong>NOTIFICADA</strong> para que realize a entrega dos itens constantes na referida Autorização de Fornecimento no prazo de <strong>24 (vinte e quatro) horas corridas</strong>, a contar do recebimento desta notificação, sob pena de adoção das medidas administrativas cabíveis, conforme previsto contratualmente.
+        </div>
+
+        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 35px; text-indent: 30px;">
+            Adicionalmente, aguardamos a conclusão da entrega da maior parte, senão da totalidade, dos pedidos em aberto, a fim de promover o devido alinhamento das pendências existentes.
+        </div>
+
+        <div id="oficioBlocoObs" style="text-align: justify; font-size: 0.9rem; font-style: italic; margin-bottom: 30px; display: none;">
+            <strong>Observações Complementares do Processo:</strong> <span id="oficioObsSancao">-</span>
+        </div>
+
+        <!-- Rodapé Institucional Exato do Modelo -->
+        <div style="margin-top: 60px; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 0.8rem; line-height: 1.3;">
+            Rua Minas Gerais, 1.742 - Vila Santa Isabel, Avaré-SP, CEP 18706-010, Tel (14) 3732-4597<br>
+            <strong>Almoxarifado da Saúde | almoxarifado.saude@avare.sp.gov.br</strong>
         </div>
     </div>
 
@@ -194,7 +225,7 @@
         </div>
     </div>
 
-    <!-- Dashboard de Avisos de Atraso e Financeiro -->
+    <!-- Dashboard de Alertas e Financeiro -->
     <div class="alerts-grid no-print">
         <div class="alert-card atraso">
             <h4>🚚 Entregas Atrasadas</h4>
@@ -383,7 +414,7 @@
     </div>
 </div>
 
-<!-- Modal Registrar Observação de Sanção (Notificação/Advertência/Multa) -->
+<!-- Modal Registrar Observação de Sanção -->
 <div id="modalObsSancao" class="modal">
     <div class="modal-content" style="max-width: 480px;">
         <h3>📝 Registrar Detalhes / Obs da Sanção</h3>
@@ -672,12 +703,9 @@
         await fetchAfs();
     }
 
-    /* Modal Configurações */
     async function fetchConfig() {
         const { data } = await _supabase.from('configuracoes').select('*').eq('id', 1);
-        if (data && data.length > 0) {
-            configSys = data[0];
-        }
+        if (data && data.length > 0) configSys = data[0];
         document.getElementById('cfgPrefeitura').value = configSys.nome_prefeitura || '';
         document.getElementById('cfgCnpj').value = configSys.cnpj_prefeitura || '';
         document.getElementById('cfgDepto').value = configSys.departamento || '';
@@ -697,15 +725,13 @@
             prazo_padrao_dias: parseInt(document.getElementById('cfgPrazoPadrao').value) || 15,
             horas_ocultar_entregue: parseInt(document.getElementById('cfgHorasOcultar').value) || 24
         };
-
         await _supabase.from('configuracoes').update(payload).eq('id', 1);
         registrarLog("Atualizou as Configurações Gerais do Sistema");
-        alert("✅ Configurações salvas com sucesso!");
+        alert("✅ Configurações salvas!");
         closeModalConfig();
         fetchConfig();
     });
 
-    /* Log Auditoria */
     async function registrarLog(acao, numAf = '-') {
         const payload = {
             usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema',
@@ -729,11 +755,9 @@
     }
     function closeModalLogs() { document.getElementById('modalLogs').style.display = 'none'; }
 
-    /* Gestão de Cancelamento de Saldo Restante */
     function openModalCancelarSaldo(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
-
         const valTot = af.valortotal || af.valorTotal || 0;
         const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
         const saldoPendente = Math.max(0, valTot - entregueRs);
@@ -750,10 +774,7 @@
         const valorToCancel = parseFloat(document.getElementById('cancelSaldoValor').value) || 0;
         const motivo = document.getElementById('cancelSaldoMotivo').value.trim();
 
-        if(!motivo) {
-            alert('Por favor informe o motivo do cancelamento do saldo!');
-            return;
-        }
+        if(!motivo) { alert('Informe o motivo!'); return; }
 
         const af = afs.find(item => item.id === id);
         if(af) {
@@ -763,15 +784,13 @@
                 mot_cancelamento_saldo: motivo,
                 data_conclusao: new Date().toISOString()
             };
-
             await _supabase.from('afs').update(payload).eq('id', id);
-            registrarLog(`Cancelou saldo restante de R$ ${valorToCancel.toFixed(2)} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            registrarLog(`Cancelou saldo de R$ ${valorToCancel.toFixed(2)} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             closeModalCancelarSaldo();
             fetchAfs();
         }
     }
 
-    /* Modal Observação de Sanção */
     function openModalObsSancao(id, novoStatus) {
         const af = afs.find(item => item.id === id);
         document.getElementById('obsSancaoAfId').value = id;
@@ -788,18 +807,13 @@
 
         const af = afs.find(item => item.id === id);
         if(af) {
-            const payload = {
-                statussancao: novoStatus,
-                obs_sancao: textoObs
-            };
-            await _supabase.from('afs').update(payload).eq('id', id);
+            await _supabase.from('afs').update({ statussancao: novoStatus, obs_sancao: textoObs }).eq('id', id);
             registrarLog(`Atualizou sanção para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             closeModalObsSancao();
             fetchAfs();
         }
     }
 
-    /* Gestão de Setores */
     async function fetchSetores() {
         const { data } = await _supabase.from('setores').select('*');
         setores = data || [
@@ -874,7 +888,6 @@
         }
     }
 
-    /* Modal Relatórios Personalizados */
     function openModalRelatorio() { document.getElementById('modalRelatorio').style.display = 'flex'; }
     function closeModalRelatorio() { document.getElementById('modalRelatorio').style.display = 'none'; }
 
@@ -935,38 +948,41 @@
         });
     }
 
-    /* Gerar Ofício Automático com Dados Dinâmicos da Configuração */
+    /* 📄 Gerar Notificação no Modelo Oficial de Avaré */
     function gerarOficioNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
 
-        document.getElementById('oficioPrefNome').innerText = configSys.nome_prefeitura || 'Prefeitura da Estância Turística de Avaré';
-        document.getElementById('oficioDeptoNome').innerText = configSys.departamento || 'Secretaria Municipal da Saúde — Almoxarifado Central';
-        document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
-
-        document.getElementById('oficioDataHoje').innerText = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-        document.getElementById('oficioNumero').innerText = Math.floor(1000 + Math.random() * 9000);
+        const dataHojeStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'Long', year: 'numeric' });
+        
+        document.getElementById('oficioDataHoje').innerText = dataHojeStr;
+        document.getElementById('oficioNumero').innerText = Math.floor(100 + Math.random() * 900).toString().padStart(3, '0');
         document.getElementById('oficioEmpresa').innerText = af.fornecedor || '-';
+        document.getElementById('oficioEmpresaTexto').innerText = af.fornecedor || '-';
         document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
-        document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
-        document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
-        document.getElementById('oficioObsSancao').innerText = af.obs_sancao || af.observacoes || 'Sem observações adicionais.';
-        document.getElementById('oficioUsuarioEmissor').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
 
-        registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
+        if(af.obs_sancao) {
+            document.getElementById('oficioObsSancao').innerText = af.obs_sancao;
+            document.getElementById('oficioBlocoObs').style.display = 'block';
+        } else {
+            document.getElementById('oficioBlocoObs').style.display = 'none';
+        }
 
+        registrarLog(`Emitiu Notificação Oficial para ${af.fornecedor}`, af.numaf || af.numAf);
+
+        // Oculta painel web e exibe a Notificação no modelo oficial para impressão/PDF
         document.querySelector('.container > .header-official').style.display = 'none';
         document.querySelector('table').style.display = 'none';
         document.getElementById('oficioTemplate').style.display = 'block';
 
         window.print();
 
+        // Restaura a visualização da tela do sistema
         document.querySelector('.container > .header-official').style.display = 'flex';
         document.querySelector('table').style.display = 'table';
         document.getElementById('oficioTemplate').style.display = 'none';
     }
 
-    /* Modal Usuários */
     async function openModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'flex'; fetchUsuarios(); }
     function closeModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'none'; }
 
@@ -994,7 +1010,6 @@
         fetchUsuarios();
     });
 
-    /* CRUD AFs */
     async function fetchAfs() {
         const { data } = await _supabase.from('afs').select('*');
         afs = data || [];
@@ -1071,7 +1086,6 @@
         document.getElementById('btnCancelEdit').style.display = 'none';
     }
 
-    /* Modal Cobrança */
     function openModalCobranca(id) {
         document.getElementById('cobrancaAfId').value = id;
         document.getElementById('cobrancaData').value = new Date().toISOString().split('T')[0];
@@ -1099,7 +1113,6 @@
         }
     }
 
-    /* Modal Parcial */
     function openModalParcial(id) {
         document.getElementById('modalAfId').value = id;
         document.getElementById('parcialData').value = new Date().toISOString().split('T')[0];
@@ -1299,7 +1312,7 @@
                 </td>
                 <td class="actions-cell no-print">
                     <button class="btn btn-edit" onclick="editAf(${af.id})">✏️ Editar</button>
-                    ${(currentStatus === 'Notificar' || currentStatus === 'Advertir' || currentStatus === 'Multar' || currentStatus === 'Cobrar') ? `<button class="btn btn-oficio" onclick="gerarOficioNotificacao(${af.id})">📄 Gerar Ofício</button>` : ''}
+                    ${(currentStatus === 'Notificar' || currentStatus === 'Advertir' || currentStatus === 'Multar' || currentStatus === 'Cobrar') ? `<button class="btn btn-oficio" onclick="gerarOficioNotificacao(${af.id})">📄 Gerar Notificação</button>` : ''}
                     <button class="btn-delete" onclick="deleteAf(${af.id})">Excluir</button>
                 </td>
             `;
