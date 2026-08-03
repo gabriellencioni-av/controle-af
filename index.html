@@ -93,13 +93,11 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
-        /* IMPRESSÃO ISOLADA */
         @media print {
             body { background: white !important; padding: 0 !important; color: #000 !important; }
             .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal { display: none !important; }
             .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
             
-            /* RELATÓRIO */
             body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
             body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
             body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
@@ -109,7 +107,6 @@
             body.printing-relatorio td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
             body.printing-relatorio .print-oficio-template { display: none !important; }
 
-            /* NOTIFICAÇÃO (OFÍCIO) */
             body.printing-oficio #mainHeader,
             body.printing-oficio #mainAlerts,
             body.printing-oficio #mainCardForm,
@@ -146,9 +143,8 @@
 </div>
 
 <div class="container">
-    <!-- MODELO DE NOTIFICAÇÃO SEM ASSINATURA E SEM RODAPÉ -->
+    <!-- MODELO DE NOTIFICAÇÃO -->
     <div id="oficioTemplate" class="print-oficio-template" style="padding: 20px; font-family: 'Times New Roman', serif; color: #000;">
-        <!-- Cabeçalho Oficial -->
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 25px;">
             <h2 id="oficioPrefNome" style="font-size: 1.25rem; text-transform: uppercase; margin-bottom: 4px; font-weight: bold;">PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ</h2>
             <h3 id="oficioDeptoNome" style="font-size: 1.05rem; font-weight: bold; margin-bottom: 4px;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE</h3>
@@ -927,64 +923,13 @@
         });
     }
 
-    /* 📄 Gerar Notificação no Modelo Limpo sem Assinatura e sem Rodapé */
-    function gerarOficioNotificacao(id) {
-        const af = afs.find(item => item.id === id);
-        if(!af) return;
-
-        const dataHojeStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-        
-        document.getElementById('oficioPrefNome').innerText = (configSys.nome_prefeitura || 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ').toUpperCase();
-        document.getElementById('oficioDeptoNome').innerText = (configSys.departamento || 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE').toUpperCase();
-        document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
-
-        document.getElementById('oficioDataHoje').innerText = dataHojeStr;
-        document.getElementById('oficioNumero').innerText = Math.floor(100 + Math.random() * 900).toString().padStart(3, '0');
-        document.getElementById('oficioEmpresa').innerText = af.fornecedor || '-';
-        document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
-        document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
-        document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
-
-        registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
-
-        document.body.className = 'printing-oficio';
-
-        window.print();
-
-        setTimeout(() => {
-            document.body.className = '';
-        }, 500);
-    }
-
-    async function openModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'flex'; fetchUsuarios(); }
-    function closeModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'none'; }
-
-    async function fetchUsuarios() {
-        const { data } = await _supabase.from('usuarios').select('*');
-        const tbody = document.getElementById('usuariosTableBody');
-        tbody.innerHTML = '';
-        if (data) {
-            data.forEach(u => {
-                tbody.innerHTML += `<tr><td><b>${u.nome}</b></td><td><code>${u.usuario}</code></td><td>${u.cargo || 'Almoxarife'}</td></tr>`;
-            });
-        }
-    }
-
-    document.getElementById('userAddForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const nome = document.getElementById('newNome').value.trim();
-        const usuario = document.getElementById('newUsuario').value.trim().toLowerCase();
-        const senha = document.getElementById('newSenha').value.trim();
-        const cargo = document.getElementById('newCargo').value.trim() || 'Almoxarife';
-
-        await _supabase.from('usuarios').insert([{ nome, usuario, senha, cargo }]);
-        alert(`✅ Funcionário "${nome}" cadastrado!`);
-        document.getElementById('userAddForm').reset();
-        fetchUsuarios();
-    });
-
+    /* CRUD AFs - ENVIOS COMPATÍVEIS COM O BANCO DE DADOS */
     async function fetchAfs() {
-        const { data } = await _supabase.from('afs').select('*');
+        const { data, error } = await _supabase.from('afs').select('*');
+        if (error) {
+            console.error("Erro ao carregar AFs:", error);
+            return;
+        }
         afs = data || [];
         saveAndRenderLocal();
     }
@@ -1014,19 +959,24 @@
             payload.data_conclusao = new Date().toISOString();
         }
 
+        let result;
         if (editId) {
-            await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
-            registrarLog(`Atualizou AF: ${payload.numaf}`, payload.numaf);
+            result = await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
         } else {
-            payload.id = Date.now();
+            // Garante envio seguro sem colunas extras que causam erro 400
             payload.cobrancas = [];
             payload.parciais = [];
-            payload.createdat = new Date().toISOString();
-            await _supabase.from('afs').insert([payload]);
-            registrarLog(`Cadastrou nova AF: ${payload.numaf}`, payload.numaf);
+            result = await _supabase.from('afs').insert([payload]);
         }
-        resetForm();
-        fetchAfs();
+
+        if (result.error) {
+            alert("❌ Erro ao salvar AF:\n\n" + result.error.message);
+            console.error("Detalhes do erro Supabase:", result.error);
+        } else {
+            registrarLog(editId ? `Atualizou AF: ${payload.numaf}` : `Cadastrou nova AF: ${payload.numaf}`, payload.numaf);
+            resetForm();
+            fetchAfs();
+        }
     });
 
     function editAf(id) {
@@ -1329,15 +1279,13 @@
             jsonRows.forEach((row, index) => {
                 if (row['Nº AF'] && row['Fornecedor']) {
                     newRows.push({
-                        id: Date.now() + index,
                         setor: row['Setor'] || 'Básica/Rede',
                         numaf: String(row['Nº AF']).trim(),
                         fornecedor: String(row['Fornecedor']).trim(),
                         valortotal: parseFloat(row['Valor Total'] || 0),
                         prazoentrega: row['Prazo Entrega'] || '',
                         statussancao: row['Status'] || 'Regular',
-                        cobrancas: [], parciais: [],
-                        createdat: new Date().toISOString()
+                        cobrancas: [], parciais: []
                     });
                 }
             });
