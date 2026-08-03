@@ -93,20 +93,24 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
+        /* IMPRESSÃO ISOLADA */
         @media print {
             body { background: white !important; padding: 0 !important; color: #000 !important; }
             .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal { display: none !important; }
             .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
             
+            /* RELATÓRIO COMPLETO COM PRODUTOS E COBRANÇAS */
             body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
             body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
             body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
             body.printing-relatorio .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
-            body.printing-relatorio table { display: table !important; width: 100% !important; border: none !important; margin-top: 10px; }
-            body.printing-relatorio th { background: #f8fafc !important; color: #0f172a !important; border-bottom: 2px solid #cbd5e1 !important; font-size: 0.75rem !important; }
-            body.printing-relatorio td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
-            body.printing-relatorio .print-oficio-template { display: none !important; }
+            body.printing-relatorio table { display: table !important; width: 100% !important; border: 1px solid #000 !important; margin-top: 10px; }
+            body.printing-relatorio th { background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #000 !important; font-size: 0.75rem !important; text-transform: uppercase; }
+            body.printing-relatorio td { border: 1px solid #000 !important; font-size: 0.75rem !important; padding: 6px !important; vertical-align: top; }
+            body.printing-relatorio .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
+            body.printing-relatorio .history-list { border: none; padding: 0; background: transparent; }
 
+            /* NOTIFICAÇÃO (OFÍCIO) */
             body.printing-oficio #mainHeader,
             body.printing-oficio #mainAlerts,
             body.printing-oficio #mainCardForm,
@@ -347,7 +351,7 @@
     </table>
 </div>
 
-<!-- Modal Configurações Gerais -->
+<!-- Modais do Sistema -->
 <div id="modalConfig" class="modal">
     <div class="modal-content" style="max-width: 550px;">
         <h3>⚙️ Configurações Gerais do Sistema</h3>
@@ -383,11 +387,9 @@
     </div>
 </div>
 
-<!-- Modal Registrar Observação de Sanção -->
 <div id="modalObsSancao" class="modal">
     <div class="modal-content" style="max-width: 480px;">
         <h3>📝 Registrar Detalhes / Obs da Sanção</h3>
-        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Informe se a notificação foi enviada, o pedido de multa foi feito ou se foi cancelado:</p>
         <br>
         <input type="hidden" id="obsSancaoAfId">
         <input type="hidden" id="obsSancaoNovoStatus">
@@ -402,11 +404,9 @@
     </div>
 </div>
 
-<!-- Modal Cancelar Saldo Restante da AF -->
 <div id="modalCancelarSaldo" class="modal">
     <div class="modal-content" style="max-width: 480px;">
         <h3>🚫 Cancelar Saldo Restante da AF</h3>
-        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Zera o valor pendente desta AF quando não haverá mais entrega do restante.</p>
         <br>
         <input type="hidden" id="cancelSaldoAfId">
         <div style="margin-bottom: 12px;">
@@ -424,11 +424,9 @@
     </div>
 </div>
 
-<!-- Modal Histórico de Logs -->
 <div id="modalLogs" class="modal">
     <div class="modal-content" style="max-width: 700px;">
         <h3>📜 Histórico Completo de Auditoria (Logs)</h3>
-        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Registro em tempo real de todas as ações no sistema:</p>
         <br>
         <div style="max-height: 350px; overflow-y: auto;">
             <table style="width: 100%;">
@@ -449,7 +447,6 @@
     </div>
 </div>
 
-<!-- Modal Relatórios -->
 <div id="modalRelatorio" class="modal">
     <div class="modal-content" style="max-width: 450px;">
         <h3>🖨️ Emitir Relatório Personalizado</h3>
@@ -474,7 +471,6 @@
     </div>
 </div>
 
-<!-- Modal Setores -->
 <div id="modalSetores" class="modal">
     <div class="modal-content">
         <h3>🎨 Gestão de Setores e Cores</h3>
@@ -516,7 +512,6 @@
     </div>
 </div>
 
-<!-- Modal Usuários -->
 <div id="modalUsuarios" class="modal">
     <div class="modal-content">
         <h3>👥 Gestão de Funcionários do Almoxarifado</h3>
@@ -562,7 +557,6 @@
     </div>
 </div>
 
-<!-- Modal Cobrança -->
 <div id="modalCobranca" class="modal">
     <div class="modal-content">
         <h3>📞 Registrar / Editar Cobrança</h3>
@@ -583,7 +577,6 @@
     </div>
 </div>
 
-<!-- Modal Entrega Parcial -->
 <div id="modalParcial" class="modal">
     <div class="modal-content">
         <h3>📦 Registrar Entrega Parcial</h3>
@@ -891,6 +884,7 @@
         }, 1000);
     }
 
+    /* 🖨️ RENDERIZAR TABELA DO RELATÓRIO COM DETALHES DE PRODUTOS, COBRANÇAS E PENALIDADES */
     function renderTableForPrint(tipo, setorSel) {
         const tbody = document.getElementById('afTableBody');
         tbody.innerHTML = '';
@@ -906,24 +900,93 @@
         filtered.forEach(af => {
             const tr = document.createElement('tr');
             const valTotal = af.valortotal || af.valorTotal || 0;
+            const numAf = af.numaf || af.numAf || '';
+            const numEmpenho = af.numempenho || af.numEmpenho || '-';
+
+            // Histórico de Cobranças para o Relatório
+            let cobrancasPrint = '-';
+            if (af.cobrancas && af.cobrancas.length > 0) {
+                cobrancasPrint = af.cobrancas.map(c => `• ${c.data || c} ${c.obs ? `(${c.obs})` : ''}`).join('<br>');
+            }
+
+            // Status e Observação da Sanção
+            let statusPrint = `<b>${af.statussancao || 'Regular'}</b>`;
+            if (af.obs_sancao) statusPrint += `<br><small style="color:#dc2626;">Obs: ${af.obs_sancao}</small>`;
 
             tr.innerHTML = `
                 <td><span class="setor-badge">${af.setor || '-'}</span></td>
-                <td><strong>${af.numaf || af.numAf}</strong></td>
-                <td><b>${af.fornecedor || ''}</b></td>
+                <td><strong>${numAf}</strong><br><small>Emp: ${numEmpenho}</small></td>
+                <td>
+                    <b>${af.fornecedor || ''}</b>
+                    ${af.produtos ? `<div style="font-size:0.75rem; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}
+                </td>
                 <td>R$ ${valTotal.toFixed(2)}</td>
                 <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
-                <td>-</td>
+                <td>${cobrancasPrint}</td>
                 <td>${af.observacoes || '-'}</td>
-                <td><strong>${af.statussancao || af.statusSancao}</strong></td>
+                <td>${statusPrint}</td>
                 <td class="actions-cell no-print"></td>
             `;
             tbody.appendChild(tr);
         });
     }
 
-    /* CRUD AFs - ENVIOS COMPATÍVEIS COM O BANCO DE DADOS */
+    /* 📄 Gerar Notificação */
+    function gerarOficioNotificacao(id) {
+        const af = afs.find(item => item.id === id);
+        if(!af) return;
+
+        const dataHojeStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        
+        document.getElementById('oficioPrefNome').innerText = (configSys.nome_prefeitura || 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ').toUpperCase();
+        document.getElementById('oficioDeptoNome').innerText = (configSys.departamento || 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE').toUpperCase();
+        document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
+
+        document.getElementById('oficioDataHoje').innerText = dataHojeStr;
+        document.getElementById('oficioNumero').innerText = Math.floor(100 + Math.random() * 900).toString().padStart(3, '0');
+        document.getElementById('oficioEmpresa').innerText = af.fornecedor || '-';
+        document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
+        document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
+        document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
+
+        registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
+
+        document.body.className = 'printing-oficio';
+        window.print();
+
+        setTimeout(() => {
+            document.body.className = '';
+        }, 500);
+    }
+
+    async function openModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'flex'; fetchUsuarios(); }
+    function closeModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'none'; }
+
+    async function fetchUsuarios() {
+        const { data } = await _supabase.from('usuarios').select('*');
+        const tbody = document.getElementById('usuariosTableBody');
+        tbody.innerHTML = '';
+        if (data) {
+            data.forEach(u => {
+                tbody.innerHTML += `<tr><td><b>${u.nome}</b></td><td><code>${u.usuario}</code></td><td>${u.cargo || 'Almoxarife'}</td></tr>`;
+            });
+        }
+    }
+
+    document.getElementById('userAddForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nome = document.getElementById('newNome').value.trim();
+        const usuario = document.getElementById('newUsuario').value.trim().toLowerCase();
+        const senha = document.getElementById('newSenha').value.trim();
+        const cargo = document.getElementById('newCargo').value.trim() || 'Almoxarife';
+
+        await _supabase.from('usuarios').insert([{ nome, usuario, senha, cargo }]);
+        alert(`✅ Funcionário "${nome}" cadastrado!`);
+        document.getElementById('userAddForm').reset();
+        fetchUsuarios();
+    });
+
     async function fetchAfs() {
         const { data, error } = await _supabase.from('afs').select('*');
         if (error) {
@@ -963,7 +1026,6 @@
         if (editId) {
             result = await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
         } else {
-            // Garante envio seguro sem colunas extras que causam erro 400
             payload.cobrancas = [];
             payload.parciais = [];
             result = await _supabase.from('afs').insert([payload]);
@@ -971,7 +1033,6 @@
 
         if (result.error) {
             alert("❌ Erro ao salvar AF:\n\n" + result.error.message);
-            console.error("Detalhes do erro Supabase:", result.error);
         } else {
             registrarLog(editId ? `Atualizou AF: ${payload.numaf}` : `Cadastrou nova AF: ${payload.numaf}`, payload.numaf);
             resetForm();
