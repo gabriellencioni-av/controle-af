@@ -32,6 +32,7 @@
         /* Destaques de Linha por Status */
         tr.row-entregue { background-color: #dcfce7 !important; } 
         tr.row-parcial { background-color: #fef9c3 !important; }  
+        tr.row-cancelado { background-color: #e2e8f0 !important; } 
 
         /* Cabeçalho Oficial */
         .header-official { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
@@ -62,6 +63,7 @@
         .btn-outline:hover { background: #f1f5f9; }
         .btn-cobranca { background: #0284c7; padding: 4px 8px; font-size: 0.75rem; }
         .btn-parcial { background: #8b5cf6; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-cancelar { background: #475569; padding: 4px 8px; font-size: 0.75rem; }
         .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
         .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
         .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
@@ -80,7 +82,6 @@
 
         .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
         
-        /* Badges de Contagem Regressiva de Prazo */
         .badge-prazo { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
         .badge-ok { background: #dcfce7; color: #16a34a; }
         .badge-hoje { background: #fef9c3; color: #ca8a04; }
@@ -92,7 +93,6 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
-        /* Estilização Exclusiva do Relatório e Ofício de Notificação para Impressão */
         @media print {
             body { background: white; padding: 0; color: #000; }
             .no-print, .excel-actions, .controls, .card, button, .actions-cell { display: none !important; }
@@ -106,10 +106,9 @@
             table { border: none !important; margin-top: 10px; }
             th { background: #f8fafc !important; color: #0f172a !important; border-bottom: 2px solid #cbd5e1 !important; font-size: 0.75rem !important; text-transform: uppercase; }
             td { border-bottom: 1px solid #e2e8f0 !important; font-size: 0.75rem !important; padding: 8px 6px !important; }
-            tr.row-entregue, tr.row-parcial { background-color: transparent !important; }
+            tr.row-entregue, tr.row-parcial, tr.row-cancelado { background-color: transparent !important; }
             .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
 
-            /* Template de Ofício */
             .print-oficio-template { display: block !important; }
         }
         .print-header-minimal, .print-oficio-template { display: none; }
@@ -140,9 +139,9 @@
     <!-- Template Imprimível de Ofício Formal de Notificação -->
     <div id="oficioTemplate" class="print-oficio-template" style="padding: 30px; font-family: 'Times New Roman', serif;">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
-            <h2 style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">Prefeitura da Estância Turística de Avaré</h2>
-            <h3 style="font-size: 1.1rem; font-weight: normal;">Secretaria Municipal da Saúde — Almoxarifado Central</h3>
-            <p style="font-size: 0.85rem; color: #333;">Praça Juca Novaes, 1169 — Avaré/SP — CNPJ: 46.634.168/0001-50</p>
+            <h2 id="oficioPrefNome" style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">Prefeitura da Estância Turística de Avaré</h2>
+            <h3 id="oficioDeptoNome" style="font-size: 1.1rem; font-weight: normal;">Secretaria Municipal da Saúde — Almoxarifado Central</h3>
+            <p style="font-size: 0.85rem; color: #333;">CNPJ: <span id="oficioCnpj">-</span></p>
         </div>
 
         <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
@@ -157,7 +156,8 @@
 
         <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 30px;">
             Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
-            Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de aplicação das sanções administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
+            Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de aplicação das sanções administrativas, multas e advertências previstas na legislação municipal vigente.<br><br>
+            <strong>Observações do Processo:</strong> <span id="oficioObsSancao">-</span>
         </div>
 
         <div style="margin-top: 80px; text-align: center;">
@@ -185,15 +185,16 @@
         </div>
         <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <span class="status-online"><span class="status-dot"></span> <span id="loggedUserName">Usuário</span></span>
+            <button type="button" class="btn" style="background: #334155;" onclick="openModalConfig()">⚙️ Configurações</button>
             <button type="button" class="btn" style="background: #475569;" onclick="openModalLogs()">📜 Histórico / Logs</button>
-            <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Gerenciar Setores</button>
+            <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Setores</button>
             <button type="button" class="btn" style="background: #8b5cf6;" onclick="openModalUsuarios()">👥 Funcionários</button>
-            <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Gerar Relatório</button>
+            <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Relatórios</button>
             <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
         </div>
     </div>
 
-    <!-- Dashboard de Alertas e Financeiro -->
+    <!-- Dashboard de Avisos de Atraso e Financeiro -->
     <div class="alerts-grid no-print">
         <div class="alert-card atraso">
             <h4>🚚 Entregas Atrasadas</h4>
@@ -261,6 +262,7 @@
                         <option value="Advertir">Advertir</option>
                         <option value="Multar">Multar</option>
                         <option value="Entrega Parcial">Entrega Parcial</option>
+                        <option value="Saldo Cancelado">Saldo Cancelado</option>
                         <option value="Entregue">Concluído / Entregue</option>
                     </select>
                 </div>
@@ -335,9 +337,9 @@
                 <th>Valores (R$)</th>
                 <th>Vigência Ata</th>
                 <th>Prazo Entrega / Alerta</th>
-                <th>Entregas Parciais / NF</th>
+                <th>Entregas Parciais / Saldo</th>
                 <th>Histórico & Cobranças</th>
-                <th>Situação / Sanção</th>
+                <th>Situação & Obs Sanção</th>
                 <th class="no-print">Ações</th>
             </tr>
         </thead>
@@ -345,11 +347,88 @@
     </table>
 </div>
 
-<!-- Modal Histórico de Logs de Auditoria -->
+<!-- Modal Configurações Gerais -->
+<div id="modalConfig" class="modal">
+    <div class="modal-content" style="max-width: 550px;">
+        <h3>⚙️ Configurações Gerais do Sistema</h3>
+        <br>
+        <form id="configForm">
+            <div style="margin-bottom: 12px;">
+                <label>Nome do Município / Órgão</label>
+                <input type="text" id="cfgPrefeitura" required>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label>CNPJ Oficial</label>
+                <input type="text" id="cfgCnpj" required>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label>Departamento / Secretaria</label>
+                <input type="text" id="cfgDepto" required>
+            </div>
+            <div class="form-grid" style="margin-bottom: 15px;">
+                <div>
+                    <label>Prazo Padrão (Dias)</label>
+                    <input type="number" id="cfgPrazoPadrao" required>
+                </div>
+                <div>
+                    <label>Ocultar Concluídas (Horas)</label>
+                    <input type="number" id="cfgHorasOcultar" required>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn-outline" onclick="closeModalConfig()">Cancelar</button>
+                <button type="submit" class="btn btn-success">Salvar Configurações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Registrar Observação de Sanção (Notificação/Advertência/Multa) -->
+<div id="modalObsSancao" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+        <h3>📝 Registrar Detalhes / Obs da Sanção</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Informe se a notificação foi enviada, o pedido de multa foi feito ou se foi cancelado:</p>
+        <br>
+        <input type="hidden" id="obsSancaoAfId">
+        <input type="hidden" id="obsSancaoNovoStatus">
+        <div style="margin-bottom: 15px;">
+            <label>Observação da Penalidade / Tramitação</label>
+            <textarea id="obsSancaoTexto" rows="3" placeholder="Ex: Ofício enviado dia 03/08; ou Pedido de cancelamento de multa enviado ao Secretário..."></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn-outline" onclick="closeModalObsSancao()">Cancelar</button>
+            <button type="button" class="btn btn-success" onclick="saveObsSancao()">Salvar Sanção</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cancelar Saldo Restante da AF -->
+<div id="modalCancelarSaldo" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+        <h3>🚫 Cancelar Saldo Restante da AF</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Zera o valor pendente desta AF quando não haverá mais entrega do restante.</p>
+        <br>
+        <input type="hidden" id="cancelSaldoAfId">
+        <div style="margin-bottom: 12px;">
+            <label>Valor a Cancelar (R$ Saldo Restante)</label>
+            <input type="number" step="0.01" id="cancelSaldoValor" readonly style="background: #f1f5f9;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Motivo do Cancelamento de Saldo</label>
+            <textarea id="cancelSaldoMotivo" rows="2" required placeholder="Ex: Falta de matéria-prima no fabricante / Rescisão amigável da ata..."></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn-outline" onclick="closeModalCancelarSaldo()">Voltar</button>
+            <button type="button" class="btn btn-delete" onclick="saveCancelarSaldo()">Confirmar Cancelamento de Saldo</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Histórico de Logs -->
 <div id="modalLogs" class="modal">
     <div class="modal-content" style="max-width: 700px;">
         <h3>📜 Histórico Completo de Auditoria (Logs)</h3>
-        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Registro em tempo real de todas as ações realizadas pelos funcionários no sistema:</p>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Registro em tempo real de todas as ações no sistema:</p>
         <br>
         <div style="max-height: 350px; overflow-y: auto;">
             <table style="width: 100%;">
@@ -370,11 +449,10 @@
     </div>
 </div>
 
-<!-- Modal Gerar Relatório Selecionado -->
+<!-- Modal Relatórios -->
 <div id="modalRelatorio" class="modal">
     <div class="modal-content" style="max-width: 450px;">
         <h3>🖨️ Emitir Relatório Personalizado</h3>
-        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Escolha o escopo do relatório minimalista que deseja imprimir:</p>
         <br>
         <div style="margin-bottom: 15px;">
             <label>Tipo de Relatório</label>
@@ -396,15 +474,14 @@
     </div>
 </div>
 
-<!-- Modal Gestão de Setores e Cores -->
+<!-- Modal Setores -->
 <div id="modalSetores" class="modal">
     <div class="modal-content">
         <h3>🎨 Gestão de Setores e Cores</h3>
         <br>
         <form id="setorAddForm" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
-            <strong style="font-size: 0.9rem;">Adicionar / Editar Setor:</strong>
             <input type="hidden" id="editSetorId" value="">
-            <div class="form-grid" style="margin-top: 10px;">
+            <div class="form-grid">
                 <div>
                     <label>Nome do Setor</label>
                     <input type="text" id="setorNome" required placeholder="Ex: Farmácia Judicial">
@@ -433,21 +510,19 @@
                 <tbody id="setoresTableBody"></tbody>
             </table>
         </div>
-        
         <div style="margin-top: 20px; text-align: right;">
             <button type="button" class="btn-outline" onclick="closeModalSetores()">Fechar</button>
         </div>
     </div>
 </div>
 
-<!-- Modal Gestão de Funcionários -->
+<!-- Modal Usuários -->
 <div id="modalUsuarios" class="modal">
     <div class="modal-content">
         <h3>👥 Gestão de Funcionários do Almoxarifado</h3>
         <br>
         <form id="userAddForm" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
-            <strong style="font-size: 0.9rem;">Cadastrar Novo Funcionário:</strong>
-            <div class="form-grid" style="margin-top: 10px;">
+            <div class="form-grid">
                 <div>
                     <label>Nome Completo</label>
                     <input type="text" id="newNome" required placeholder="Ex: João da Silva">
@@ -465,7 +540,7 @@
                     <input type="text" id="newCargo" placeholder="Ex: Auxiliar de Farmácia">
                 </div>
             </div>
-            <button type="submit" class="btn btn-success" style="width: 100%;">+ Cadastrar Funcionário</button>
+            <button type="submit" class="btn btn-success" style="width: 100%; margin-top:10px;">+ Cadastrar Funcionário</button>
         </form>
 
         <h4>Funcionários Cadastrados:</h4>
@@ -481,14 +556,13 @@
                 <tbody id="usuariosTableBody"></tbody>
             </table>
         </div>
-        
         <div style="margin-top: 20px; text-align: right;">
             <button type="button" class="btn-outline" onclick="closeModalUsuarios()">Fechar</button>
         </div>
     </div>
 </div>
 
-<!-- Modal Registrar Cobrança -->
+<!-- Modal Cobrança -->
 <div id="modalCobranca" class="modal">
     <div class="modal-content">
         <h3>📞 Registrar / Editar Cobrança</h3>
@@ -541,6 +615,14 @@
 
     let afs = [];
     let setores = [];
+    let configSys = {
+        nome_prefeitura: 'Prefeitura da Estância Turística de Avaré',
+        cnpj_prefeitura: '46.634.168/0001-50',
+        departamento: 'Secretaria Municipal da Saúde — Almoxarifado Central',
+        prazo_padrao_dias: 15,
+        horas_ocultar_entregue: 24
+    };
+
     let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
 
     if (usuarioLogado) {
@@ -585,11 +667,45 @@
     }
 
     async function initApp() {
+        await fetchConfig();
         await fetchSetores();
         await fetchAfs();
     }
 
-    /* Registo de Log de Auditoria */
+    /* Modal Configurações */
+    async function fetchConfig() {
+        const { data } = await _supabase.from('configuracoes').select('*').eq('id', 1);
+        if (data && data.length > 0) {
+            configSys = data[0];
+        }
+        document.getElementById('cfgPrefeitura').value = configSys.nome_prefeitura || '';
+        document.getElementById('cfgCnpj').value = configSys.cnpj_prefeitura || '';
+        document.getElementById('cfgDepto').value = configSys.departamento || '';
+        document.getElementById('cfgPrazoPadrao').value = configSys.prazo_padrao_dias || 15;
+        document.getElementById('cfgHorasOcultar').value = configSys.horas_ocultar_entregue || 24;
+    }
+
+    function openModalConfig() { document.getElementById('modalConfig').style.display = 'flex'; }
+    function closeModalConfig() { document.getElementById('modalConfig').style.display = 'none'; }
+
+    document.getElementById('configForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const payload = {
+            nome_prefeitura: document.getElementById('cfgPrefeitura').value.trim(),
+            cnpj_prefeitura: document.getElementById('cfgCnpj').value.trim(),
+            departamento: document.getElementById('cfgDepto').value.trim(),
+            prazo_padrao_dias: parseInt(document.getElementById('cfgPrazoPadrao').value) || 15,
+            horas_ocultar_entregue: parseInt(document.getElementById('cfgHorasOcultar').value) || 24
+        };
+
+        await _supabase.from('configuracoes').update(payload).eq('id', 1);
+        registrarLog("Atualizou as Configurações Gerais do Sistema");
+        alert("✅ Configurações salvas com sucesso!");
+        closeModalConfig();
+        fetchConfig();
+    });
+
+    /* Log Auditoria */
     async function registrarLog(acao, numAf = '-') {
         const payload = {
             usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema',
@@ -605,24 +721,83 @@
         const { data } = await _supabase.from('logs_auditoria').select('*').order('id', { ascending: false }).limit(50);
         const tbody = document.getElementById('logsTableBody');
         tbody.innerHTML = '';
-
-        if (data && data.length > 0) {
+        if (data) {
             data.forEach(l => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><small>${l.data_hora}</small></td>
-                        <td><b>${l.usuario}</b></td>
-                        <td>${l.acao}</td>
-                        <td><code>${l.numaf || '-'}</code></td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr><td><small>${l.data_hora}</small></td><td><b>${l.usuario}</b></td><td>${l.acao}</td><td><code>${l.numaf || '-'}</code></td></tr>`;
             });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="4">Nenhum log registrado até o momento.</td></tr>';
+        }
+    }
+    function closeModalLogs() { document.getElementById('modalLogs').style.display = 'none'; }
+
+    /* Gestão de Cancelamento de Saldo Restante */
+    function openModalCancelarSaldo(id) {
+        const af = afs.find(item => item.id === id);
+        if(!af) return;
+
+        const valTot = af.valortotal || af.valorTotal || 0;
+        const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
+        const saldoPendente = Math.max(0, valTot - entregueRs);
+
+        document.getElementById('cancelSaldoAfId').value = id;
+        document.getElementById('cancelSaldoValor').value = saldoPendente.toFixed(2);
+        document.getElementById('cancelSaldoMotivo').value = '';
+        document.getElementById('modalCancelarSaldo').style.display = 'flex';
+    }
+    function closeModalCancelarSaldo() { document.getElementById('modalCancelarSaldo').style.display = 'none'; }
+
+    async function saveCancelarSaldo() {
+        const id = parseInt(document.getElementById('cancelSaldoAfId').value);
+        const valorToCancel = parseFloat(document.getElementById('cancelSaldoValor').value) || 0;
+        const motivo = document.getElementById('cancelSaldoMotivo').value.trim();
+
+        if(!motivo) {
+            alert('Por favor informe o motivo do cancelamento do saldo!');
+            return;
+        }
+
+        const af = afs.find(item => item.id === id);
+        if(af) {
+            const payload = {
+                statussancao: 'Saldo Cancelado',
+                saldo_cancelado: valorToCancel,
+                mot_cancelamento_saldo: motivo,
+                data_conclusao: new Date().toISOString()
+            };
+
+            await _supabase.from('afs').update(payload).eq('id', id);
+            registrarLog(`Cancelou saldo restante de R$ ${valorToCancel.toFixed(2)} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            closeModalCancelarSaldo();
+            fetchAfs();
         }
     }
 
-    function closeModalLogs() { document.getElementById('modalLogs').style.display = 'none'; }
+    /* Modal Observação de Sanção */
+    function openModalObsSancao(id, novoStatus) {
+        const af = afs.find(item => item.id === id);
+        document.getElementById('obsSancaoAfId').value = id;
+        document.getElementById('obsSancaoNovoStatus').value = novoStatus;
+        document.getElementById('obsSancaoTexto').value = af ? (af.obs_sancao || '') : '';
+        document.getElementById('modalObsSancao').style.display = 'flex';
+    }
+    function closeModalObsSancao() { document.getElementById('modalObsSancao').style.display = 'none'; }
+
+    async function saveObsSancao() {
+        const id = parseInt(document.getElementById('obsSancaoAfId').value);
+        const novoStatus = document.getElementById('obsSancaoNovoStatus').value;
+        const textoObs = document.getElementById('obsSancaoTexto').value.trim();
+
+        const af = afs.find(item => item.id === id);
+        if(af) {
+            const payload = {
+                statussancao: novoStatus,
+                obs_sancao: textoObs
+            };
+            await _supabase.from('afs').update(payload).eq('id', id);
+            registrarLog(`Atualizou sanção para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            closeModalObsSancao();
+            fetchAfs();
+        }
+    }
 
     /* Gestão de Setores */
     async function fetchSetores() {
@@ -657,16 +832,7 @@
         const tbody = document.getElementById('setoresTableBody');
         tbody.innerHTML = '';
         setores.forEach(s => {
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${s.nome}</b></td>
-                    <td><span style="display:inline-block; width:20px; height:20px; background:${s.cor}; border-radius:4px; vertical-align:middle;"></span> <code>${s.cor}</code></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSetor(${s.id}, '${s.nome}', '${s.cor}')">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deleteSetor(${s.id})">Excluir</button>
-                    </td>
-                </tr>
-            `;
+            tbody.innerHTML += `<tr><td><b>${s.nome}</b></td><td><span style="display:inline-block; width:20px; height:20px; background:${s.cor}; border-radius:4px; vertical-align:middle;"></span> <code>${s.cor}</code></td><td><button class="btn btn-edit" onclick="editSetor(${s.id}, '${s.nome}', '${s.cor}')">✏️ Editar</button> <button class="btn-delete" onclick="deleteSetor(${s.id})">Excluir</button></td></tr>`;
         });
     }
 
@@ -694,10 +860,8 @@
 
         if (editId) {
             await _supabase.from('setores').update({ nome, cor }).eq('id', parseInt(editId));
-            registrarLog(`Editou o setor: ${nome}`);
         } else {
             await _supabase.from('setores').insert([{ nome, cor }]);
-            registrarLog(`Criou novo setor: ${nome}`);
         }
         resetSetorForm();
         fetchSetores();
@@ -706,7 +870,6 @@
     async function deleteSetor(id) {
         if(confirm('Tem certeza que deseja excluir este setor?')) {
             await _supabase.from('setores').delete().eq('id', id);
-            registrarLog(`Excluiu setor id: ${id}`);
             fetchSetores();
         }
     }
@@ -734,7 +897,6 @@
         document.getElementById('printDataHora').innerText = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
 
         registrarLog(`Gerou Relatório: ${labelFiltro}`);
-
         renderTableForPrint(tipo, setorSel);
         closeModalRelatorio();
         window.print();
@@ -755,14 +917,12 @@
 
         filtered.forEach(af => {
             const tr = document.createElement('tr');
-            const numAf = af.numaf || af.numAf || '';
-            const numEmpenho = af.numempenho || af.numEmpenho || '';
             const valTotal = af.valortotal || af.valorTotal || 0;
 
             tr.innerHTML = `
                 <td><span class="setor-badge">${af.setor || '-'}</span></td>
-                <td><strong>${numAf}</strong>${numEmpenho ? `<br><small>Emp: ${numEmpenho}</small>` : ''}</td>
-                <td><b>${af.fornecedor || ''}</b>${af.produtos ? `<br><small>Itens: ${af.produtos}</small>` : ''}</td>
+                <td><strong>${af.numaf || af.numAf}</strong></td>
+                <td><b>${af.fornecedor || ''}</b></td>
                 <td>R$ ${valTotal.toFixed(2)}</td>
                 <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
@@ -775,10 +935,14 @@
         });
     }
 
-    /* Gerar Ofício Automático em PDF/Impressão */
+    /* Gerar Ofício Automático com Dados Dinâmicos da Configuração */
     function gerarOficioNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
+
+        document.getElementById('oficioPrefNome').innerText = configSys.nome_prefeitura || 'Prefeitura da Estância Turística de Avaré';
+        document.getElementById('oficioDeptoNome').innerText = configSys.departamento || 'Secretaria Municipal da Saúde — Almoxarifado Central';
+        document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
 
         document.getElementById('oficioDataHoje').innerText = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         document.getElementById('oficioNumero').innerText = Math.floor(1000 + Math.random() * 9000);
@@ -786,18 +950,17 @@
         document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
         document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
         document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
+        document.getElementById('oficioObsSancao').innerText = af.obs_sancao || af.observacoes || 'Sem observações adicionais.';
         document.getElementById('oficioUsuarioEmissor').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
 
         registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
 
-        // Oculta tabela e imprime ofício
         document.querySelector('.container > .header-official').style.display = 'none';
         document.querySelector('table').style.display = 'none';
         document.getElementById('oficioTemplate').style.display = 'block';
 
         window.print();
 
-        // Restaura visão
         document.querySelector('.container > .header-official').style.display = 'flex';
         document.querySelector('table').style.display = 'table';
         document.getElementById('oficioTemplate').style.display = 'none';
@@ -826,7 +989,6 @@
         const cargo = document.getElementById('newCargo').value.trim() || 'Almoxarife';
 
         await _supabase.from('usuarios').insert([{ nome, usuario, senha, cargo }]);
-        registrarLog(`Cadastrou o funcionário: ${nome}`);
         alert(`✅ Funcionário "${nome}" cadastrado!`);
         document.getElementById('userAddForm').reset();
         fetchUsuarios();
@@ -860,7 +1022,9 @@
             usuario_cadastro: usuarioLogado ? usuarioLogado.nome : 'Sistema'
         };
 
-        if(payload.statussancao === 'Entregue') payload.data_conclusao = new Date().toISOString();
+        if(payload.statussancao === 'Entregue' || payload.statussancao === 'Saldo Cancelado') {
+            payload.data_conclusao = new Date().toISOString();
+        }
 
         if (editId) {
             await _supabase.from('afs').update(payload).eq('id', parseInt(editId));
@@ -930,7 +1094,6 @@
             if(cobrancas.length >= 3 && (statussancao === 'Regular' || statussancao === 'Cobrar')) statussancao = 'Notificar';
 
             await _supabase.from('afs').update({ cobrancas, statussancao }).eq('id', id);
-            registrarLog(`Registrou cobrança na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             closeModalCobranca();
             fetchAfs();
         }
@@ -954,19 +1117,26 @@
         if(af && nf && data) {
             const parciais = af.parciais || [];
             parciais.push({ nf, valor, data, usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife' });
-            const statussancao = (af.statussancao !== 'Entregue') ? 'Entrega Parcial' : 'Entregue';
+            const statussancao = (af.statussancao !== 'Entregue' && af.statussancao !== 'Saldo Cancelado') ? 'Entrega Parcial' : af.statussancao;
 
             await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
-            registrarLog(`Registrou entrega parcial NF ${nf} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             closeModalParcial();
             fetchAfs();
+        }
+    }
+
+    function tratarMudancaStatusSelect(id, novoStatus) {
+        if(novoStatus === 'Notificar' || novoStatus === 'Advertir' || novoStatus === 'Multar') {
+            openModalObsSancao(id, novoStatus);
+        } else {
+            alterarStatusManual(id, novoStatus);
         }
     }
 
     async function alterarStatusManual(id, novoStatus) {
         const af = afs.find(item => item.id === id);
         const payload = { statussancao: novoStatus };
-        if(novoStatus === 'Entregue') payload.data_conclusao = new Date().toISOString();
+        if(novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') payload.data_conclusao = new Date().toISOString();
         await _supabase.from('afs').update(payload).eq('id', id);
         if(af) registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
         fetchAfs();
@@ -991,11 +1161,12 @@
 
         afs.forEach(af => {
             const status = af.statussancao || af.statusSancao;
-            if(status === 'Entregue') return;
+            if(status === 'Entregue' || status === 'Saldo Cancelado') return;
 
             const valTot = af.valortotal || af.valorTotal || 0;
             const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
-            totalPendenteRs += Math.max(0, valTot - entregueRs);
+            const canceladoRs = af.saldo_cancelado || 0;
+            totalPendenteRs += Math.max(0, valTot - entregueRs - canceladoRs);
 
             if (status === 'Cobrar') countAtrasadas++;
             if (status === 'Notificar') countNotificar++;
@@ -1032,9 +1203,10 @@
             const matchesSearch = fornecedor.toLowerCase().includes(search) || numAf.toLowerCase().includes(search) || numEmpenho.toLowerCase().includes(search) || produtos.toLowerCase().includes(search);
             const matchesSetor = (setorFilter === 'TODOS') || (af.setor === setorFilter);
 
-            if (statusFilter === 'ATIVOS' && currentStatus === 'Entregue' && af.data_conclusao) {
+            const limiteHoras = configSys.horas_ocultar_entregue || 24;
+            if (statusFilter === 'ATIVOS' && (currentStatus === 'Entregue' || currentStatus === 'Saldo Cancelado') && af.data_conclusao) {
                 const diffHoras = (agora - new Date(af.data_conclusao)) / (1000 * 60 * 60);
-                if (diffHoras >= 24) return false;
+                if (diffHoras >= limiteHoras) return false;
             }
 
             return matchesSearch && matchesSetor;
@@ -1052,22 +1224,23 @@
 
             if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
             if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
+            if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
 
             const setorObj = setores.find(s => s.nome === af.setor);
             const setorCor = setorObj ? setorObj.cor : '#2563eb';
 
             const valTotal = af.valortotal || af.valorTotal || 0;
             const totalParcial = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
-            const valPendente = Math.max(0, valTotal - totalParcial);
+            const saldoCancelado = af.saldo_cancelado || 0;
+            const valPendente = Math.max(0, valTotal - totalParcial - saldoCancelado);
 
-            // Cálculo do Alerta de Prazo
             let prazoBadgeHtml = '';
             const dtPrazoStr = af.prazoentrega || af.prazoEntrega;
             if (dtPrazoStr) {
                 const dtPrazo = new Date(dtPrazoStr + 'T00:00:00');
                 const diffDias = Math.ceil((dtPrazo - hojeZero) / (1000 * 60 * 60 * 24));
 
-                if (currentStatus !== 'Entregue') {
+                if (currentStatus !== 'Entregue' && currentStatus !== 'Saldo Cancelado') {
                     if (diffDias < 0) {
                         prazoBadgeHtml = `<br><span class="badge-prazo badge-atrasado">🔴 Atrasado há ${Math.abs(diffDias)}d</span>`;
                     } else if (diffDias === 0) {
@@ -1095,13 +1268,16 @@
                 <td>
                     <small>Total: ${valTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
                     <small style="color: #16a34a;">Entregue: ${totalParcial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
+                    ${saldoCancelado > 0 ? `<small style="color: #64748b;">Cancelado: ${saldoCancelado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>` : ''}
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
                 <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id})">📦 Reg. Parcial</button>
+                    ${valPendente > 0 ? `<button class="btn btn-cancelar no-print" style="margin-top:2px;" onclick="openModalCancelarSaldo(${af.id})">🚫 Canc. Saldo</button>` : ''}
                     ${parciaisHtml ? `<div class="history-list">${parciaisHtml}</div>` : ''}
+                    ${af.mot_cancelamento_saldo ? `<div style="font-size:0.75rem; color:#ef4444; margin-top:2px;"><b>Cancelado:</b> ${af.mot_cancelamento_saldo}</div>` : ''}
                 </td>
                 <td>
                     <button class="btn btn-cobranca no-print" onclick="openModalCobranca(${af.id})">📞 Cobrar (${af.cobrancas ? af.cobrancas.length : 0})</button>
@@ -1109,15 +1285,17 @@
                     ${af.observacoes ? `<div style="font-size:0.75rem; color:#475569; margin-top:4px;"><b>Obs:</b> ${af.observacoes}</div>` : ''}
                 </td>
                 <td>
-                    <select onchange="alterarStatusManual(${af.id}, this.value)" style="width: auto; font-weight: bold;">
+                    <select onchange="tratarMudancaStatusSelect(${af.id}, this.value)" style="width: auto; font-weight: bold;">
                         <option value="Regular" ${currentStatus === 'Regular' ? 'selected' : ''}>Regular</option>
                         <option value="Cobrar" ${currentStatus === 'Cobrar' ? 'selected' : ''}>Cobrar</option>
                         <option value="Notificar" ${currentStatus === 'Notificar' ? 'selected' : ''}>Notificar</option>
                         <option value="Advertir" ${currentStatus === 'Advertir' ? 'selected' : ''}>Advertir</option>
                         <option value="Multar" ${currentStatus === 'Multar' ? 'selected' : ''}>Multar</option>
                         <option value="Entrega Parcial" ${currentStatus === 'Entrega Parcial' ? 'selected' : ''}>Entrega Parcial</option>
+                        <option value="Saldo Cancelado" ${currentStatus === 'Saldo Cancelado' ? 'selected' : ''}>Saldo Cancelado</option>
                         <option value="Entregue" ${currentStatus === 'Entregue' ? 'selected' : ''}>Entregue / Concluído</option>
                     </select>
+                    ${af.obs_sancao ? `<div style="font-size:0.75rem; color:#dc2626; margin-top:4px;"><b>Obs Sanção:</b> ${af.obs_sancao}</div>` : ''}
                 </td>
                 <td class="actions-cell no-print">
                     <button class="btn btn-edit" onclick="editAf(${af.id})">✏️ Editar</button>
