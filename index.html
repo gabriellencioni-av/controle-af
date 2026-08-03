@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PDF.js para Leitura de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -19,10 +21,10 @@
             --text: #0f172a;
             --border: #e2e8f0;
 
-            --setor-basica: #2563eb;      /* Azul */
-            --setor-ps: #f97316;          /* Laranja */
-            --setor-judicial: #a855f7;    /* Roxo */
-            --setor-enfermagem: #eab308;  /* Amarelo */
+            --setor-basica: #2563eb;
+            --setor-ps: #f97316;
+            --setor-judicial: #a855f7;
+            --setor-enfermagem: #eab308;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -30,6 +32,14 @@
         
         .container { max-width: 1400px; margin: 0 auto; }
         
+        /* Modal de Login */
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+        /* Destaques de Linha por Status */
+        tr.row-entregue { background-color: #dcfce7 !important; } /* Verde */
+        tr.row-parcial { background-color: #fef9c3 !important; }  /* Amarelo */
+
         /* Cabeçalho Oficial */
         .header-official { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
@@ -70,7 +80,6 @@
         table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
         th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
         th { background: #f1f5f9; font-weight: 600; color: #334155; }
-        tr:hover { background: #f8fafc; }
 
         .status-online { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 12px; }
         .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
@@ -81,12 +90,11 @@
         .setor-judicial { background-color: var(--setor-judicial); }
         .setor-enfermagem { background-color: var(--setor-enfermagem); color: #0f172a; }
 
-        .alert-icon { font-size: 1rem; margin-left: 2px; }
-        .history-list { font-size: 0.75rem; color: #64748b; margin-top: 4px; max-height: 80px; overflow-y: auto; background: #f8fafc; padding: 4px; border-radius: 4px; border: 1px solid #f1f5f9; }
+        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 90px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
         .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
         
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 450px; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
 
         @media print {
             body { background: white; padding: 0; }
@@ -94,21 +102,49 @@
             .container { max-width: 100%; }
             table { border: 1px solid #000; }
             th, td { border: 1px solid #000; font-size: 0.75rem; }
+            .print-header { display: block !important; margin-bottom: 15px; font-size: 0.8rem; border-bottom: 1px solid #000; padding-bottom: 5px; }
         }
+        .print-header { display: none; }
     </style>
 </head>
 <body>
 
+<!-- Tela de Login -->
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+        <h2 style="margin-bottom: 5px; color: #1e293b;">🏛️ Acesso ao Sistema</h2>
+        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 20px;">Almoxarifado da Saúde — Avaré</p>
+        <form id="loginForm">
+            <div style="margin-bottom: 15px;">
+                <label>Usuário</label>
+                <input type="text" id="loginUsuario" required placeholder="Ex: admin">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label>Senha</label>
+                <input type="password" id="loginSenha" required placeholder="••••••••">
+            </div>
+            <button type="submit" style="width: 100%; padding: 10px;">Entrar no Sistema</button>
+        </form>
+    </div>
+</div>
+
 <div class="container">
+    <!-- Cabeçalho de Impressão (Auditoria) -->
+    <div class="print-header">
+        <strong>PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ — ALMOXARIFADO DA SAÚDE</strong><br>
+        Relatório Emitido por: <span id="printUsuario">-</span> | Data/Hora: <span id="printDataHora">-</span>
+    </div>
+
     <!-- Cabeçalho Oficial -->
     <div class="header-official">
         <div>
             <h1>Prefeitura da Estância Turística de Avaré</h1>
             <h2>Almoxarifado da Saúde — Controle Interno de AFs</h2>
         </div>
-        <div class="no-print" style="display: flex; gap: 8px; align-items: center;">
-            <span class="status-online"><span class="status-dot"></span> Tempo Real Ativo</span>
-            <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Imprimir Relatório</button>
+        <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <span class="status-online"><span class="status-dot"></span> <span id="loggedUserName">Usuário</span></span>
+            <button type="button" class="btn btn-outline" onclick="gerarRelatorioPrint()">🖨️ Imprimir Relatório</button>
+            <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
         </div>
     </div>
 
@@ -133,6 +169,16 @@
         <div class="alert-card financeiro">
             <h4>💰 Total Pendente (R$)</h4>
             <div class="count" id="valPendente">R$ 0,00</div>
+        </div>
+    </div>
+
+    <!-- Formulário de Importação Inteligente via PDF -->
+    <div class="card no-print" style="border-left: 5px solid #8b5cf6;">
+        <h3>📄 Importação Automática via PDF (AF / Empenho)</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Selecione o arquivo PDF oficial para preencher os dados automaticamente.</p>
+        <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+            <input type="file" id="pdfFileInput" accept="application/pdf" style="max-width: 350px;">
+            <button type="button" class="btn" style="background: #8b5cf6;" onclick="lerArquivoPDF()">⚡ Ler e Migrar PDF</button>
         </div>
     </div>
 
@@ -189,10 +235,17 @@
                     </select>
                 </div>
             </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label>Produtos / Itens que compõem a AF (Opcional)</label>
+                <textarea id="produtosText" rows="2" placeholder="Ex: 100 cx Dipirona 500mg, 50 frascos Amoxicilina..."></textarea>
+            </div>
+
             <div style="margin-bottom: 15px;">
                 <label>Observações / Motivo da Sanção (Opcional)</label>
                 <textarea id="observacoes" rows="2" placeholder="Histórico de ligações, falta de insumos no fabricante, ofícios..."></textarea>
             </div>
+
             <div style="display: flex; gap: 10px;">
                 <button type="submit" id="btnSubmitForm">Salvar AF</button>
                 <button type="button" id="btnCancelEdit" class="btn-outline" style="display: none;" onclick="resetForm()">Cancelar Edição</button>
@@ -225,8 +278,14 @@
                 <option value="Enfermagem">Enfermagem</option>
             </select>
 
+            <label>Status:</label>
+            <select id="filterStatus" onchange="renderTable()">
+                <option value="ATIVOS">Apenas AFs Ativas (Oculta Entregues > 24h)</option>
+                <option value="TODOS">Todas (Incluindo Histórico de Entregues)</option>
+            </select>
+
             <label>Buscar:</label>
-            <input type="text" id="searchInput" placeholder="Fornecedor, Nº AF ou Empenho..." oninput="renderTable()">
+            <input type="text" id="searchInput" placeholder="Fornecedor, Nº AF, Produto..." oninput="renderTable()">
         </div>
 
         <div class="controls-group">
@@ -246,12 +305,12 @@
             <tr>
                 <th>Setor</th>
                 <th>Nº AF / Empenho</th>
-                <th>Fornecedor</th>
+                <th>Fornecedor / Produtos</th>
                 <th>Valores (R$)</th>
                 <th>Vigência Ata</th>
                 <th>Prazo Entrega</th>
                 <th>Entregas Parciais / NF</th>
-                <th>Cobranças / Obs</th>
+                <th>Histórico & Cobranças (Com Usuário)</th>
                 <th>Situação / Sanção</th>
                 <th class="no-print">Ações</th>
             </tr>
@@ -260,6 +319,27 @@
             <!-- Linhas geradas via JavaScript -->
         </tbody>
     </table>
+</div>
+
+<!-- Modal Alterar/Registrar Cobrança com Data Retroativa e Usuário -->
+<div id="modalCobranca" class="modal">
+    <div class="modal-content">
+        <h3>📞 Registrar / Editar Cobrança</h3>
+        <br>
+        <input type="hidden" id="cobrancaAfId">
+        <div style="margin-bottom: 10px;">
+            <label>Data da Cobrança</label>
+            <input type="date" id="cobrancaData" required>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Observação do Contato (Opcional)</label>
+            <input type="text" id="cobrancaObs" placeholder="Ex: Falei com Fátima, prometeu para sexta">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn-outline" onclick="closeModalCobranca()">Cancelar</button>
+            <button type="button" class="btn-success" onclick="saveCobranca()">Salvar Cobrança</button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Registro de Entrega Parcial -->
@@ -292,7 +372,38 @@
     const SUPABASE_KEY = "sb_publishable_wzosuw4QDpJfthg3pPpE3g_wv8GwNw6";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
     let afs = [];
+    let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
+
+    if (usuarioLogado) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const userIn = document.getElementById('loginUsuario').value.trim();
+        const passIn = document.getElementById('loginSenha').value.trim();
+
+        const { data, error } = await _supabase.from('usuarios').select('*').eq('usuario', userIn).eq('senha', passIn);
+
+        if (data && data.length > 0) {
+            usuarioLogado = data[0];
+            sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+            fetchAfs();
+        } else {
+            alert("❌ Usuário ou senha incorretos!");
+        }
+    });
+
+    function logout() {
+        sessionStorage.removeItem('user_session');
+        location.reload();
+    }
 
     async function fetchAfs() {
         const { data, error } = await _supabase.from('afs').select('*');
@@ -304,7 +415,6 @@
         saveAndRenderLocal();
     }
 
-    // Escuta em tempo real
     _supabase.channel('public:afs')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'afs' }, payload => {
             fetchAfs();
@@ -326,8 +436,14 @@
             vigenciaata: document.getElementById('vigenciaAta').value || null,
             prazoentrega: document.getElementById('prazoEntrega').value,
             statussancao: document.getElementById('statusSancao').value,
-            observacoes: document.getElementById('observacoes').value.trim() || null
+            observacoes: document.getElementById('observacoes').value.trim() || null,
+            produtos: document.getElementById('produtosText').value.trim() || null,
+            usuario_cadastro: usuarioLogado ? usuarioLogado.nome : 'Sistema'
         };
+
+        if(payload.statussancao === 'Entregue') {
+            payload.data_conclusao = new Date().toISOString();
+        }
 
         let result;
         if (editId) {
@@ -336,18 +452,56 @@
             payload.id = Date.now();
             payload.cobrancas = [];
             payload.parciais = [];
+            payload.historico_acoes = [{
+                acao: 'Cadastro Inicial',
+                usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema',
+                data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')
+            }];
             payload.createdat = new Date().toISOString();
             result = await _supabase.from('afs').insert([payload]);
         }
 
         if (result.error) {
-            alert("❌ Erro ao salvar no Supabase:\n" + result.error.message);
-            console.error(result.error);
+            alert("❌ Erro ao salvar: " + result.error.message);
         } else {
             resetForm();
             fetchAfs();
         }
     });
+
+    async function lerArquivoPDF() {
+        const fileInput = document.getElementById('pdfFileInput');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Selecione um arquivo PDF primeiro!");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+        let fullText = "";
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            fullText += textContent.items.map(item => item.str).join(" ") + " ";
+        }
+
+        const afMatch = fullText.match(/(?:AF|AUTORIZAÇÃO|PROCESSO)[\s:]*([0-9\/\-]+)/i);
+        const empenhoMatch = fullText.match(/(?:EMPENHO)[\s:]*([0-9\/\-]+)/i);
+        const valorMatch = fullText.match(/(?:TOTAL|VALOR)[\s:]*R?\$?\s*([0-9\.\,]+)/i);
+
+        if (afMatch) document.getElementById('numAf').value = "AF " + afMatch[1];
+        if (empenhoMatch) document.getElementById('numEmpenho').value = empenhoMatch[1];
+        if (valorMatch) {
+            const valClean = valorMatch[1].replace('.', '').replace(',', '.');
+            document.getElementById('valorTotal').value = parseFloat(valClean) || 0;
+        }
+
+        document.getElementById('produtosText').value = fullText.substring(0, 300) + "...";
+
+        alert("⚡ Leitura concluída! Verifique e ajuste os campos preenchidos no formulário.");
+    }
 
     function editAf(id) {
         const af = afs.find(item => item.id === id);
@@ -363,6 +517,7 @@
         document.getElementById('prazoEntrega').value = af.prazoentrega || af.prazoEntrega || '';
         document.getElementById('statusSancao').value = af.statussancao || af.statusSancao || 'Regular';
         document.getElementById('observacoes').value = af.observacoes || '';
+        document.getElementById('produtosText').value = af.produtos || '';
 
         document.getElementById('formTitle').innerText = '✏️ Editar Autorização de Fornecimento';
         document.getElementById('btnSubmitForm').innerText = 'Atualizar AF';
@@ -377,6 +532,51 @@
         document.getElementById('formTitle').innerText = 'Cadastrar Nova Autorização';
         document.getElementById('btnSubmitForm').innerText = 'Salvar AF';
         document.getElementById('btnCancelEdit').style.display = 'none';
+    }
+
+    function openModalCobranca(id) {
+        document.getElementById('cobrancaAfId').value = id;
+        document.getElementById('cobrancaData').value = new Date().toISOString().split('T')[0];
+        document.getElementById('modalCobranca').style.display = 'flex';
+    }
+
+    function closeModalCobranca() {
+        document.getElementById('modalCobranca').style.display = 'none';
+        document.getElementById('cobrancaObs').value = '';
+    }
+
+    async function saveCobranca() {
+        const id = parseInt(document.getElementById('cobrancaAfId').value);
+        const dataCob = document.getElementById('cobrancaData').value;
+        const obsCob = document.getElementById('cobrancaObs').value.trim();
+
+        if(!dataCob) return;
+
+        const af = afs.find(item => item.id === id);
+        if(af) {
+            const cobrancas = af.cobrancas || [];
+            const parts = dataCob.split('-');
+            const dataFmt = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            
+            cobrancas.push({
+                data: dataFmt,
+                usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife',
+                obs: obsCob
+            });
+
+            let statussancao = af.statussancao || af.statusSancao;
+            let datanotificacao = af.datanotificacao || af.dataNotificacao;
+
+            if(cobrancas.length >= 3 && (statussancao === 'Regular' || statussancao === 'Cobrar')) {
+                statussancao = 'Notificar';
+                datanotificacao = new Date().toISOString();
+            }
+
+            const { error } = await _supabase.from('afs').update({ cobrancas, statussancao, datanotificacao }).eq('id', id);
+            if(error) alert("Erro: " + error.message);
+            closeModalCobranca();
+            fetchAfs();
+        }
     }
 
     function openModalParcial(id) {
@@ -397,44 +597,20 @@
         const valor = parseFloat(document.getElementById('parcialValor').value) || 0;
         const data = document.getElementById('parcialData').value;
 
-        if(!nf || !data) {
-            alert('Por favor preencha a NF e a Data!');
-            return;
-        }
+        if(!nf || !data) return;
 
         const af = afs.find(item => item.id === id);
         if(af) {
             const parciais = af.parciais || [];
-            parciais.push({ nf, valor, data });
+            parciais.push({ nf, valor, data, usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife' });
             const currentStatus = af.statussancao || af.statusSancao;
             const statussancao = (currentStatus !== 'Entregue') ? 'Entrega Parcial' : 'Entregue';
 
             const { error } = await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
-            if(error) alert("Erro ao registrar parcial: " + error.message);
+            if(error) alert("Erro: " + error.message);
             closeModalParcial();
             fetchAfs();
         }
-    }
-
-    async function addCobranca(id) {
-        const af = afs.find(item => item.id === id);
-        if(!af) return;
-
-        const cobrancas = af.cobrancas || [];
-        const dataHoje = new Date().toLocaleDateString('pt-BR');
-        cobrancas.push(dataHoje);
-
-        let statussancao = af.statussancao || af.statusSancao;
-        let datanotificacao = af.datanotificacao || af.dataNotificacao;
-
-        if(cobrancas.length >= 3 && (statussancao === 'Regular' || statussancao === 'Cobrar')) {
-            statussancao = 'Notificar';
-            datanotificacao = new Date().toISOString();
-        }
-
-        const { error } = await _supabase.from('afs').update({ cobrancas, statussancao, datanotificacao }).eq('id', id);
-        if(error) alert("Erro ao adicionar cobrança: " + error.message);
-        fetchAfs();
     }
 
     async function alterarStatusManual(id, novoStatus) {
@@ -444,9 +620,10 @@
         const payload = { statussancao: novoStatus };
         if(novoStatus === 'Notificar' && !af.datanotificacao) payload.datanotificacao = new Date().toISOString();
         if(novoStatus === 'Advertir' && !af.dataadvertencia) payload.dataadvertencia = new Date().toISOString();
+        if(novoStatus === 'Entregue') payload.data_conclusao = new Date().toISOString();
 
         const { error } = await _supabase.from('afs').update(payload).eq('id', id);
-        if(error) alert("Erro ao alterar status: " + error.message);
+        if(error) alert("Erro: " + error.message);
         fetchAfs();
     }
 
@@ -477,10 +654,6 @@
             const status = af.statussancao || af.statusSancao;
             if(status === 'Entregue') return;
 
-            const prazoStr = af.prazoentrega || af.prazoEntrega;
-            const prazo = prazoStr ? new Date(prazoStr + 'T00:00:00') : null;
-            const cobrancasCount = af.cobrancas ? af.cobrancas.length : 0;
-
             const valTot = af.valortotal || af.valorTotal || 0;
             const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
             const pendenteRs = Math.max(0, valTot - entregueRs);
@@ -503,19 +676,31 @@
         const tbody = document.getElementById('afTableBody');
         const search = document.getElementById('searchInput').value.toLowerCase();
         const setorFilter = document.getElementById('filterSetor').value;
+        const statusFilter = document.getElementById('filterStatus').value;
         const sortBy = document.getElementById('sortSelect').value;
 
         tbody.innerHTML = '';
+
+        const agora = new Date();
 
         let filtered = afs.filter(af => {
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '';
             const fornecedor = af.fornecedor || '';
+            const produtos = af.produtos || '';
+            const currentStatus = af.statussancao || af.statusSancao || 'Regular';
 
             const matchesSearch = fornecedor.toLowerCase().includes(search) || 
                                   numAf.toLowerCase().includes(search) || 
-                                  numEmpenho.toLowerCase().includes(search);
+                                  numEmpenho.toLowerCase().includes(search) ||
+                                  produtos.toLowerCase().includes(search);
             const matchesSetor = (setorFilter === 'TODOS') || (af.setor === setorFilter);
+
+            if (statusFilter === 'ATIVOS' && currentStatus === 'Entregue' && af.data_conclusao) {
+                const diffHoras = (agora - new Date(af.data_conclusao)) / (1000 * 60 * 60);
+                if (diffHoras >= 24) return false;
+            }
+
             return matchesSearch && matchesSetor;
         });
 
@@ -524,12 +709,9 @@
             const fornB = b.fornecedor || '';
             const prazoA = a.prazoentrega || a.prazoEntrega || '9999-12-31';
             const prazoB = b.prazoentrega || b.prazoEntrega || '9999-12-31';
-            const vigA = a.vigenciaata || a.vigenciaAta || '9999-12-31';
-            const vigB = b.vigenciaata || b.vigenciaAta || '9999-12-31';
 
             if (sortBy === 'fornecedor') return fornA.localeCompare(fornB);
             if (sortBy === 'prazo') return new Date(prazoA) - new Date(prazoB);
-            if (sortBy === 'vigencia') return new Date(vigA) - new Date(vigB);
             return b.id - a.id;
         });
 
@@ -538,7 +720,11 @@
 
         filtered.forEach(af => {
             const tr = document.createElement('tr');
-            
+            const currentStatus = af.statussancao || af.statusSancao || 'Regular';
+
+            if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
+            if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
+
             const setorClass = {
                 'Básica/Rede': 'setor-basica',
                 'Pronto-socorro': 'setor-ps',
@@ -548,29 +734,24 @@
 
             const vigenciaStr = af.vigenciaata || af.vigenciaAta;
             let vigenciaAtaText = formatDate(vigenciaStr);
-            if (vigenciaStr) {
-                const dtVig = new Date(vigenciaStr + 'T00:00:00');
-                const diffDias = Math.ceil((dtVig - hoje) / (1000 * 60 * 60 * 24));
-                if (diffDias <= 0) {
-                    vigenciaAtaText += ' <span class="alert-icon" title="Ata Vencida!">🚨</span>';
-                } else if (diffDias <= 30) {
-                    vigenciaAtaText += ' <span class="alert-icon" title="Vencimento Próximo (menos de 30 dias)">⚠️</span>';
-                }
-            }
 
             const valTotal = af.valortotal || af.valorTotal || 0;
             const totalParcial = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
             const valPendente = Math.max(0, valTotal - totalParcial);
 
-            const cobrancasCount = af.cobrancas ? af.cobrancas.length : 0;
-            const ultimasCobrancas = af.cobrancas ? af.cobrancas.slice(-2).join(', ') : '';
+            let cobrancasHtml = '';
+            if (af.cobrancas && af.cobrancas.length > 0) {
+                cobrancasHtml = af.cobrancas.map(c => {
+                    if(typeof c === 'object') return `<div>• ${c.data} (${c.usuario || 'Almoxarife'}) ${c.obs ? `- ${c.obs}` : ''}</div>`;
+                    return `<div>• ${c}</div>`;
+                }).join('');
+            }
 
             let parciaisHtml = '';
             if (af.parciais && af.parciais.length > 0) {
-                parciaisHtml = af.parciais.map(p => `<div>• <b>${p.nf}</b>: R$ ${p.valor.toFixed(2)} (${formatDate(p.data)})</div>`).join('');
+                parciaisHtml = af.parciais.map(p => `<div>• <b>${p.nf}</b>: R$ ${p.valor.toFixed(2)} (${p.usuario || 'User'})</div>`).join('');
             }
 
-            const currentStatus = af.statussancao || af.statusSancao || 'Regular';
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '';
 
@@ -580,7 +761,10 @@
                     <strong>${numAf}</strong>
                     ${numEmpenho ? `<br><small style="color:#64748b;">Emp: ${numEmpenho}</small>` : ''}
                 </td>
-                <td>${af.fornecedor || ''}</td>
+                <td>
+                    <b>${af.fornecedor || ''}</b>
+                    ${af.produtos ? `<div style="font-size:0.75rem; color:#475569; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}
+                </td>
                 <td>
                     <small>Total: ${valTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
                     <small style="color: #16a34a;">Entregue: ${totalParcial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
@@ -593,8 +777,8 @@
                     ${parciaisHtml ? `<div class="history-list">${parciaisHtml}</div>` : ''}
                 </td>
                 <td>
-                    <button class="btn btn-cobranca no-print" onclick="addCobranca(${af.id})">📞 Cobrar (${cobrancasCount})</button>
-                    ${ultimasCobrancas ? `<div class="history-list">Últimas: ${ultimasCobrancas}</div>` : ''}
+                    <button class="btn btn-cobranca no-print" onclick="openModalCobranca(${af.id})">📞 Cobrar (${af.cobrancas ? af.cobrancas.length : 0})</button>
+                    ${cobrancasHtml ? `<div class="history-list">${cobrancasHtml}</div>` : ''}
                     ${af.observacoes ? `<div style="font-size:0.75rem; color:#475569; margin-top:4px;"><b>Obs:</b> ${af.observacoes}</div>` : ''}
                 </td>
                 <td>
@@ -624,152 +808,71 @@
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
 
+    function gerarRelatorioPrint() {
+        document.getElementById('printUsuario').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
+        document.getElementById('printDataHora').innerText = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
+        window.print();
+    }
+
     function exportExcel() {
-        if (afs.length === 0) {
-            alert('Não há registros para exportar!');
-            return;
-        }
-
-        const dataToExport = afs.map(af => {
-            const entregue = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
-            const valTot = af.valortotal || af.valorTotal || 0;
-            return {
-                'Setor': af.setor,
-                'Nº AF': af.numaf || af.numAf,
-                'Nº Empenho': af.numempenho || af.numEmpenho || '-',
-                'Fornecedor': af.fornecedor,
-                'Valor Total (R$)': valTot,
-                'Valor Entregue (R$)': entregue,
-                'Saldo Pendente (R$)': Math.max(0, valTot - entregue),
-                'Vigência Ata': formatDate(af.vigenciaata || af.vigenciaAta),
-                'Prazo Entrega': formatDate(af.prazoentrega || af.prazoEntrega),
-                'Nº Cobranças': af.cobrancas ? af.cobrancas.length : 0,
-                'Status / Sanção': af.statussancao || af.statusSancao,
-                'Observações': af.observacoes || ''
-            };
-        });
-
+        if (afs.length === 0) return;
+        const dataToExport = afs.map(af => ({
+            'Setor': af.setor,
+            'Nº AF': af.numaf || af.numAf,
+            'Nº Empenho': af.numempenho || af.numEmpenho || '-',
+            'Fornecedor': af.fornecedor,
+            'Valor Total (R$)': af.valortotal || af.valorTotal || 0,
+            'Status': af.statussancao || af.statusSancao,
+            'Produtos': af.produtos || ''
+        }));
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "AFs Cadastradas");
-        XLSX.writeFile(workbook, "Controle_AFs_Avare_Completo.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "AFs");
+        XLSX.writeFile(workbook, "Controle_AFs_Avare.xlsx");
     }
 
     function downloadModelo() {
-        const modelo = [{
-            'Setor': 'Básica/Rede',
-            'Nº AF': 'AF 001/2026',
-            'Nº Empenho': '1234/2026',
-            'Fornecedor': 'Exemplo Distribuidora LTDA',
-            'Valor Total': 5000.00,
-            'Vigência Ata': '31/12/2026',
-            'Prazo Entrega': '15/08/2026',
-            'Status': 'Regular',
-            'Observações': 'Aguardando entrega'
-        }];
-
+        const modelo = [{ 'Setor': 'Básica/Rede', 'Nº AF': 'AF 001/2026', 'Fornecedor': 'Exemplo LTDA', 'Valor Total': 1000.00, 'Prazo Entrega': '15/08/2026', 'Status': 'Regular' }];
         const worksheet = XLSX.utils.json_to_sheet(modelo);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Modelo_AFs");
-        XLSX.writeFile(workbook, "Modelo_Importacao_AFs.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Modelo");
+        XLSX.writeFile(workbook, "Modelo_Importacao.xlsx");
     }
 
     async function importExcel(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = async function(e) {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-            
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            const jsonRows = XLSX.utils.sheet_to_json(worksheet, { raw: false });
-
+            const jsonRows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { raw: false });
             let newRows = [];
-
             jsonRows.forEach((row, index) => {
-                const setor = row['Setor'] || 'Básica/Rede';
-                const numAf = row['Nº AF'] || row['AF'] || row['Processo'];
-                const numEmpenho = row['Nº Empenho'] || row['Empenho'] || '';
-                const fornecedor = row['Fornecedor'] || row['Empresa'];
-                const valorTotal = parseFloat(row['Valor Total'] || row['Valor'] || 0);
-                let vigenciaAta = row['Vigência Ata'] || row['Vigencia'];
-                let prazoEntrega = row['Prazo Entrega'] || row['Prazo'];
-                let statusSancao = row['Status'] || row['Situação'] || 'Regular';
-                const obs = row['Observações'] || row['Obs'] || '';
-
-                if (numAf && fornecedor) {
+                if (row['Nº AF'] && row['Fornecedor']) {
                     newRows.push({
                         id: Date.now() + index,
-                        setor: cleanSetor(setor),
-                        numaf: String(numAf).trim(),
-                        numempenho: String(numEmpenho).trim() || null,
-                        fornecedor: String(fornecedor).trim(),
-                        valortotal: valorTotal,
-                        vigenciaata: formatToYYYYMMDD(vigenciaAta) || null,
-                        prazoentrega: formatToYYYYMMDD(prazoEntrega),
-                        statussancao: cleanStatus(statusSancao),
-                        observacoes: String(obs).trim() || null,
-                        cobrancas: [],
-                        parciais: [],
+                        setor: row['Setor'] || 'Básica/Rede',
+                        numaf: String(row['Nº AF']).trim(),
+                        fornecedor: String(row['Fornecedor']).trim(),
+                        valortotal: parseFloat(row['Valor Total'] || 0),
+                        prazoentrega: row['Prazo Entrega'] || '',
+                        statussancao: row['Status'] || 'Regular',
+                        cobrancas: [], parciais: [],
                         createdat: new Date().toISOString()
                     });
                 }
             });
-
             if (newRows.length > 0) {
-                const { error } = await _supabase.from('afs').insert(newRows);
-                if (error) {
-                    alert("Erro ao importar planilha: " + error.message);
-                } else {
-                    alert(`✅ Sucesso! ${newRows.length} registros foram importados.`);
-                    fetchAfs();
-                }
-            } else {
-                alert('⚠️ Nenhum registro válido encontrado na planilha.');
+                await _supabase.from('afs').insert(newRows);
+                alert(`✅ ${newRows.length} registros importados!`);
+                fetchAfs();
             }
-            
-            event.target.value = '';
         };
-
         reader.readAsArrayBuffer(file);
     }
 
-    function cleanSetor(val) {
-        if(!val) return 'Básica/Rede';
-        const str = String(val).toLowerCase();
-        if(str.includes('pronto') || str.includes('ps')) return 'Pronto-socorro';
-        if(str.includes('judic') || str.includes('case')) return 'Mandado Judicial/Case';
-        if(str.includes('enferm')) return 'Enfermagem';
-        return 'Básica/Rede';
-    }
-
-    function formatToYYYYMMDD(val) {
-        if (!val) return '';
-        if (typeof val === 'string' && val.includes('/')) {
-            const parts = val.split('/');
-            if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-        }
-        if (typeof val === 'string' && val.includes('-')) return val.substring(0, 10);
-        return '';
-    }
-
-    function cleanStatus(val) {
-        if (!val) return 'Regular';
-        const str = String(val).toLowerCase();
-        if (str.includes('cobr')) return 'Cobrar';
-        if (str.includes('notif')) return 'Notificar';
-        if (str.includes('advert')) return 'Advertir';
-        if (str.includes('mult')) return 'Multar';
-        if (str.includes('parcial')) return 'Entrega Parcial';
-        if (str.includes('entreg')) return 'Entregue';
-        return 'Regular';
-    }
-
-    // Inicializa carregando os dados
-    fetchAfs();
+    if(usuarioLogado) fetchAfs();
 </script>
 
 </body>
