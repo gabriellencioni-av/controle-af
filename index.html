@@ -34,7 +34,7 @@
         tr.row-parcial { background-color: #fef9c3 !important; }  
         tr.row-cancelado { background-color: #e2e8f0 !important; } 
 
-        /* Cabeçalho Oficial */
+        /* Cabeçalho Oficial Web */
         .header-official { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
         .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
@@ -136,64 +136,36 @@
 </div>
 
 <div class="container">
-    <!-- Modelo Oficial de Notificação da Prefeitura de Avaré -->
-    <div id="oficioTemplate" class="print-oficio-template" style="padding: 30px; font-family: 'Times New Roman', Times, serif; color: #000;">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <p style="font-size: 0.85rem; letter-spacing: 1px; font-weight: bold; margin-bottom: 2px;">ESTÂNCIA TURÍSTICA</p>
-            <p style="font-size: 0.8rem; letter-spacing: 0.5px; margin-bottom: 5px;">TERRA DO VERDE, DA ÁGUA E DO SOL</p>
-            <h2 style="font-size: 1.25rem; text-transform: uppercase; font-weight: bold; margin-bottom: 2px;">PREFEITURA MUNICIPAL DE AVARÉ</h2>
-            <h3 style="font-size: 1.1rem; text-transform: uppercase; font-weight: bold;">SECRETARIA MUNICIPAL DA SAÚDE</h3>
+    <!-- PRIMEIRO MODELO DE NOTIFICAÇÃO (LIMPO - SEM OBSERVAÇÕES INFERIORES) -->
+    <div id="oficioTemplate" class="print-oficio-template" style="padding: 40px 30px; font-family: 'Times New Roman', serif; color: #000;">
+        <!-- Cabeçalho Oficial -->
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
+            <h2 id="oficioPrefNome" style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ</h2>
+            <h3 id="oficioDeptoNome" style="font-size: 1.1rem; font-weight: normal;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO CENTRAL</h3>
+            <p style="font-size: 0.85rem; color: #333;">Praça Juca Novaes, 1169 — Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
         </div>
 
-        <p style="text-align: left; font-size: 1rem; margin-bottom: 25px;">
-            Estância Turística de Avaré, <span id="oficioDataHoje">-</span>.
-        </p>
+        <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
 
-        <div style="margin-bottom: 20px; font-size: 1rem; line-height: 1.4;">
-            À Empresa<br>
-            <strong id="oficioEmpresa" style="text-transform: uppercase;">-</strong>
+        <p style="font-size: 1rem; font-weight: bold; margin-bottom: 20px;">OFÍCIO DE NOTIFICAÇÃO DE ATRASO Nº <span id="oficioNumero">-</span>/2026</p>
+
+        <div style="margin-bottom: 25px; line-height: 1.6; font-size: 1rem;">
+            <strong>À Empresa:</strong> <span id="oficioEmpresa">-</span><br>
+            <strong>Assunto:</strong> NOTIFICAÇÃO POR DESCUMPRIMENTO DE PRAZO DE ENTREGA<br>
+            <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
         </div>
 
-        <p style="font-size: 1.05rem; font-weight: bold; margin-bottom: 25px; text-transform: uppercase;">
-            NOTIFICAÇÃO <span id="oficioNumero">002</span>/26
-        </p>
-
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px;">
-            Considerando as Comunicações via e-mail e mensagens de cobrança previamente registradas;
+        <!-- Corpo do Texto do Primeiro Modelo -->
+        <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 50px;">
+            Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
+            Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de adoção das medidas administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
         </div>
 
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
-            Viemos, por meio desta, notificá-los formalmente de que, até o presente momento, a contratada não realizou a entrega dos itens constantes na Autorização de Fornecimento nº <strong><span id="oficioAf">-</span></strong>, bem como das demais Autorizações de Fornecimento pendentes, já reiteradamente cobradas por meio de e-mails e mensagens via WhatsApp.
-        </div>
-
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
-            Ressaltamos que, embora haja retorno aos nossos contatos, as pendências não têm sido devidamente regularizadas dentro dos prazos estabelecidos, o que vem impactando diretamente nossas operações, especialmente no que se refere ao atendimento de demandas decorrentes de Mandado Judicial e da rede de atenção básica.
-        </div>
-
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
-            Diante do exposto, solicitamos a entrega imediata do referido pedido, bem como dos demais, na maior quantidade de itens possível, a fim de regularizar o volume de solicitações em aberto e sanar o desabastecimento de medicamentos e insumos, ocasionado por recorrentes falhas no cumprimento dos prazos previamente acordados.
-        </div>
-
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
-            Reforçamos a necessidade de regularização dessas inconsistências com a máxima urgência, considerando o atual cenário de desabastecimento e a elevada demanda pelos itens no município.
-        </div>
-
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 15px; text-indent: 30px;">
-            Dessa forma, fica a empresa <strong id="oficioEmpresaTexto" style="text-transform: uppercase;">-</strong> formalmente <strong>NOTIFICADA</strong> para que realize a entrega dos itens constantes na referida Autorização de Fornecimento no prazo de <strong>24 (vinte e quatro) horas corridas</strong>, a contar do recebimento desta notificação, sob pena de adoção das medidas administrativas cabíveis, conforme previsto contratualmente.
-        </div>
-
-        <div style="text-align: justify; line-height: 1.6; font-size: 1rem; margin-bottom: 35px; text-indent: 30px;">
-            Adicionalmente, aguardamos a conclusão da entrega da maior parte, senão da totalidade, dos pedidos em aberto, a fim de promover o devido alinhamento das pendências existentes.
-        </div>
-
-        <div id="oficioBlocoObs" style="text-align: justify; font-size: 0.95rem; font-style: italic; margin-bottom: 30px; display: none;">
-            <strong>Observações Complementares do Processo:</strong> <span id="oficioObsSancao">-</span>
-        </div>
-
-        <!-- Rodapé Institucional -->
-        <div style="margin-top: 60px; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 0.8rem; line-height: 1.3;">
-            Rua Minas Gerais, 1.742 - Vila Santa Isabel, Avaré-SP, CEP 18706-010, Tel (14) 3732-4597<br>
-            <strong>Almoxarifado da Saúde | almoxarifado.saude@avare.sp.gov.br</strong>
+        <!-- Assinatura Direta e Rodapé -->
+        <div style="margin-top: 100px; text-align: center;">
+            ____________________________________________________<br>
+            <strong>Almoxarifado Central da Saúde</strong><br>
+            Responsável: <span id="oficioUsuarioEmissor">-</span>
         </div>
     </div>
 
@@ -646,9 +618,9 @@
     let afs = [];
     let setores = [];
     let configSys = {
-        nome_prefeitura: 'Prefeitura da Estância Turística de Avaré',
+        nome_prefeitura: 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ',
         cnpj_prefeitura: '46.634.168/0001-50',
-        departamento: 'Secretaria Municipal da Saúde — Almoxarifado Central',
+        departamento: 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO CENTRAL',
         prazo_padrao_dias: 15,
         horas_ocultar_entregue: 24
     };
@@ -947,29 +919,28 @@
         });
     }
 
-    /* 📄 Gerar Notificação no Modelo Oficial de Avaré Corrigido */
+    /* 📄 Gerar Notificação no Primeiro Modelo Solicitado (Apenas Cabeçalho + Texto Direto) */
     function gerarOficioNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
 
         const dataHojeStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         
+        document.getElementById('oficioPrefNome').innerText = (configSys.nome_prefeitura || 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ').toUpperCase();
+        document.getElementById('oficioDeptoNome').innerText = (configSys.departamento || 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO CENTRAL').toUpperCase();
+        document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
+
         document.getElementById('oficioDataHoje').innerText = dataHojeStr;
         document.getElementById('oficioNumero').innerText = Math.floor(100 + Math.random() * 900).toString().padStart(3, '0');
         document.getElementById('oficioEmpresa').innerText = af.fornecedor || '-';
-        document.getElementById('oficioEmpresaTexto').innerText = af.fornecedor || '-';
         document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
+        document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
+        document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
+        document.getElementById('oficioUsuarioEmissor').innerText = usuarioLogado ? usuarioLogado.nome : 'Almoxarife';
 
-        if(af.obs_sancao) {
-            document.getElementById('oficioObsSancao').innerText = af.obs_sancao;
-            document.getElementById('oficioBlocoObs').style.display = 'block';
-        } else {
-            document.getElementById('oficioBlocoObs').style.display = 'none';
-        }
+        registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
 
-        registrarLog(`Emitiu Notificação Oficial para ${af.fornecedor}`, af.numaf || af.numAf);
-
-        // Oculta visualmente os controles web da tela e prepara Notificação
+        // Prepara layout exclusivo para impressão do Ofício
         document.getElementById('mainHeader').style.display = 'none';
         document.getElementById('mainAlerts').style.display = 'none';
         document.getElementById('mainCardForm').style.display = 'none';
@@ -979,10 +950,9 @@
         
         document.getElementById('oficioTemplate').style.display = 'block';
 
-        // Dispara janela de impressão do navegador
         window.print();
 
-        // Restaura a visualização normal da tela do sistema
+        // Restaura tela do sistema
         setTimeout(() => {
             document.getElementById('mainHeader').style.display = 'flex';
             document.getElementById('mainAlerts').style.display = 'grid';
