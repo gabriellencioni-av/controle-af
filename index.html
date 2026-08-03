@@ -136,13 +136,13 @@
 </div>
 
 <div class="container">
-    <!-- PRIMEIRO MODELO DE NOTIFICAÇÃO (LIMPO - SEM OBSERVAÇÕES INFERIORES) -->
+    <!-- MODELO DE NOTIFICAÇÃO AJUSTADO (ENDEREÇO RUA MINAS GERAIS, 1.742 + SEM RODAPÉ DE RELATÓRIO) -->
     <div id="oficioTemplate" class="print-oficio-template" style="padding: 40px 30px; font-family: 'Times New Roman', serif; color: #000;">
         <!-- Cabeçalho Oficial -->
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px;">
             <h2 id="oficioPrefNome" style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 5px;">PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ</h2>
-            <h3 id="oficioDeptoNome" style="font-size: 1.1rem; font-weight: normal;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO CENTRAL</h3>
-            <p style="font-size: 0.85rem; color: #333;">Praça Juca Novaes, 1169 — Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
+            <h3 id="oficioDeptoNome" style="font-size: 1.1rem; font-weight: normal;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE</h3>
+            <p style="font-size: 0.85rem; color: #333;">Rua Minas Gerais, 1.742 - Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
         </div>
 
         <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
@@ -155,14 +155,14 @@
             <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
         </div>
 
-        <!-- Corpo do Texto do Primeiro Modelo -->
-        <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 50px;">
+        <!-- Corpo do Texto -->
+        <div style="text-align: justify; line-height: 1.8; font-size: 1rem; margin-bottom: 60px;">
             Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
             Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de adoção das medidas administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
         </div>
 
-        <!-- Assinatura Direta e Rodapé -->
-        <div style="margin-top: 100px; text-align: center;">
+        <!-- Assinatura Direta -->
+        <div style="margin-top: 120px; text-align: center;">
             ____________________________________________________<br>
             <strong>Almoxarifado Central da Saúde</strong><br>
             Responsável: <span id="oficioUsuarioEmissor">-</span>
@@ -170,7 +170,7 @@
     </div>
 
     <!-- Cabeçalho Oficial do Relatório Minimalista -->
-    <div class="print-header-minimal">
+    <div id="printHeaderMinimal" class="print-header-minimal">
         <h1>Prefeitura da Estância Turística de Avaré</h1>
         <h2>Relatório Gerencial de Autorizações de Fornecimento (AF) — Almoxarifado da Saúde</h2>
         <div class="print-meta">
@@ -620,7 +620,7 @@
     let configSys = {
         nome_prefeitura: 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ',
         cnpj_prefeitura: '46.634.168/0001-50',
-        departamento: 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO CENTRAL',
+        departamento: 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE',
         prazo_padrao_dias: 15,
         horas_ocultar_entregue: 24
     };
@@ -883,8 +883,15 @@
         registrarLog(`Gerou Relatório: ${labelFiltro}`);
         renderTableForPrint(tipo, setorSel);
         closeModalRelatorio();
+        
+        // Garante que o cabeçalho do relatório apareça na impressão de relatórios
+        document.getElementById('printHeaderMinimal').style.display = 'block';
         window.print();
-        setTimeout(() => renderTable(), 1000);
+        
+        setTimeout(() => {
+            document.getElementById('printHeaderMinimal').style.display = 'none';
+            renderTable();
+        }, 1000);
     }
 
     function renderTableForPrint(tipo, setorSel) {
@@ -919,7 +926,7 @@
         });
     }
 
-    /* 📄 Gerar Notificação no Primeiro Modelo Solicitado (Apenas Cabeçalho + Texto Direto) */
+    /* 📄 Gerar Notificação no Modelo Limpo Solicitado */
     function gerarOficioNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
@@ -927,7 +934,7 @@
         const dataHojeStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         
         document.getElementById('oficioPrefNome').innerText = (configSys.nome_prefeitura || 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ').toUpperCase();
-        document.getElementById('oficioDeptoNome').innerText = (configSys.departamento || 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO CENTRAL').toUpperCase();
+        document.getElementById('oficioDeptoNome').innerText = (configSys.departamento || 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE').toUpperCase();
         document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
 
         document.getElementById('oficioDataHoje').innerText = dataHojeStr;
@@ -940,14 +947,15 @@
 
         registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
 
-        // Prepara layout exclusivo para impressão do Ofício
+        // Oculta painel web e cabeçalhos secundários de relatório
         document.getElementById('mainHeader').style.display = 'none';
         document.getElementById('mainAlerts').style.display = 'none';
         document.getElementById('mainCardForm').style.display = 'none';
         document.getElementById('mainExcelActions').style.display = 'none';
         document.getElementById('mainControls').style.display = 'none';
         document.getElementById('mainTable').style.display = 'none';
-        
+        document.getElementById('printHeaderMinimal').style.display = 'none';
+
         document.getElementById('oficioTemplate').style.display = 'block';
 
         window.print();
