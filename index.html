@@ -174,11 +174,11 @@
 
     <!-- Formulário de Importação Inteligente via PDF -->
     <div class="card no-print" style="border-left: 5px solid #8b5cf6;">
-        <h3>📄 Importação Automática via PDF (AF / Empenho)</h3>
-        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Selecione o arquivo PDF oficial para preencher os dados automaticamente.</p>
+        <h3>📄 Importação Automática de AF (PDF Oficial de Avaré)</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">Selecione o PDF gerado pelo Compras Web da Prefeitura para preenchimento instantâneo.</p>
         <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
             <input type="file" id="pdfFileInput" accept="application/pdf" style="max-width: 350px;">
-            <button type="button" class="btn" style="background: #8b5cf6;" onclick="lerArquivoPDF()">⚡ Ler e Migrar PDF</button>
+            <button type="button" class="btn" style="background: #8b5cf6;" onclick="lerArquivoPDF()">⚡ Ler e Migrar AF</button>
         </div>
     </div>
 
@@ -191,11 +191,11 @@
             <div class="form-grid">
                 <div>
                     <label>Nº da AF / Processo</label>
-                    <input type="text" id="numAf" required placeholder="Ex: AF 102/2026">
+                    <input type="text" id="numAf" required placeholder="Ex: AF 11919/26">
                 </div>
                 <div>
                     <label>Nº do Empenho (Opcional)</label>
-                    <input type="text" id="numEmpenho" placeholder="Ex: 4501/2026">
+                    <input type="text" id="numEmpenho" placeholder="Ex: 00402/26">
                 </div>
                 <div>
                     <label>Setor Responsável</label>
@@ -237,8 +237,8 @@
             </div>
             
             <div style="margin-bottom: 15px;">
-                <label>Produtos / Itens que compõem a AF (Opcional)</label>
-                <textarea id="produtosText" rows="2" placeholder="Ex: 100 cx Dipirona 500mg, 50 frascos Amoxicilina..."></textarea>
+                <label>Produtos / Serviços que compõem a AF</label>
+                <textarea id="produtosText" rows="3" placeholder="Descrição do produto ou prestação de serviço..."></textarea>
             </div>
 
             <div style="margin-bottom: 15px;">
@@ -310,7 +310,7 @@
                 <th>Vigência Ata</th>
                 <th>Prazo Entrega</th>
                 <th>Entregas Parciais / NF</th>
-                <th>Histórico & Cobranças (Com Usuário)</th>
+                <th>Histórico & Cobranças</th>
                 <th>Situação / Sanção</th>
                 <th class="no-print">Ações</th>
             </tr>
@@ -321,7 +321,7 @@
     </table>
 </div>
 
-<!-- Modal Alterar/Registrar Cobrança com Data Retroativa e Usuário -->
+<!-- Modal Alterar/Registrar Cobrança -->
 <div id="modalCobranca" class="modal">
     <div class="modal-content">
         <h3>📞 Registrar / Editar Cobrança</h3>
@@ -387,7 +387,6 @@
         const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const passIn = document.getElementById('loginSenha').value.trim();
 
-        // 1. Verificação de emergência local (Garante o acesso imediato)
         if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
@@ -397,9 +396,7 @@
             return;
         }
 
-        // 2. Consulta ao Supabase
         const { data, error } = await _supabase.from('usuarios').select('*');
-        
         let found = false;
         if (data && data.length > 0) {
             const userMatch = data.find(u => 
@@ -474,11 +471,6 @@
             payload.id = Date.now();
             payload.cobrancas = [];
             payload.parciais = [];
-            payload.historico_acoes = [{
-                acao: 'Cadastro Inicial',
-                usuario: usuarioLogado ? usuarioLogado.nome : 'Sistema',
-                data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')
-            }];
             payload.createdat = new Date().toISOString();
             result = await _supabase.from('afs').insert([payload]);
         }
@@ -491,10 +483,11 @@
         }
     });
 
+    // ⚡ Leitor Adaptado para o Modelo Oficial de Avaré
     async function lerArquivoPDF() {
         const fileInput = document.getElementById('pdfFileInput');
         if (!fileInput.files || fileInput.files.length === 0) {
-            alert("Selecione um arquivo PDF primeiro!");
+            alert("Selecione um arquivo PDF de AF primeiro!");
             return;
         }
 
@@ -506,23 +499,61 @@
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
-            fullText += textContent.items.map(item => item.str).join(" ") + " ";
+            fullText += textContent.items.map(item => item.str).join(" ") + "\n";
         }
 
-        const afMatch = fullText.match(/(?:AF|AUTORIZAÇÃO|PROCESSO)[\s:]*([0-9\/\-]+)/i);
-        const empenhoMatch = fullText.match(/(?:EMPENHO)[\s:]*([0-9\/\-]+)/i);
-        const valorMatch = fullText.match(/(?:TOTAL|VALOR)[\s:]*R?\$?\s*([0-9\.\,]+)/i);
+        // 1. Rosa: Nº da AF (Ex: N° 11919/26)
+        const afMatch = fullText.match(/N[°º]\s*([0-9\/\-]+)/i);
+        if (afMatch) {
+            document.getElementById('numAf').value = "AF " + afMatch[1];
+        }
 
-        if (afMatch) document.getElementById('numAf').value = "AF " + afMatch[1];
-        if (empenhoMatch) document.getElementById('numEmpenho').value = empenhoMatch[1];
-        if (valorMatch) {
-            const valClean = valorMatch[1].replace('.', '').replace(',', '.');
+        // 2. Amarelo: Data Subpedido / Geração (Ex: 03/08/2026)
+        const dataMatch = fullText.match(/DATA\s+SUBPEDIDO\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i) ||
+                          fullText.match(/([0-9]{2}\/[0-9]{2}\/[0-9]{4})/);
+        if (dataMatch) {
+            const dtParts = dataMatch[1].split('/');
+            if (dtParts.length === 3) {
+                const dtEmissao = new Date(`${dtParts[2]}-${dtParts[1]}-${dtParts[0]}`);
+                // Calcula prazo padrão de 15 dias corridos a partir do subpedido
+                dtEmissao.setDate(dtEmissao.getDate() + 15);
+                document.getElementById('prazoEntrega').value = dtEmissao.toISOString().split('T')[0];
+            }
+        }
+
+        // 3. Verde: Nome do Fornecedor / Empresa (Ex: INDREL CARE SERVICOS LTDA)
+        const fornMatch = fullText.match(/Fornecedor:\s*([^\n\r]+)/i);
+        if (fornMatch) {
+            document.getElementById('fornecedor').value = fornMatch[1].replace(/CNPJ:.*/i, '').trim();
+        }
+
+        // 4. Vermelho: Produto / Serviço
+        // Procura entre 'Discr.' e 'TOTAL PEDIDO' ou no corpo das especificações
+        let produtoEncontrado = "";
+        const prodSectionMatch = fullText.match(/Discr\.[^\n]*\n([\s\S]*?)TOTAL\s+PEDIDO/i);
+        if (prodSectionMatch) {
+            produtoEncontrado = prodSectionMatch[1].replace(/[0-9\.\,]+\s*\|\s*UN\s*\|\s*[0-9\.\,]+/gi, '').replace(/\|/g, '').trim();
+        } else {
+            const descrMatch = fullText.match(/(CONTRATAÇÃO DE EMPRESA ESPECIALIZADA[^\n]+)/i) ||
+                               fullText.match(/(\d{3}\.\d{3}\.\d{3}\s*\|\s*[^\n]+)/i);
+            if (descrMatch) produtoEncontrado = descrMatch[1].trim();
+        }
+
+        if (produtoEncontrado) {
+            document.getElementById('produtosText').value = produtoEncontrado;
+        }
+
+        // Extra: Empenho e Valor Total
+        const empMatch = fullText.match(/Pedido\s+Empenho:\s*\|\s*([0-9\/\-]+)/i) || fullText.match(/Empenho\(s\):\s*\|\s*([0-9\/\-a-zA-Z]+)/i);
+        if (empMatch) document.getElementById('numEmpenho').value = empMatch[1].trim();
+
+        const valMatch = fullText.match(/TOTAL\s+PEDIDO\s*\|\s*\|\s*([0-9\.\,]+)/i) || fullText.match(/\|\s*([0-9]{1,3}(?:\.[0-9]{3})*\,[0-9]{2})/);
+        if (valMatch) {
+            const valClean = valMatch[1].replace(/\./g, '').replace(',', '.');
             document.getElementById('valorTotal').value = parseFloat(valClean) || 0;
         }
 
-        document.getElementById('produtosText').value = fullText.substring(0, 300) + "...";
-
-        alert("⚡ Leitura concluída! Verifique e ajuste os campos preenchidos no formulário.");
+        alert("⚡ Leitura concluída com sucesso!\nOs campos de AF, Data, Empresa, Empenho, Valor e Produtos foram preenchidos.");
     }
 
     function editAf(id) {
@@ -663,9 +694,6 @@
     }
 
     function verificarRegrasEAlertas() {
-        const hoje = new Date();
-        hoje.setHours(0,0,0,0);
-
         let countAtrasadas = 0;
         let countNotificar = 0;
         let countAdvertir = 0;
@@ -702,7 +730,6 @@
         const sortBy = document.getElementById('sortSelect').value;
 
         tbody.innerHTML = '';
-
         const agora = new Date();
 
         let filtered = afs.filter(af => {
@@ -736,9 +763,6 @@
             if (sortBy === 'prazo') return new Date(prazoA) - new Date(prazoB);
             return b.id - a.id;
         });
-
-        const hoje = new Date();
-        hoje.setHours(0,0,0,0);
 
         filtered.forEach(af => {
             const tr = document.createElement('tr');
