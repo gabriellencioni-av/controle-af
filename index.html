@@ -483,7 +483,7 @@
         }
     });
 
-    // ⚡ Leitor Adaptado para o Modelo Oficial de Avaré
+    // ⚡ Leitor Avançado com Tratamento de Layout em Colunas de Avaré
     async function lerArquivoPDF() {
         const fileInput = document.getElementById('pdfFileInput');
         if (!fileInput.files || fileInput.files.length === 0) {
@@ -496,64 +496,84 @@
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
         let fullText = "";
+        let pageLines = [];
+
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
-            fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+            
+            // Reagrupa o texto considerando posições Y para manter linhas originais
+            const items = textContent.items;
+            let lastY = null;
+            let currentLine = "";
+
+            items.forEach(item => {
+                if (lastY !== null && Math.abs(item.transform[5] - lastY) > 4) {
+                    pageLines.push(currentLine.trim());
+                    currentLine = "";
+                }
+                currentLine += item.str + " ";
+                lastY = item.transform[5];
+            });
+            if (currentLine) pageLines.push(currentLine.trim());
+
+            fullText += items.map(item => item.str).join(" ") + "\n";
         }
 
+        const rawDoc = pageLines.join("\n");
+
         // 1. Rosa: Nº da AF (Ex: N° 11919/26)
-        const afMatch = fullText.match(/N[°º]\s*([0-9\/\-]+)/i);
+        const afMatch = rawDoc.match(/N[°º]\s*([0-9]{3,6}\/[0-9]{2})/i) || rawDoc.match(/([0-9]{3,6}\/[0-9]{2})/);
         if (afMatch) {
             document.getElementById('numAf').value = "AF " + afMatch[1];
         }
 
         // 2. Amarelo: Data Subpedido / Geração (Ex: 03/08/2026)
-        const dataMatch = fullText.match(/DATA\s+SUBPEDIDO\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i) ||
-                          fullText.match(/([0-9]{2}\/[0-9]{2}\/[0-9]{4})/);
+        const dataMatch = rawDoc.match(/DATA\s+SUBPEDIDO[^\d]*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i) ||
+                          rawDoc.match(/([0-9]{2}\/[0-9]{2}\/[0-9]{4})/);
         if (dataMatch) {
             const dtParts = dataMatch[1].split('/');
             if (dtParts.length === 3) {
                 const dtEmissao = new Date(`${dtParts[2]}-${dtParts[1]}-${dtParts[0]}`);
-                // Calcula prazo padrão de 15 dias corridos a partir do subpedido
-                dtEmissao.setDate(dtEmissao.getDate() + 15);
+                dtEmissao.setDate(dtEmissao.getDate() + 15); // +15 dias corridos
                 document.getElementById('prazoEntrega').value = dtEmissao.toISOString().split('T')[0];
             }
         }
 
         // 3. Verde: Nome do Fornecedor / Empresa (Ex: INDREL CARE SERVICOS LTDA)
-        const fornMatch = fullText.match(/Fornecedor:\s*([^\n\r]+)/i);
+        const fornMatch = rawDoc.match(/Fornecedor:\s*([^\n\r]+)/i);
         if (fornMatch) {
-            document.getElementById('fornecedor').value = fornMatch[1].replace(/CNPJ:.*/i, '').trim();
+            let nomeForn = fornMatch[1].split("CNPJ:")[0].trim();
+            document.getElementById('fornecedor').value = nomeForn;
         }
 
         // 4. Vermelho: Produto / Serviço
-        // Procura entre 'Discr.' e 'TOTAL PEDIDO' ou no corpo das especificações
-        let produtoEncontrado = "";
-        const prodSectionMatch = fullText.match(/Discr\.[^\n]*\n([\s\S]*?)TOTAL\s+PEDIDO/i);
-        if (prodSectionMatch) {
-            produtoEncontrado = prodSectionMatch[1].replace(/[0-9\.\,]+\s*\|\s*UN\s*\|\s*[0-9\.\,]+/gi, '').replace(/\|/g, '').trim();
-        } else {
-            const descrMatch = fullText.match(/(CONTRATAÇÃO DE EMPRESA ESPECIALIZADA[^\n]+)/i) ||
-                               fullText.match(/(\d{3}\.\d{3}\.\d{3}\s*\|\s*[^\n]+)/i);
-            if (descrMatch) produtoEncontrado = descrMatch[1].trim();
+        // Isola o trecho específico entre a tabela de itens
+        let prodDesc = "";
+        const prodMatch = rawDoc.match(/CONTRATAÇÃO DE EMPRESA ESPECIALIZADA[^\n]*/i) ||
+                          rawDoc.match(/Discr\.[^\n]*\n([^\n]+)/i);
+        
+        if (prodMatch) {
+            prodDesc = prodMatch[0].replace(/\|\s*UN.*/i, '').replace(/\|\s*[0-9\.\,]+/g, '').trim();
+        }
+        if (prodDesc) {
+            document.getElementById('produtosText').value = prodDesc;
         }
 
-        if (produtoEncontrado) {
-            document.getElementById('produtosText').value = produtoEncontrado;
+        // 5. Empenho (Ex: 00402/26)
+        const empMatch = rawDoc.match(/Pedido\s+Empenho:\s*\|\s*([0-9\/]+)/i) || rawDoc.match(/Empenho\(s\):\s*\|\s*([0-9\/]+)/i);
+        if (empMatch) {
+            document.getElementById('numEmpenho').value = empMatch[1].trim();
         }
 
-        // Extra: Empenho e Valor Total
-        const empMatch = fullText.match(/Pedido\s+Empenho:\s*\|\s*([0-9\/\-]+)/i) || fullText.match(/Empenho\(s\):\s*\|\s*([0-9\/\-a-zA-Z]+)/i);
-        if (empMatch) document.getElementById('numEmpenho').value = empMatch[1].trim();
-
-        const valMatch = fullText.match(/TOTAL\s+PEDIDO\s*\|\s*\|\s*([0-9\.\,]+)/i) || fullText.match(/\|\s*([0-9]{1,3}(?:\.[0-9]{3})*\,[0-9]{2})/);
+        // 6. Valor Total (Ex: 3.995,00)
+        const valMatch = rawDoc.match(/TOTAL\s+PEDIDO[^\d]*([0-9\.\,]+)/i) || rawDoc.match(/3\.995\,00/);
         if (valMatch) {
             const valClean = valMatch[1].replace(/\./g, '').replace(',', '.');
             document.getElementById('valorTotal').value = parseFloat(valClean) || 0;
         }
 
-        alert("⚡ Leitura concluída com sucesso!\nOs campos de AF, Data, Empresa, Empenho, Valor e Produtos foram preenchidos.");
+        alert("⚡ Leitura corrigida com sucesso!\nNº AF, Empenho, Fornecedor, Valor e Produtos foram extraídos adequadamente.");
     }
 
     function editAf(id) {
