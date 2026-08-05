@@ -67,6 +67,7 @@
         .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
         .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
         .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-mini { padding: 2px 5px; font-size: 0.7rem; border-radius: 4px; }
 
         .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
         .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -87,7 +88,8 @@
         .badge-hoje { background: #fef9c3; color: #ca8a04; }
         .badge-atrasado { background: #fee2e2; color: #dc2626; }
 
-        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 90px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .item-parcial-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px dashed #e2e8f0; }
         .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
         
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
@@ -96,7 +98,7 @@
         /* IMPRESSÃO ISOLADA */
         @media print {
             body { background: white !important; padding: 0 !important; color: #000 !important; }
-            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal { display: none !important; }
+            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini { display: none !important; }
             .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
             
             body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
@@ -575,11 +577,13 @@
     </div>
 </div>
 
+<!-- Modal Registrar / Editar Entrega Parcial -->
 <div id="modalParcial" class="modal">
     <div class="modal-content">
-        <h3>📦 Registrar Entrega Parcial</h3>
+        <h3 id="modalParcialTitle">📦 Registrar Entrega Parcial</h3>
         <br>
         <input type="hidden" id="modalAfId">
+        <input type="hidden" id="modalParcialIndex" value="-1">
         <div style="margin-bottom: 10px;">
             <label>Nº da Nota Fiscal (NF)</label>
             <input type="text" id="parcialNf" required placeholder="Ex: NF 12345">
@@ -882,7 +886,6 @@
         }, 1000);
     }
 
-    /* 🖨️ RENDERIZAR TABELA DO RELATÓRIO CORRIGIDA - ORDEM DAS COLUNAS AJUSTADA */
     function renderTableForPrint(tipo, setorSel) {
         const tbody = document.getElementById('afTableBody');
         tbody.innerHTML = '';
@@ -901,19 +904,16 @@
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '-';
 
-            // 1. Entregas Parciais
             let parciaisPrint = '-';
             if (af.parciais && af.parciais.length > 0) {
                 parciaisPrint = af.parciais.map(p => `• NF ${p.nf}: R$ ${p.valor.toFixed(2)}`).join('<br>');
             }
 
-            // 2. Histórico de Cobranças (Colocadas na coluna correta)
             let cobrancasPrint = '-';
             if (af.cobrancas && af.cobrancas.length > 0) {
                 cobrancasPrint = af.cobrancas.map(c => `• ${c.data || c} ${c.obs ? `(${c.obs})` : ''}`).join('<br>');
             }
 
-            // 3. Status e Observação da Sanção
             let statusPrint = `<b>${af.statussancao || 'Regular'}</b>`;
             if (af.obs_sancao) statusPrint += `<br><small style="color:#dc2626;">Obs: ${af.obs_sancao}</small>`;
 
@@ -1101,15 +1101,32 @@
         }
     }
 
-    function openModalParcial(id) {
+    /* 📦 CADASTRO, EDIÇÃO E EXCLUSÃO DE ENTREGAS PARCIAIS */
+    function openModalParcial(id, indexParcial = -1) {
         document.getElementById('modalAfId').value = id;
-        document.getElementById('parcialData').value = new Date().toISOString().split('T')[0];
+        document.getElementById('modalParcialIndex').value = indexParcial;
+        
+        const af = afs.find(item => item.id === id);
+        if (indexParcial >= 0 && af && af.parciais && af.parciais[indexParcial]) {
+            const item = af.parciais[indexParcial];
+            document.getElementById('modalParcialTitle').innerText = '✏️ Editar Entrega Parcial';
+            document.getElementById('parcialNf').value = item.nf || '';
+            document.getElementById('parcialValor').value = item.valor || '';
+            document.getElementById('parcialData').value = item.data || new Date().toISOString().split('T')[0];
+        } else {
+            document.getElementById('modalParcialTitle').innerText = '📦 Registrar Entrega Parcial';
+            document.getElementById('parcialNf').value = '';
+            document.getElementById('parcialValor').value = '';
+            document.getElementById('parcialData').value = new Date().toISOString().split('T')[0];
+        }
+
         document.getElementById('modalParcial').style.display = 'flex';
     }
     function closeModalParcial() { document.getElementById('modalParcial').style.display = 'none'; }
 
     async function saveParcial() {
         const id = parseInt(document.getElementById('modalAfId').value);
+        const indexParcial = parseInt(document.getElementById('modalParcialIndex').value);
         const nf = document.getElementById('parcialNf').value.trim();
         const valor = parseFloat(document.getElementById('parcialValor').value) || 0;
         const data = document.getElementById('parcialData').value;
@@ -1117,11 +1134,35 @@
         const af = afs.find(item => item.id === id);
         if(af && nf && data) {
             const parciais = af.parciais || [];
-            parciais.push({ nf, valor, data, usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife' });
+            const novoObj = { nf, valor, data, usuario: usuarioLogado ? usuarioLogado.nome : 'Almoxarife' };
+
+            if (indexParcial >= 0 && indexParcial < parciais.length) {
+                parciais[indexParcial] = novoObj;
+                registrarLog(`Editou entrega parcial NF ${nf} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            } else {
+                parciais.push(novoObj);
+                registrarLog(`Registrou entrega parcial NF ${nf} na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            }
+
             const statussancao = (af.statussancao !== 'Entregue' && af.statussancao !== 'Saldo Cancelado') ? 'Entrega Parcial' : af.statussancao;
 
             await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
             closeModalParcial();
+            fetchAfs();
+        }
+    }
+
+    async function deleteParcial(id, indexParcial) {
+        const af = afs.find(item => item.id === id);
+        if (af && af.parciais && confirm('Deseja excluir esta entrega parcial?')) {
+            const parciais = af.parciais;
+            const removido = parciais.splice(indexParcial, 1);
+            let statussancao = af.statussancao;
+            if (parciais.length === 0 && statussancao === 'Entrega Parcial') {
+                statussancao = 'Regular';
+            }
+            await _supabase.from('afs').update({ parciais, statussancao }).eq('id', id);
+            registrarLog(`Excluiu entrega parcial na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
             fetchAfs();
         }
     }
@@ -1257,9 +1298,18 @@
                 cobrancasHtml = af.cobrancas.map(c => `<div>• ${c.data || c} ${c.usuario ? `(${c.usuario})` : ''} ${c.obs ? `- ${c.obs}` : ''}</div>`).join('');
             }
 
+            // Exibição da Entrega Parcial com Botões de Edição/Exclusão
             let parciaisHtml = '';
             if (af.parciais && af.parciais.length > 0) {
-                parciaisHtml = af.parciais.map(p => `<div>• <b>${p.nf}</b>: R$ ${p.valor.toFixed(2)} (${p.usuario || 'User'})</div>`).join('');
+                parciaisHtml = af.parciais.map((p, idx) => `
+                    <div class="item-parcial-row">
+                        <span>• <b>${p.nf}</b>: R$ ${p.valor.toFixed(2)}</span>
+                        <span class="no-print" style="display:inline-flex; gap:2px;">
+                            <button class="btn btn-edit btn-mini" title="Editar Parcial" onclick="openModalParcial(${af.id}, ${idx})">✏️</button>
+                            <button class="btn-delete btn-mini" title="Excluir Parcial" onclick="deleteParcial(${af.id}, ${idx})">🗑️</button>
+                        </span>
+                    </div>
+                `).join('');
             }
 
             tr.innerHTML = `
@@ -1275,7 +1325,7 @@
                 <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
-                    <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id})">📦 Reg. Parcial</button>
+                    <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id}, -1)">📦 + Reg. Parcial</button>
                     ${valPendente > 0 ? `<button class="btn btn-cancelar no-print" style="margin-top:2px;" onclick="openModalCancelarSaldo(${af.id})">🚫 Canc. Saldo</button>` : ''}
                     ${parciaisHtml ? `<div class="history-list">${parciaisHtml}</div>` : ''}
                     ${af.mot_cancelamento_saldo ? `<div style="font-size:0.75rem; color:#ef4444; margin-top:2px;"><b>Cancelado:</b> ${af.mot_cancelamento_saldo}</div>` : ''}
