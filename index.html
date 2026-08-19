@@ -124,77 +124,59 @@
         
         .print-header-minimal, .print-oficio-template { display: none; }
 
+/* ===== V2.0 — Melhorias de UX / Dashboard / Mobile ===== */
+:root { --primary-dark:#1d4ed8; --muted:#64748b; --surface:#ffffff; --surface-2:#f8fafc; --shadow:0 8px 24px rgba(15,23,42,.07); }
+body { padding: 16px; }
+.header-official { box-shadow: var(--shadow); border-radius: 12px; }
+.quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
+.quick-nav .btn { font-size:.8rem; }
+.dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+.metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
+.metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
+.metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
+.metric-sub { font-size:.76rem; color:var(--muted); }
+.metric-danger { border-top:4px solid #dc2626; }
+.metric-warning { border-top:4px solid #f59e0b; }
+.metric-info { border-top:4px solid #2563eb; }
+.metric-success { border-top:4px solid #16a34a; }
+.metric-purple { border-top:4px solid #7c3aed; }
+.metric-dark { border-top:4px solid #475569; }
+.home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
+.panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+.panel h3 { margin-bottom:12px; font-size:1rem; }
+.priority-list { display:flex; flex-direction:column; gap:8px; }
+.priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; }
+.priority-main { min-width:0; }
+.priority-title { font-weight:750; font-size:.88rem; }
+.priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
+.tag-danger { background:#fee2e2; color:#b91c1c; }
+.tag-warning { background:#fef3c7; color:#a16207; }
+.tag-info { background:#dbeafe; color:#1d4ed8; }
+.tag-success { background:#dcfce7; color:#15803d; }
+.empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
+.notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
+.notification-panel.open { display:block; }
+.notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
+.notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
+.notification-item:hover { background:#f8fafc; }
+.notification-item:last-child { border-bottom:none; }
+.notif-title { font-weight:750; font-size:.84rem; }
+.notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
+.notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
+.filter-chip-row { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px; }
+.filter-chip { border:1px solid var(--border); background:#fff; color:#334155; border-radius:999px; padding:7px 10px; font-size:.76rem; cursor:pointer; }
+.filter-chip:hover { background:#eff6ff; }
+.data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
+.health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
+@media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
+@media (max-width:700px){
+  body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
+  .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
+  #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
+}
 
-        /* ============================== */
-        /* v2.0 - Dashboard / Responsive */
-        /* ============================== */
-        html { scroll-behavior: smooth; }
-        body { min-height: 100vh; }
-        .topbar { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; margin:-10px 0 18px; background:rgba(248,250,252,.92); backdrop-filter: blur(12px); border-bottom:1px solid var(--border); }
-        .brand-mini { font-weight:800; color:#1e293b; font-size:.95rem; }
-        .nav-mini { display:flex; flex-wrap:wrap; gap:8px; }
-        .nav-mini button { background:#fff; color:#334155; border:1px solid var(--border); padding:7px 10px; border-radius:8px; }
-        .nav-mini button:hover { background:#f1f5f9; }
-        .dashboard-title { display:flex; align-items:end; justify-content:space-between; gap:15px; margin:8px 0 14px; }
-        .dashboard-title h3 { font-size:1.05rem; }
-        .dashboard-title small { color:#64748b; }
-        .summary-grid { display:grid; grid-template-columns:repeat(5,minmax(150px,1fr)); gap:12px; margin-bottom:16px; }
-        .summary-card { position:relative; overflow:hidden; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:0 4px 12px rgba(15,23,42,.04); cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; }
-        .summary-card:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.08); }
-        .summary-card::after { content:""; position:absolute; width:65px; height:65px; border-radius:50%; right:-20px; top:-20px; background:rgba(37,99,235,.06); }
-        .summary-card .label { color:#64748b; font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
-        .summary-card .value { font-size:1.55rem; font-weight:900; margin-top:4px; }
-        .summary-card .hint { color:#64748b; font-size:.72rem; margin-top:3px; }
-        .summary-card.danger { border-top:4px solid #dc2626; }
-        .summary-card.warning { border-top:4px solid #eab308; }
-        .summary-card.info { border-top:4px solid #2563eb; }
-        .summary-card.success { border-top:4px solid #16a34a; }
-        .summary-card.neutral { border-top:4px solid #64748b; }
-        .priority-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; margin-bottom:18px; }
-        .priority-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
-        .priority-list { display:grid; gap:8px; }
-        .priority-item { display:grid; grid-template-columns:1.2fr 1fr auto auto; gap:10px; align-items:center; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; background:#fafafa; }
-        .priority-item .af-id { font-weight:800; color:#0f172a; }
-        .priority-item .vendor { color:#475569; font-size:.84rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .priority-item .deadline { font-weight:700; font-size:.82rem; }
-        .priority-empty { padding:15px; text-align:center; color:#64748b; background:#f8fafc; border-radius:10px; }
-        .table-wrap { overflow-x:auto; border-radius:8px; }
-        .loading-pill { display:none; align-items:center; gap:8px; color:#475569; font-size:.82rem; }
-        .loading-pill.show { display:inline-flex; }
-        .spinner { width:14px; height:14px; border:2px solid #cbd5e1; border-top-color:#2563eb; border-radius:50%; animation:spin .7s linear infinite; }
-        @keyframes spin { to { transform:rotate(360deg); } }
-        .toast-container { position:fixed; right:18px; bottom:18px; z-index:3000; display:grid; gap:8px; max-width:min(360px,calc(100vw - 36px)); }
-        .toast { background:#0f172a; color:#fff; padding:11px 14px; border-radius:10px; box-shadow:0 10px 30px rgba(15,23,42,.22); font-size:.84rem; animation:toastIn .2s ease; }
-        .toast.success { background:#166534; } .toast.error { background:#991b1b; } .toast.warning { background:#92400e; }
-        @keyframes toastIn { from { transform:translateY(8px); opacity:0 } to { transform:translateY(0); opacity:1 } }
-        .muted { color:#64748b; }
-        .chip { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:999px; font-size:.72rem; font-weight:800; background:#f1f5f9; color:#334155; }
-        .danger-text { color:#b91c1c; } .success-text { color:#166534; } .warning-text { color:#a16207; }
-        @media (max-width: 1100px) { .summary-grid { grid-template-columns:repeat(3,1fr); } .priority-item { grid-template-columns:1fr 1fr; } }
-        @media (max-width: 760px) {
-            body { padding:10px; }
-            .topbar { margin:-2px 0 12px; position:relative; }
-            .topbar .brand-mini { max-width:55%; }
-            .nav-mini { justify-content:flex-end; }
-            .nav-mini button { font-size:.72rem; padding:6px 8px; }
-            .summary-grid { grid-template-columns:repeat(2,1fr); }
-            .summary-card .value { font-size:1.25rem; }
-            .priority-item { grid-template-columns:1fr; gap:5px; }
-            .header-official { padding:14px; }
-            .header-official h1 { font-size:1.05rem; }
-            .header-official h2 { font-size:.82rem; }
-            .header-official .no-print { width:100%; }
-            .header-official .no-print button { flex:1; min-width:110px; }
-            .controls { align-items:stretch; }
-            .controls-group { width:100%; }
-            .controls-group > * { min-width:0; }
-            .controls-group input, .controls-group select { flex:1; }
-            .excel-actions { align-items:stretch; }
-            .excel-actions .controls-group { width:100%; }
-            .excel-actions button { flex:1; }
-            table { min-width:1100px; }
-            .modal-content { max-width:calc(100vw - 20px) !important; margin:10px; }
-        }
     </style>
 </head>
 <body>
@@ -270,29 +252,53 @@
         </div>
     </div>
 
-    <section id="dashboardSection" class="no-print">
-        <div class="dashboard-title">
-            <div>
-                <h3>Visão geral</h3>
-                <small>Prioridades e situação atual das Autorizações de Fornecimento</small>
-            </div>
-            <span id="loadingPill" class="loading-pill"><span class="spinner"></span> Atualizando dados...</span>
+
+    <div class="quick-nav no-print" id="quickNav">
+        <button class="btn" type="button" onclick="scrollToSection('mainCardForm')">➕ Nova AF</button>
+        <button class="btn btn-outline" type="button" onclick="focusSearch()">🔎 Buscar AF</button>
+        <button class="btn btn-outline" type="button" onclick="openNotifications()">🔔 Notificações <span id="notifBadge" class="notif-badge" style="display:none;margin-left:3px;">0</span></button>
+        <button class="btn btn-outline" type="button" onclick="openModalRelatorio()">📊 Relatórios</button>
+    </div>
+
+    <div id="notificationPanel" class="notification-panel no-print">
+        <div class="notification-head"><strong>🔔 Alertas e próximas ações</strong><button class="btn btn-outline btn-mini" type="button" onclick="closeNotifications()">✕</button></div>
+        <div id="notificationList"></div>
+    </div>
+
+    <div class="dashboard-grid no-print" id="v2Dashboard">
+        <div class="metric-card metric-danger" onclick="applyStatusQuickFilter('Cobrar')">
+            <div class="metric-label">🔴 Atrasadas</div><div class="metric-value" id="v2Atrasadas">0</div><div class="metric-sub">Precisam de cobrança</div>
         </div>
-        <div class="summary-grid">
-            <div class="summary-card danger" onclick="filtrarRapido('ATRASADAS')"><div class="label">🔴 Atrasadas</div><div class="value" id="summaryAtrasadas">0</div><div class="hint">Cobranças em aberto</div></div>
-            <div class="summary-card warning" onclick="filtrarRapido('HOJE')"><div class="label">🟡 Vencem hoje</div><div class="value" id="summaryHoje">0</div><div class="hint">Exigem atenção imediata</div></div>
-            <div class="summary-card info" onclick="filtrarRapido('PARCIAIS')"><div class="label">📦 Parciais</div><div class="value" id="summaryParciais">0</div><div class="hint">AFs ainda incompletas</div></div>
-            <div class="summary-card success"><div class="label">✅ Concluídas</div><div class="value" id="summaryEntregues">0</div><div class="hint">Entregues / encerradas</div></div>
-            <div class="summary-card neutral"><div class="label">💰 Pendente</div><div class="value" id="summaryPendente">R$ 0,00</div><div class="hint">Saldo financeiro das AFs</div></div>
+        <div class="metric-card metric-warning" onclick="filterToday()">
+            <div class="metric-label">🟡 Vencem hoje</div><div class="metric-value" id="v2Hoje">0</div><div class="metric-sub">Prazo final hoje</div>
         </div>
-        <div class="priority-card">
-            <div class="priority-head">
-                <strong>🔥 Prioridades</strong>
-                <span class="chip" id="priorityCount">0 itens</span>
-            </div>
+        <div class="metric-card metric-info" onclick="applyStatusQuickFilter('Entrega Parcial')">
+            <div class="metric-label">📦 Parciais</div><div class="metric-value" id="v2Parciais">0</div><div class="metric-sub">Aguardam conclusão</div>
+        </div>
+        <div class="metric-card metric-purple" onclick="applyStatusQuickFilter('Notificar')">
+            <div class="metric-label">⚠️ Sanções</div><div class="metric-value" id="v2Sancoes">0</div><div class="metric-sub">Notificar/advertir/multar</div>
+        </div>
+        <div class="metric-card metric-success" onclick="applyStatusQuickFilter('Entregue')">
+            <div class="metric-label">✅ Concluídas</div><div class="metric-value" id="v2Entregues">0</div><div class="metric-sub">AFs entregues</div>
+        </div>
+        <div class="metric-card metric-dark">
+            <div class="metric-label">💰 Saldo pendente</div><div class="metric-value" id="v2Pendente">R$ 0,00</div><div class="metric-sub">Valor ainda não entregue</div>
+        </div>
+    </div>
+
+    <div class="home-grid no-print">
+        <div class="panel">
+            <h3>🎯 O que precisa de atenção?</h3>
             <div id="priorityList" class="priority-list"></div>
         </div>
-    </section>
+        <div class="panel">
+            <h3>📊 Resumo da base</h3>
+            <div id="dataHealth" class="data-health"></div>
+            <div style="margin-top:14px; font-size:.8rem; color:#475569; line-height:1.6;">
+                O painel é atualizado sempre que os registros do Supabase são recarregados. Use os indicadores acima como atalhos para os filtros.
+            </div>
+        </div>
+    </div>
 
     <!-- Dashboard de Alertas e Financeiro -->
     <div id="mainAlerts" class="alerts-grid no-print">
@@ -428,7 +434,7 @@
     </div>
 
     <!-- Tabela de Registros -->
-    <div class="table-wrap"><table id="mainTable">
+    <table id="mainTable">
         <thead>
             <tr>
                 <th>Setor</th>
@@ -444,7 +450,7 @@
             </tr>
         </thead>
         <tbody id="afTableBody"></tbody>
-    </table></div>
+    </table>
 </div>
 
 <!-- Modais do Sistema -->
@@ -699,8 +705,6 @@
     </div>
 </div>
 
-<div id="toastContainer" class="toast-container"></div>
-
 <script>
     const SUPABASE_URL = "https://adunochvwwfynngzsszg.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wzosuw4QDpJfthg3pPpE3g_wv8GwNw6";
@@ -717,110 +721,6 @@
     };
 
     let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
-
-
-    function toast(message, type='') {
-        const c = document.getElementById('toastContainer');
-        if (!c) return;
-        const el = document.createElement('div');
-        el.className = `toast ${type}`;
-        el.textContent = message;
-        c.appendChild(el);
-        setTimeout(() => el.remove(), 3500);
-    }
-
-    function setLoading(show) {
-        const el = document.getElementById('loadingPill');
-        if (el) el.classList.toggle('show', !!show);
-    }
-
-    function scrollToSection(id) {
-        document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' });
-    }
-
-    function filtrarRapido(tipo) {
-        const status = document.getElementById('filterStatus');
-        const search = document.getElementById('searchInput');
-        const setor = document.getElementById('filterSetor');
-        setor.value = 'TODOS'; search.value = '';
-        if (tipo === 'PARCIAIS') {
-            status.value = 'TODOS';
-            renderTable('PARCIAIS');
-            scrollToSection('mainTable'); return;
-        }
-        if (tipo === 'HOJE') {
-            status.value = 'TODOS';
-            renderTable('HOJE');
-            scrollToSection('mainTable'); return;
-        }
-        if (tipo === 'ATRASADAS') {
-            status.value = 'TODOS';
-            renderTable('ATRASADAS');
-            scrollToSection('mainTable'); return;
-        }
-    }
-
-    function getAfStatus(af) {
-        return af.statussancao || af.statusSancao || 'Regular';
-    }
-
-    function getAfValues(af) {
-        const total = Number(af.valortotal ?? af.valorTotal ?? 0) || 0;
-        const entregue = Array.isArray(af.parciais) ? af.parciais.reduce((sum,p)=>sum + (Number(p.valor)||0),0) : 0;
-        const cancelado = Number(af.saldo_cancelado)||0;
-        return { total, entregue, cancelado, pendente: Math.max(0,total-entregue-cancelado) };
-    }
-
-    function getDaysToDeadline(af) {
-        const raw = af.prazoentrega || af.prazoEntrega;
-        if (!raw) return null;
-        const today = new Date(); today.setHours(0,0,0,0);
-        const d = new Date(raw + 'T00:00:00');
-        return Math.ceil((d - today)/(1000*60*60*24));
-    }
-
-    function updateDashboard() {
-        let atrasadas=0, hoje=0, parciais=0, entregues=0, pendente=0;
-        const prioridades=[];
-        afs.forEach(af => {
-            const status = getAfStatus(af);
-            const vals = getAfValues(af);
-            const dias = getDaysToDeadline(af);
-            if (status === 'Entregue' || status === 'Saldo Cancelado') { entregues++; return; }
-            pendente += vals.pendente;
-            if (status === 'Entrega Parcial') parciais++;
-            if (dias !== null && dias < 0) atrasadas++;
-            if (dias === 0) hoje++;
-            if (dias !== null && dias <= 3) prioridades.push({ af, dias });
-            if (['Notificar','Advertir','Multar'].includes(status)) prioridades.push({ af, dias, sancao:true });
-        });
-        const unique = [];
-        const seen = new Set();
-        prioridades.sort((a,b)=>{
-            const sa = a.sancao ? 0 : 1, sb = b.sancao ? 0 : 1;
-            if(sa!==sb) return sa-sb;
-            return (a.dias ?? 999)-(b.dias ?? 999);
-        }).forEach(x=>{ if(!seen.has(x.af.id)){seen.add(x.af.id);unique.push(x);} });
-        const list=unique.slice(0,6);
-        document.getElementById('summaryAtrasadas').textContent=atrasadas;
-        document.getElementById('summaryHoje').textContent=hoje;
-        document.getElementById('summaryParciais').textContent=parciais;
-        document.getElementById('summaryEntregues').textContent=entregues;
-        document.getElementById('summaryPendente').textContent=pendente.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-        document.getElementById('priorityCount').textContent=`${list.length} item${list.length===1?'':'s'}`;
-        const box=document.getElementById('priorityList'); box.innerHTML='';
-        if(!list.length){ box.innerHTML='<div class="priority-empty">🎉 Nenhuma prioridade crítica no momento.</div>'; return; }
-        list.forEach(({af,dias,sancao})=>{
-            let dl='Sem prazo';
-            if(dias !== null) dl = dias < 0 ? `🔴 Atrasada há ${Math.abs(dias)}d` : dias===0 ? '🟡 Vence hoje' : `🟢 ${dias}d restantes`;
-            const status=getAfStatus(af);
-            box.insertAdjacentHTML('beforeend', `<div class="priority-item"><div class="af-id">${escapeHtml(af.numaf||af.numAf||'-')}</div><div class="vendor">${escapeHtml(af.fornecedor||'-')}</div><div class="deadline">${dl}</div><div><span class="chip">${escapeHtml(status)}</span></div></div>`);
-        });
-    }
-
-    function escapeHtml(v) {
-        return String(v ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-    }
 
     if (usuarioLogado) {
         document.getElementById('loginOverlay').style.display = 'none';
@@ -855,7 +755,7 @@
             }
         }
 
-        if (!found) toast("❌ Usuário ou senha incorretos!", "error");
+        if (!found) alert("❌ Usuário ou senha incorretos!");
     });
 
     function logout() {
@@ -864,8 +764,9 @@
     }
 
     async function initApp() {
-        setLoading(true);
-        try { await fetchConfig(); await fetchSetores(); await fetchAfs(); } finally { setLoading(false); }
+        await fetchConfig();
+        await fetchSetores();
+        await fetchAfs();
     }
 
     async function fetchConfig() {
@@ -1048,9 +949,7 @@
 
     async function deleteSetor(id) {
         if(confirm('Tem certeza que deseja excluir este setor?')) {
-            const { error } = await _supabase.from('setores').delete().eq('id', id);
-            if (error) { toast('Não foi possível excluir o setor.', 'error'); return; }
-            registrarLog(`Excluiu o setor ID ${id}`);
+            await _supabase.from('setores').delete().eq('id', id);
             fetchSetores();
         }
     }
@@ -1202,7 +1101,6 @@
         }
         afs = data || [];
         saveAndRenderLocal();
-        updateDashboard();
     }
 
     _supabase.channel('public:afs').on('postgres_changes', { event: '*', schema: 'public', table: 'afs' }, () => fetchAfs()).subscribe();
@@ -1391,18 +1289,116 @@
     async function deleteAf(id) {
         const af = afs.find(item => item.id === id);
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
-            const { error } = await _supabase.from('afs').delete().eq('id', id);
-            if (error) { toast('Não foi possível excluir a AF: ' + error.message, 'error'); return; }
+            await _supabase.from('afs').delete().eq('id', id);
             if(af) registrarLog(`Excluiu a AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
-            toast('AF excluída.', 'success');
             fetchAfs();
         }
     }
 
+
+
+    /* ===== V2.0 — Dashboard, notificações e filtros rápidos ===== */
+    function scrollToSection(id) {
+        const el = document.getElementById(id); if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    function focusSearch() {
+        scrollToSection('mainControls');
+        setTimeout(() => { const el=document.getElementById('searchInput'); if(el){ el.focus(); el.select(); } }, 350);
+    }
+    function openNotifications(){ document.getElementById('notificationPanel').classList.add('open'); renderNotifications(); }
+    function closeNotifications(){ document.getElementById('notificationPanel').classList.remove('open'); }
+    document.addEventListener('click', function(e){
+        const panel=document.getElementById('notificationPanel');
+        const btn=e.target.closest && e.target.closest('[onclick="openNotifications()"]');
+        if(panel && panel.classList.contains('open') && !panel.contains(e.target) && !btn) closeNotifications();
+    });
+    function daysFromToday(dateStr){
+        if(!dateStr) return null;
+        const d = new Date(dateStr + 'T00:00:00'); const t = new Date(); t.setHours(0,0,0,0);
+        return Math.ceil((d-t)/(1000*60*60*24));
+    }
+    function afStatus(af){ return af.statussancao || af.statusSancao || 'Regular'; }
+    function afTotal(af){ return Number(af.valortotal || af.valorTotal || 0); }
+    function afDelivered(af){ return (af.parciais || []).reduce((acc,p)=>acc + Number(p.valor || 0),0); }
+    function afCancelled(af){ return Number(af.saldo_cancelado || 0); }
+    function afPending(af){ return Math.max(0, afTotal(af)-afDelivered(af)-afCancelled(af)); }
+    function isClosed(af){ const s=afStatus(af); return s==='Entregue'||s==='Saldo Cancelado'; }
+
+    function updateV2Dashboard(){
+        let atrasadas=0, hoje=0, parciais=0, sancoes=0, entregues=0, pendente=0;
+        const priority=[]; const seenToday=[];
+        const now=new Date(); now.setHours(0,0,0,0);
+        afs.forEach(af=>{
+            const s=afStatus(af); const d=daysFromToday(af.prazoentrega || af.prazoEntrega);
+            if(s==='Entregue') entregues++;
+            if(s==='Entrega Parcial') parciais++;
+            if(['Notificar','Advertir','Multar'].includes(s)) sancoes++;
+            if(!isClosed(af)){ pendente += afPending(af); if(d!==null){ if(d<0){atrasadas++; priority.push({level:'danger',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Atrasada há ${Math.abs(d)} dia(s)`,tag:'Cobrar',id:af.id});} else if(d===0){hoje++; priority.push({level:'warning',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:'Prazo vence hoje',tag:s==='Regular'?'Acompanhar':s,id:af.id});} else if(d<=3){priority.push({level:'info',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Prazo em ${d} dia(s)`,tag:s,id:af.id});} } }
+            if(s==='Notificar'||s==='Advertir'||s==='Multar') priority.push({level:'danger',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Situação: ${s}`,tag:'Ação',id:af.id});
+            if((af.vigenciaata||af.vigenciaAta) && !isClosed(af)){ const vd=daysFromToday(af.vigenciaata||af.vigenciaAta); if(vd!==null && vd>=0 && vd<=30) priority.push({level:'warning',title:`${af.numaf||af.numAf||'AF'} — vigência próxima`,meta:`Ata/contrato vence em ${vd} dia(s)`,tag:'Vigência',id:af.id}); }
+        });
+        document.getElementById('v2Atrasadas').textContent=atrasadas;
+        document.getElementById('v2Hoje').textContent=hoje;
+        document.getElementById('v2Parciais').textContent=parciais;
+        document.getElementById('v2Sancoes').textContent=sancoes;
+        document.getElementById('v2Entregues').textContent=entregues;
+        document.getElementById('v2Pendente').textContent=pendente.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        priority.sort((a,b)=>({danger:0,warning:1,info:2}[a.level]-({danger:0,warning:1,info:2}[b.level])));
+        const unique=[]; const ids=new Set(); priority.forEach(x=>{ const k=`${x.id}-${x.tag}`; if(!ids.has(k)){ids.add(k);unique.push(x);} });
+        const box=document.getElementById('priorityList');
+        box.innerHTML=unique.slice(0,8).map(x=>`<div class="priority-item" onclick="focusAf(${x.id})"><div class="priority-main"><div class="priority-title">${escapeHtml(x.title)}</div><div class="priority-meta">${escapeHtml(x.meta)}</div></div><span class="priority-tag tag-${x.level}">${escapeHtml(x.tag)}</span></div>`).join('');
+        if(!box.innerHTML) box.innerHTML='<div class="empty-state">✅ Nenhuma prioridade crítica agora.</div>';
+        const suppliers=new Set(afs.map(a=>String(a.fornecedor||'').trim()).filter(Boolean));
+        const setoresAtivos=new Set(afs.map(a=>String(a.setor||'').trim()).filter(Boolean));
+        document.getElementById('dataHealth').innerHTML=`<span class="health-pill">📦 ${afs.length} AFs</span><span class="health-pill">🏢 ${suppliers.size} fornecedores</span><span class="health-pill">🎨 ${setoresAtivos.size} setores usados</span><span class="health-pill">📎 ${afs.filter(a=>(a.produtos||'').trim()).length} com itens descritos</span>`;
+        const totalAlerts=atrasadas+hoje+parciais+sancoes;
+        const badge=document.getElementById('notifBadge'); badge.textContent=totalAlerts; badge.style.display=totalAlerts?'inline-flex':'none';
+        renderNotifications();
+    }
+    function renderNotifications(){
+        const list=document.getElementById('notificationList'); if(!list) return;
+        const items=[]; afs.forEach(af=>{
+            if(isClosed(af)) return;
+            const d=daysFromToday(af.prazoentrega||af.prazoEntrega); const s=afStatus(af);
+            if(d!==null && d<0) items.push({kind:'danger',title:`${af.numaf||af.numAf}: prazo em atraso`,meta:`${af.fornecedor||'-'} • ${Math.abs(d)} dia(s)`,id:af.id});
+            else if(d===0) items.push({kind:'warning',title:`${af.numaf||af.numAf}: vence hoje`,meta:af.fornecedor||'-',id:af.id});
+            if(['Notificar','Advertir','Multar'].includes(s)) items.push({kind:'danger',title:`${af.numaf||af.numAf}: ${s}`,meta:af.fornecedor||'-',id:af.id});
+            const v=af.vigenciaata||af.vigenciaAta; const vd=daysFromToday(v); if(vd!==null && vd>=0 && vd<=30) items.push({kind:'warning',title:`${af.numaf||af.numAf}: vigência próxima`,meta:`vence em ${vd} dia(s)`,id:af.id});
+        });
+        list.innerHTML=items.slice(0,20).map(i=>`<div class="notification-item" onclick="focusAf(${i.id});closeNotifications()"><div class="notif-title">${i.kind==='danger'?'🔴':'🟡'} ${escapeHtml(i.title)}</div><div class="notif-meta">${escapeHtml(i.meta)}</div></div>`).join('') || '<div class="empty-state">Nenhum alerta no momento.</div>';
+    }
+    function focusAf(id){
+        const af=afs.find(x=>x.id===id); if(!af) return;
+        const search=document.getElementById('searchInput'); if(search){ search.value=af.numaf||af.numAf||''; }
+        const sf=document.getElementById('filterSetor'); if(sf){ sf.value='TODOS'; }
+        const st=document.getElementById('filterStatus'); if(st){ st.value='TODOS'; }
+        renderTable(); scrollToSection('mainControls');
+    }
+    function applyStatusQuickFilter(status){
+        const search=document.getElementById('searchInput'); if(search) search.value='';
+        const sf=document.getElementById('filterSetor'); if(sf) sf.value='TODOS';
+        const st=document.getElementById('filterStatus'); if(st) st.value='TODOS';
+        renderTable();
+        const select=document.getElementById('statusSancao');
+        scrollToSection('mainTable');
+        // filtro temporário por status sem alterar as opções existentes
+        document.querySelectorAll('#afTableBody tr').forEach(tr=>{
+            const text=tr.innerText||'';
+            if(status==='Notificar') tr.style.display = text.includes('Notificar')||text.includes('Advertir')||text.includes('Multar')?'':'none';
+            else tr.style.display = text.includes(status)?'':'none';
+        });
+    }
+    function filterToday(){
+        document.getElementById('searchInput').value=''; document.getElementById('filterSetor').value='TODOS'; document.getElementById('filterStatus').value='TODOS'; renderTable();
+        document.querySelectorAll('#afTableBody tr').forEach(tr=>{ tr.style.display = (tr.innerText||'').includes('Vence Hoje!')?'':'none'; });
+        scrollToSection('mainTable');
+    }
+    function escapeHtml(value){ return String(value??'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+
     function saveAndRenderLocal() {
         verificarRegrasEAlertas();
-        updateDashboard();
         renderTable();
+        updateV2Dashboard();
     }
 
     function verificarRegrasEAlertas() {
@@ -1430,7 +1426,7 @@
         document.getElementById('valPendente').innerText = totalPendenteRs.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    function renderTable(quickFilter = null) {
+    function renderTable() {
         const tbody = document.getElementById('afTableBody');
         const search = document.getElementById('searchInput').value.toLowerCase();
         const setorFilter = document.getElementById('filterSetor').value;
@@ -1458,19 +1454,14 @@
                 if (diffHoras >= limiteHoras) return false;
             }
 
-            if (quickFilter === 'PARCIAIS' && currentStatus !== 'Entrega Parcial') return false;
-            if (quickFilter === 'ATRASADAS') { const dias = getDaysToDeadline(af); if (dias === null || dias >= 0) return false; }
-            if (quickFilter === 'HOJE') { const dias = getDaysToDeadline(af); if (dias !== 0) return false; }
-
             return matchesSearch && matchesSetor;
         });
 
         filtered.sort((a, b) => {
-            if (sortBy === 'fornecedor') return (a.fornecedor || '').localeCompare(b.fornecedor || '');
+            if (sortBy === 'fornecedor') return (a.fornecedor || '').localeCompare(b.fornecedor || '', 'pt-BR');
             if (sortBy === 'prazo') return new Date(a.prazoentrega || '9999-12-31') - new Date(b.prazoentrega || '9999-12-31');
             if (sortBy === 'vigencia') return new Date(a.vigenciaata || '9999-12-31') - new Date(b.vigenciaata || '9999-12-31');
-            if (sortBy === 'criacao') return (b.id || 0) - (a.id || 0);
-            return b.id - a.id;
+            return (Number(b.id)||0) - (Number(a.id)||0);
         });
 
         filtered.forEach(af => {
@@ -1526,9 +1517,9 @@
             }
 
             tr.innerHTML = `
-                <td><span class="setor-badge" style="background-color: ${setorCor};">${af.setor || 'Geral'}</span></td>
-                <td><strong>${af.numaf || af.numAf}</strong>${af.numempenho ? `<br><small style="color:#64748b;">Emp: ${af.numempenho}</small>` : ''}</td>
-                <td><b>${af.fornecedor || ''}</b>${af.produtos ? `<div style="font-size:0.75rem; color:#475569; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}</td>
+                <td><span class="setor-badge" style="background-color: ${setorCor};">${escapeHtml(af.setor || 'Geral')}</span></td>
+                <td><strong>${escapeHtml(af.numaf || af.numAf || '')}</strong>${af.numempenho ? `<br><small style="color:#64748b;">Emp: ${escapeHtml(af.numempenho)}</small>` : ''}</td>
+                <td><b>${escapeHtml(af.fornecedor || '')}</b>${af.produtos ? `<div style="font-size:0.75rem; color:#475569; margin-top:2px;"><b>Itens:</b> ${escapeHtml(af.produtos)}</div>` : ''}</td>
                 <td>
                     <small>Total: ${valTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
                     <small style="color: #16a34a;">Entregue: ${totalParcial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>
@@ -1546,7 +1537,7 @@
                 <td>
                     <button class="btn btn-cobranca no-print" onclick="openModalCobranca(${af.id})">📞 Cobrar (${af.cobrancas ? af.cobrancas.length : 0})</button>
                     ${cobrancasHtml ? `<div class="history-list">${cobrancasHtml}</div>` : ''}
-                    ${af.observacoes ? `<div style="font-size:0.75rem; color:#475569; margin-top:4px;"><b>Obs:</b> ${af.observacoes}</div>` : ''}
+                    ${af.observacoes ? `<div style="font-size:0.75rem; color:#475569; margin-top:4px;"><b>Obs:</b> ${escapeHtml(af.observacoes)}</div>` : ''}
                 </td>
                 <td>
                     <select onchange="tratarMudancaStatusSelect(${af.id}, this.value)" style="width: auto; font-weight: bold;">
@@ -1559,7 +1550,7 @@
                         <option value="Saldo Cancelado" ${currentStatus === 'Saldo Cancelado' ? 'selected' : ''}>Saldo Cancelado</option>
                         <option value="Entregue" ${currentStatus === 'Entregue' ? 'selected' : ''}>Entregue / Concluído</option>
                     </select>
-                    ${af.obs_sancao ? `<div style="font-size:0.75rem; color:#dc2626; margin-top:4px;"><b>Obs Sanção:</b> ${af.obs_sancao}</div>` : ''}
+                    ${af.obs_sancao ? `<div style="font-size:0.75rem; color:#dc2626; margin-top:4px;"><b>Obs Sanção:</b> ${escapeHtml(af.obs_sancao)}</div>` : ''}
                 </td>
                 <td class="actions-cell no-print">
                     <button class="btn btn-edit" onclick="editAf(${af.id})">✏️ Editar</button>
@@ -1579,33 +1570,12 @@
     }
 
     function exportExcel() {
-        if (afs.length === 0) { toast('Nenhuma AF para exportar.', 'warning'); return; }
-        const dataToExport = afs.map(af => {
-            const v = getAfValues(af);
-            return {
-                'Setor': af.setor || '',
-                'Nº AF': af.numaf || af.numAf || '',
-                'Empenho': af.numempenho || af.numEmpenho || '',
-                'Fornecedor': af.fornecedor || '',
-                'Valor Total': v.total,
-                'Valor Entregue': v.entregue,
-                'Saldo Cancelado': v.cancelado,
-                'Saldo Pendente': v.pendente,
-                'Vigência Ata': af.vigenciaata || af.vigenciaAta || '',
-                'Prazo Entrega': af.prazoentrega || af.prazoEntrega || '',
-                'Status': getAfStatus(af),
-                'Produtos': af.produtos || '',
-                'Observações': af.observacoes || '',
-                'Observação Sanção': af.obs_sancao || ''
-            };
-        });
+        if (afs.length === 0) return;
+        const dataToExport = afs.map(af => ({ 'Setor': af.setor, 'Nº AF': af.numaf || af.numAf, 'Fornecedor': af.fornecedor, 'Valor Total': af.valortotal || 0, 'Status': af.statussancao }));
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-        worksheet['!cols'] = [12,15,15,30,15,15,16,16,16,16,20,40,40,40].map(w=>({wch:w}));
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "AFs");
-        XLSX.writeFile(workbook, `Controle_AFs_Avare_${new Date().toISOString().slice(0,10)}.xlsx`);
-        registrarLog(`Exportou ${afs.length} AFs para Excel`);
-        toast('📊 Excel exportado com sucesso.', 'success');
+        XLSX.writeFile(workbook, "Controle_AFs_Avare.xlsx");
     }
 
     function downloadModelo() {
@@ -1649,6 +1619,9 @@
     }
 
     if(usuarioLogado) initApp();
+
+    // Atualização inicial da interface V2 quando houver dados em memória
+    window.addEventListener('load', () => { if (afs.length) updateV2Dashboard(); });
 </script>
 
 </body>
