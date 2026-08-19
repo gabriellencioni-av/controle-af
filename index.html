@@ -123,6 +123,78 @@
         }
         
         .print-header-minimal, .print-oficio-template { display: none; }
+
+
+        /* ============================== */
+        /* v2.0 - Dashboard / Responsive */
+        /* ============================== */
+        html { scroll-behavior: smooth; }
+        body { min-height: 100vh; }
+        .topbar { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; margin:-10px 0 18px; background:rgba(248,250,252,.92); backdrop-filter: blur(12px); border-bottom:1px solid var(--border); }
+        .brand-mini { font-weight:800; color:#1e293b; font-size:.95rem; }
+        .nav-mini { display:flex; flex-wrap:wrap; gap:8px; }
+        .nav-mini button { background:#fff; color:#334155; border:1px solid var(--border); padding:7px 10px; border-radius:8px; }
+        .nav-mini button:hover { background:#f1f5f9; }
+        .dashboard-title { display:flex; align-items:end; justify-content:space-between; gap:15px; margin:8px 0 14px; }
+        .dashboard-title h3 { font-size:1.05rem; }
+        .dashboard-title small { color:#64748b; }
+        .summary-grid { display:grid; grid-template-columns:repeat(5,minmax(150px,1fr)); gap:12px; margin-bottom:16px; }
+        .summary-card { position:relative; overflow:hidden; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:0 4px 12px rgba(15,23,42,.04); cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; }
+        .summary-card:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.08); }
+        .summary-card::after { content:""; position:absolute; width:65px; height:65px; border-radius:50%; right:-20px; top:-20px; background:rgba(37,99,235,.06); }
+        .summary-card .label { color:#64748b; font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+        .summary-card .value { font-size:1.55rem; font-weight:900; margin-top:4px; }
+        .summary-card .hint { color:#64748b; font-size:.72rem; margin-top:3px; }
+        .summary-card.danger { border-top:4px solid #dc2626; }
+        .summary-card.warning { border-top:4px solid #eab308; }
+        .summary-card.info { border-top:4px solid #2563eb; }
+        .summary-card.success { border-top:4px solid #16a34a; }
+        .summary-card.neutral { border-top:4px solid #64748b; }
+        .priority-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; margin-bottom:18px; }
+        .priority-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+        .priority-list { display:grid; gap:8px; }
+        .priority-item { display:grid; grid-template-columns:1.2fr 1fr auto auto; gap:10px; align-items:center; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; background:#fafafa; }
+        .priority-item .af-id { font-weight:800; color:#0f172a; }
+        .priority-item .vendor { color:#475569; font-size:.84rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .priority-item .deadline { font-weight:700; font-size:.82rem; }
+        .priority-empty { padding:15px; text-align:center; color:#64748b; background:#f8fafc; border-radius:10px; }
+        .table-wrap { overflow-x:auto; border-radius:8px; }
+        .loading-pill { display:none; align-items:center; gap:8px; color:#475569; font-size:.82rem; }
+        .loading-pill.show { display:inline-flex; }
+        .spinner { width:14px; height:14px; border:2px solid #cbd5e1; border-top-color:#2563eb; border-radius:50%; animation:spin .7s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .toast-container { position:fixed; right:18px; bottom:18px; z-index:3000; display:grid; gap:8px; max-width:min(360px,calc(100vw - 36px)); }
+        .toast { background:#0f172a; color:#fff; padding:11px 14px; border-radius:10px; box-shadow:0 10px 30px rgba(15,23,42,.22); font-size:.84rem; animation:toastIn .2s ease; }
+        .toast.success { background:#166534; } .toast.error { background:#991b1b; } .toast.warning { background:#92400e; }
+        @keyframes toastIn { from { transform:translateY(8px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+        .muted { color:#64748b; }
+        .chip { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:999px; font-size:.72rem; font-weight:800; background:#f1f5f9; color:#334155; }
+        .danger-text { color:#b91c1c; } .success-text { color:#166534; } .warning-text { color:#a16207; }
+        @media (max-width: 1100px) { .summary-grid { grid-template-columns:repeat(3,1fr); } .priority-item { grid-template-columns:1fr 1fr; } }
+        @media (max-width: 760px) {
+            body { padding:10px; }
+            .topbar { margin:-2px 0 12px; position:relative; }
+            .topbar .brand-mini { max-width:55%; }
+            .nav-mini { justify-content:flex-end; }
+            .nav-mini button { font-size:.72rem; padding:6px 8px; }
+            .summary-grid { grid-template-columns:repeat(2,1fr); }
+            .summary-card .value { font-size:1.25rem; }
+            .priority-item { grid-template-columns:1fr; gap:5px; }
+            .header-official { padding:14px; }
+            .header-official h1 { font-size:1.05rem; }
+            .header-official h2 { font-size:.82rem; }
+            .header-official .no-print { width:100%; }
+            .header-official .no-print button { flex:1; min-width:110px; }
+            .controls { align-items:stretch; }
+            .controls-group { width:100%; }
+            .controls-group > * { min-width:0; }
+            .controls-group input, .controls-group select { flex:1; }
+            .excel-actions { align-items:stretch; }
+            .excel-actions .controls-group { width:100%; }
+            .excel-actions button { flex:1; }
+            table { min-width:1100px; }
+            .modal-content { max-width:calc(100vw - 20px) !important; margin:10px; }
+        }
     </style>
 </head>
 <body>
@@ -197,6 +269,30 @@
             <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
         </div>
     </div>
+
+    <section id="dashboardSection" class="no-print">
+        <div class="dashboard-title">
+            <div>
+                <h3>Visão geral</h3>
+                <small>Prioridades e situação atual das Autorizações de Fornecimento</small>
+            </div>
+            <span id="loadingPill" class="loading-pill"><span class="spinner"></span> Atualizando dados...</span>
+        </div>
+        <div class="summary-grid">
+            <div class="summary-card danger" onclick="filtrarRapido('ATRASADAS')"><div class="label">🔴 Atrasadas</div><div class="value" id="summaryAtrasadas">0</div><div class="hint">Cobranças em aberto</div></div>
+            <div class="summary-card warning" onclick="filtrarRapido('HOJE')"><div class="label">🟡 Vencem hoje</div><div class="value" id="summaryHoje">0</div><div class="hint">Exigem atenção imediata</div></div>
+            <div class="summary-card info" onclick="filtrarRapido('PARCIAIS')"><div class="label">📦 Parciais</div><div class="value" id="summaryParciais">0</div><div class="hint">AFs ainda incompletas</div></div>
+            <div class="summary-card success"><div class="label">✅ Concluídas</div><div class="value" id="summaryEntregues">0</div><div class="hint">Entregues / encerradas</div></div>
+            <div class="summary-card neutral"><div class="label">💰 Pendente</div><div class="value" id="summaryPendente">R$ 0,00</div><div class="hint">Saldo financeiro das AFs</div></div>
+        </div>
+        <div class="priority-card">
+            <div class="priority-head">
+                <strong>🔥 Prioridades</strong>
+                <span class="chip" id="priorityCount">0 itens</span>
+            </div>
+            <div id="priorityList" class="priority-list"></div>
+        </div>
+    </section>
 
     <!-- Dashboard de Alertas e Financeiro -->
     <div id="mainAlerts" class="alerts-grid no-print">
@@ -332,7 +428,7 @@
     </div>
 
     <!-- Tabela de Registros -->
-    <table id="mainTable">
+    <div class="table-wrap"><table id="mainTable">
         <thead>
             <tr>
                 <th>Setor</th>
@@ -348,7 +444,7 @@
             </tr>
         </thead>
         <tbody id="afTableBody"></tbody>
-    </table>
+    </table></div>
 </div>
 
 <!-- Modais do Sistema -->
@@ -603,6 +699,8 @@
     </div>
 </div>
 
+<div id="toastContainer" class="toast-container"></div>
+
 <script>
     const SUPABASE_URL = "https://adunochvwwfynngzsszg.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wzosuw4QDpJfthg3pPpE3g_wv8GwNw6";
@@ -619,6 +717,110 @@
     };
 
     let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
+
+
+    function toast(message, type='') {
+        const c = document.getElementById('toastContainer');
+        if (!c) return;
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.textContent = message;
+        c.appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+    }
+
+    function setLoading(show) {
+        const el = document.getElementById('loadingPill');
+        if (el) el.classList.toggle('show', !!show);
+    }
+
+    function scrollToSection(id) {
+        document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    function filtrarRapido(tipo) {
+        const status = document.getElementById('filterStatus');
+        const search = document.getElementById('searchInput');
+        const setor = document.getElementById('filterSetor');
+        setor.value = 'TODOS'; search.value = '';
+        if (tipo === 'PARCIAIS') {
+            status.value = 'TODOS';
+            renderTable('PARCIAIS');
+            scrollToSection('mainTable'); return;
+        }
+        if (tipo === 'HOJE') {
+            status.value = 'TODOS';
+            renderTable('HOJE');
+            scrollToSection('mainTable'); return;
+        }
+        if (tipo === 'ATRASADAS') {
+            status.value = 'TODOS';
+            renderTable('ATRASADAS');
+            scrollToSection('mainTable'); return;
+        }
+    }
+
+    function getAfStatus(af) {
+        return af.statussancao || af.statusSancao || 'Regular';
+    }
+
+    function getAfValues(af) {
+        const total = Number(af.valortotal ?? af.valorTotal ?? 0) || 0;
+        const entregue = Array.isArray(af.parciais) ? af.parciais.reduce((sum,p)=>sum + (Number(p.valor)||0),0) : 0;
+        const cancelado = Number(af.saldo_cancelado)||0;
+        return { total, entregue, cancelado, pendente: Math.max(0,total-entregue-cancelado) };
+    }
+
+    function getDaysToDeadline(af) {
+        const raw = af.prazoentrega || af.prazoEntrega;
+        if (!raw) return null;
+        const today = new Date(); today.setHours(0,0,0,0);
+        const d = new Date(raw + 'T00:00:00');
+        return Math.ceil((d - today)/(1000*60*60*24));
+    }
+
+    function updateDashboard() {
+        let atrasadas=0, hoje=0, parciais=0, entregues=0, pendente=0;
+        const prioridades=[];
+        afs.forEach(af => {
+            const status = getAfStatus(af);
+            const vals = getAfValues(af);
+            const dias = getDaysToDeadline(af);
+            if (status === 'Entregue' || status === 'Saldo Cancelado') { entregues++; return; }
+            pendente += vals.pendente;
+            if (status === 'Entrega Parcial') parciais++;
+            if (dias !== null && dias < 0) atrasadas++;
+            if (dias === 0) hoje++;
+            if (dias !== null && dias <= 3) prioridades.push({ af, dias });
+            if (['Notificar','Advertir','Multar'].includes(status)) prioridades.push({ af, dias, sancao:true });
+        });
+        const unique = [];
+        const seen = new Set();
+        prioridades.sort((a,b)=>{
+            const sa = a.sancao ? 0 : 1, sb = b.sancao ? 0 : 1;
+            if(sa!==sb) return sa-sb;
+            return (a.dias ?? 999)-(b.dias ?? 999);
+        }).forEach(x=>{ if(!seen.has(x.af.id)){seen.add(x.af.id);unique.push(x);} });
+        const list=unique.slice(0,6);
+        document.getElementById('summaryAtrasadas').textContent=atrasadas;
+        document.getElementById('summaryHoje').textContent=hoje;
+        document.getElementById('summaryParciais').textContent=parciais;
+        document.getElementById('summaryEntregues').textContent=entregues;
+        document.getElementById('summaryPendente').textContent=pendente.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        document.getElementById('priorityCount').textContent=`${list.length} item${list.length===1?'':'s'}`;
+        const box=document.getElementById('priorityList'); box.innerHTML='';
+        if(!list.length){ box.innerHTML='<div class="priority-empty">🎉 Nenhuma prioridade crítica no momento.</div>'; return; }
+        list.forEach(({af,dias,sancao})=>{
+            let dl='Sem prazo';
+            if(dias !== null) dl = dias < 0 ? `🔴 Atrasada há ${Math.abs(dias)}d` : dias===0 ? '🟡 Vence hoje' : `🟢 ${dias}d restantes`;
+            const status=getAfStatus(af);
+            box.insertAdjacentHTML('beforeend', `<div class="priority-item"><div class="af-id">${escapeHtml(af.numaf||af.numAf||'-')}</div><div class="vendor">${escapeHtml(af.fornecedor||'-')}</div><div class="deadline">${dl}</div><div><span class="chip">${escapeHtml(status)}</span></div></div>`);
+        });
+    }
+
+    function escapeHtml(v) {
+        return String(v ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+    }
 
     if (usuarioLogado) {
         document.getElementById('loginOverlay').style.display = 'none';
@@ -653,7 +855,7 @@
             }
         }
 
-        if (!found) alert("❌ Usuário ou senha incorretos!");
+        if (!found) toast("❌ Usuário ou senha incorretos!", "error");
     });
 
     function logout() {
@@ -662,9 +864,8 @@
     }
 
     async function initApp() {
-        await fetchConfig();
-        await fetchSetores();
-        await fetchAfs();
+        setLoading(true);
+        try { await fetchConfig(); await fetchSetores(); await fetchAfs(); } finally { setLoading(false); }
     }
 
     async function fetchConfig() {
@@ -847,7 +1048,9 @@
 
     async function deleteSetor(id) {
         if(confirm('Tem certeza que deseja excluir este setor?')) {
-            await _supabase.from('setores').delete().eq('id', id);
+            const { error } = await _supabase.from('setores').delete().eq('id', id);
+            if (error) { toast('Não foi possível excluir o setor.', 'error'); return; }
+            registrarLog(`Excluiu o setor ID ${id}`);
             fetchSetores();
         }
     }
@@ -999,6 +1202,7 @@
         }
         afs = data || [];
         saveAndRenderLocal();
+        updateDashboard();
     }
 
     _supabase.channel('public:afs').on('postgres_changes', { event: '*', schema: 'public', table: 'afs' }, () => fetchAfs()).subscribe();
@@ -1187,14 +1391,17 @@
     async function deleteAf(id) {
         const af = afs.find(item => item.id === id);
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
-            await _supabase.from('afs').delete().eq('id', id);
+            const { error } = await _supabase.from('afs').delete().eq('id', id);
+            if (error) { toast('Não foi possível excluir a AF: ' + error.message, 'error'); return; }
             if(af) registrarLog(`Excluiu a AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            toast('AF excluída.', 'success');
             fetchAfs();
         }
     }
 
     function saveAndRenderLocal() {
         verificarRegrasEAlertas();
+        updateDashboard();
         renderTable();
     }
 
@@ -1223,7 +1430,7 @@
         document.getElementById('valPendente').innerText = totalPendenteRs.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    function renderTable() {
+    function renderTable(quickFilter = null) {
         const tbody = document.getElementById('afTableBody');
         const search = document.getElementById('searchInput').value.toLowerCase();
         const setorFilter = document.getElementById('filterSetor').value;
@@ -1251,12 +1458,18 @@
                 if (diffHoras >= limiteHoras) return false;
             }
 
+            if (quickFilter === 'PARCIAIS' && currentStatus !== 'Entrega Parcial') return false;
+            if (quickFilter === 'ATRASADAS') { const dias = getDaysToDeadline(af); if (dias === null || dias >= 0) return false; }
+            if (quickFilter === 'HOJE') { const dias = getDaysToDeadline(af); if (dias !== 0) return false; }
+
             return matchesSearch && matchesSetor;
         });
 
         filtered.sort((a, b) => {
             if (sortBy === 'fornecedor') return (a.fornecedor || '').localeCompare(b.fornecedor || '');
             if (sortBy === 'prazo') return new Date(a.prazoentrega || '9999-12-31') - new Date(b.prazoentrega || '9999-12-31');
+            if (sortBy === 'vigencia') return new Date(a.vigenciaata || '9999-12-31') - new Date(b.vigenciaata || '9999-12-31');
+            if (sortBy === 'criacao') return (b.id || 0) - (a.id || 0);
             return b.id - a.id;
         });
 
@@ -1366,12 +1579,33 @@
     }
 
     function exportExcel() {
-        if (afs.length === 0) return;
-        const dataToExport = afs.map(af => ({ 'Setor': af.setor, 'Nº AF': af.numaf || af.numAf, 'Fornecedor': af.fornecedor, 'Valor Total': af.valortotal || 0, 'Status': af.statussancao }));
+        if (afs.length === 0) { toast('Nenhuma AF para exportar.', 'warning'); return; }
+        const dataToExport = afs.map(af => {
+            const v = getAfValues(af);
+            return {
+                'Setor': af.setor || '',
+                'Nº AF': af.numaf || af.numAf || '',
+                'Empenho': af.numempenho || af.numEmpenho || '',
+                'Fornecedor': af.fornecedor || '',
+                'Valor Total': v.total,
+                'Valor Entregue': v.entregue,
+                'Saldo Cancelado': v.cancelado,
+                'Saldo Pendente': v.pendente,
+                'Vigência Ata': af.vigenciaata || af.vigenciaAta || '',
+                'Prazo Entrega': af.prazoentrega || af.prazoEntrega || '',
+                'Status': getAfStatus(af),
+                'Produtos': af.produtos || '',
+                'Observações': af.observacoes || '',
+                'Observação Sanção': af.obs_sancao || ''
+            };
+        });
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        worksheet['!cols'] = [12,15,15,30,15,15,16,16,16,16,20,40,40,40].map(w=>({wch:w}));
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "AFs");
-        XLSX.writeFile(workbook, "Controle_AFs_Avare.xlsx");
+        XLSX.writeFile(workbook, `Controle_AFs_Avare_${new Date().toISOString().slice(0,10)}.xlsx`);
+        registrarLog(`Exportou ${afs.length} AFs para Excel`);
+        toast('📊 Excel exportado com sucesso.', 'success');
     }
 
     function downloadModelo() {
