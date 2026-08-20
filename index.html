@@ -18,10 +18,15 @@
             --card-bg: #ffffff;
             --text: #0f172a;
             --border: #e2e8f0;
+            --primary-dark: #1d4ed8;
+            --muted: #64748b;
+            --surface: #ffffff;
+            --surface-2: #f8fafc;
+            --shadow: 0 8px 24px rgba(15,23,42,.07);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+        body { background-color: var(--bg); color: var(--text); padding: 16px; line-height: 1.5; }
         
         .container { max-width: 1400px; margin: 0 auto; }
         
@@ -35,7 +40,7 @@
         tr.row-cancelado { background-color: #e2e8f0 !important; } 
 
         /* Cabeçalho Oficial Web */
-        .header-official { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
         .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
 
@@ -95,10 +100,16 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
+        /* Filtro Alfabético */
+        .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+        .alphabet-btn { background: #f8fafc; border: 1px solid var(--border); color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.15s ease; }
+        .alphabet-btn:hover { background: #e2e8f0; }
+        .alphabet-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
         /* IMPRESSÃO ISOLADA */
         @media print {
             body { background: white !important; padding: 0 !important; color: #000 !important; }
-            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini { display: none !important; }
+            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini, .alphabet-filter { display: none !important; }
             .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
             
             body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
@@ -124,59 +135,53 @@
         
         .print-header-minimal, .print-oficio-template { display: none; }
 
-/* ===== V2.0 — Melhorias de UX / Dashboard / Mobile ===== */
-:root { --primary-dark:#1d4ed8; --muted:#64748b; --surface:#ffffff; --surface-2:#f8fafc; --shadow:0 8px 24px rgba(15,23,42,.07); }
-body { padding: 16px; }
-.header-official { box-shadow: var(--shadow); border-radius: 12px; }
-.quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
-.quick-nav .btn { font-size:.8rem; }
-.dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
-.metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
-.metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
-.metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
-.metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
-.metric-sub { font-size:.76rem; color:var(--muted); }
-.metric-danger { border-top:4px solid #dc2626; }
-.metric-warning { border-top:4px solid #f59e0b; }
-.metric-info { border-top:4px solid #2563eb; }
-.metric-success { border-top:4px solid #16a34a; }
-.metric-purple { border-top:4px solid #7c3aed; }
-.metric-dark { border-top:4px solid #475569; }
-.home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
-.panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
-.panel h3 { margin-bottom:12px; font-size:1rem; }
-.priority-list { display:flex; flex-direction:column; gap:8px; }
-.priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; }
-.priority-main { min-width:0; }
-.priority-title { font-weight:750; font-size:.88rem; }
-.priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
-.tag-danger { background:#fee2e2; color:#b91c1c; }
-.tag-warning { background:#fef3c7; color:#a16207; }
-.tag-info { background:#dbeafe; color:#1d4ed8; }
-.tag-success { background:#dcfce7; color:#15803d; }
-.empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
-.notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
-.notification-panel.open { display:block; }
-.notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
-.notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
-.notification-item:hover { background:#f8fafc; }
-.notification-item:last-child { border-bottom:none; }
-.notif-title { font-weight:750; font-size:.84rem; }
-.notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
-.notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
-.filter-chip-row { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px; }
-.filter-chip { border:1px solid var(--border); background:#fff; color:#334155; border-radius:999px; padding:7px 10px; font-size:.76rem; cursor:pointer; }
-.filter-chip:hover { background:#eff6ff; }
-.data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
-.health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
-@media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
-@media (max-width:700px){
-  body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
-  .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
-  #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
-}
+        /* UX / Dashboard / Mobile */
+        .quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
+        .quick-nav .btn { font-size:.8rem; }
+        .dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+        .metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
+        .metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
+        .metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
+        .metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
+        .metric-sub { font-size:.76rem; color:var(--muted); }
+        .metric-danger { border-top:4px solid #dc2626; }
+        .metric-warning { border-top:4px solid #f59e0b; }
+        .metric-info { border-top:4px solid #2563eb; }
+        .metric-success { border-top:4px solid #16a34a; }
+        .metric-purple { border-top:4px solid #7c3aed; }
+        .metric-dark { border-top:4px solid #475569; }
+        .home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
+        .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+        .panel h3 { margin-bottom:12px; font-size:1rem; }
+        .priority-list { display:flex; flex-direction:column; gap:8px; }
+        .priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; cursor:pointer; }
+        .priority-main { min-width:0; }
+        .priority-title { font-weight:750; font-size:.88rem; }
+        .priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
+        .tag-danger { background:#fee2e2; color:#b91c1c; }
+        .tag-warning { background:#fef3c7; color:#a16207; }
+        .tag-info { background:#dbeafe; color:#1d4ed8; }
+        .tag-success { background:#dcfce7; color:#15803d; }
+        .empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
+        .notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
+        .notification-panel.open { display:block; }
+        .notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
+        .notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
+        .notification-item:hover { background:#f8fafc; }
+        .notification-item:last-child { border-bottom:none; }
+        .notif-title { font-weight:750; font-size:.84rem; }
+        .notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
+        .notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
+        .data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
+        .health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
 
+        @media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
+        @media (max-width:700px){
+            body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
+            .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
+            #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
+        }
     </style>
 </head>
 <body>
@@ -252,7 +257,6 @@ body { padding: 16px; }
         </div>
     </div>
 
-
     <div class="quick-nav no-print" id="quickNav">
         <button class="btn" type="button" onclick="scrollToSection('mainCardForm')">➕ Nova AF</button>
         <button class="btn btn-outline" type="button" onclick="focusSearch()">🔎 Buscar AF</button>
@@ -300,7 +304,7 @@ body { padding: 16px; }
         </div>
     </div>
 
-    <!-- Dashboard de Alertas e Financeiro -->
+    <!-- Dashboard de Alertas e Financeiro Antigo -->
     <div id="mainAlerts" class="alerts-grid no-print">
         <div class="alert-card atraso">
             <h4>🚚 Entregas Atrasadas</h4>
@@ -402,6 +406,39 @@ body { padding: 16px; }
         <div class="controls-group">
             <button type="button" class="btn btn-success" onclick="exportExcel()">📊 Exportar para Excel</button>
         </div>
+    </div>
+
+    <!-- Barra de Filtro Alfabético -->
+    <div id="alphabetContainer" class="alphabet-filter no-print">
+        <span style="font-size: 0.8rem; font-weight: bold; color: #475569; margin-right: 4px;">Letra:</span>
+        <button type="button" class="alphabet-btn active" onclick="setLetterFilter('')">TODAS</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('A')">A</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('B')">B</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('C')">C</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('D')">D</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('E')">E</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('F')">F</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('G')">G</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('H')">H</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('I')">I</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('J')">J</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('K')">K</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('L')">L</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('M')">M</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('N')">N</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('O')">O</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('P')">P</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('Q')">Q</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('R')">R</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('S')">S</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('T')">T</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('U')">U</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('V')">V</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('W')">W</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('X')">X</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('Y')">Y</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('Z')">Z</button>
+        <button type="button" class="alphabet-btn" onclick="setLetterFilter('0-9')">0-9</button>
     </div>
 
     <!-- Controles de Filtro e Ordenação -->
@@ -712,6 +749,7 @@ body { padding: 16px; }
 
     let afs = [];
     let setores = [];
+    let selectedLetter = ''; // Armazena filtro de letra inicial
     let configSys = {
         nome_prefeitura: 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ',
         cnpj_prefeitura: '46.634.168/0001-50',
@@ -1038,7 +1076,6 @@ body { padding: 16px; }
         });
     }
 
-    /* 📄 Gerar Notificação */
     function gerarOficioNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
@@ -1203,7 +1240,6 @@ body { padding: 16px; }
         }
     }
 
-    /* 📦 CADASTRO, EDIÇÃO E EXCLUSÃO DE ENTREGAS PARCIAIS */
     function openModalParcial(id, indexParcial = -1) {
         document.getElementById('modalAfId').value = id;
         document.getElementById('modalParcialIndex').value = indexParcial;
@@ -1258,7 +1294,7 @@ body { padding: 16px; }
         const af = afs.find(item => item.id === id);
         if (af && af.parciais && confirm('Deseja excluir esta entrega parcial?')) {
             const parciais = af.parciais;
-            const removido = parciais.splice(indexParcial, 1);
+            parciais.splice(indexParcial, 1);
             let statussancao = af.statussancao;
             if (parciais.length === 0 && statussancao === 'Entrega Parcial') {
                 statussancao = 'Regular';
@@ -1295,9 +1331,7 @@ body { padding: 16px; }
         }
     }
 
-
-
-    /* ===== V2.0 — Dashboard, notificações e filtros rápidos ===== */
+    /* ===== Dashboard, notificações e filtros rápidos ===== */
     function scrollToSection(id) {
         const el = document.getElementById(id); if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
     }
@@ -1326,14 +1360,21 @@ body { padding: 16px; }
 
     function updateV2Dashboard(){
         let atrasadas=0, hoje=0, parciais=0, sancoes=0, entregues=0, pendente=0;
-        const priority=[]; const seenToday=[];
+        const priority=[];
         const now=new Date(); now.setHours(0,0,0,0);
         afs.forEach(af=>{
             const s=afStatus(af); const d=daysFromToday(af.prazoentrega || af.prazoEntrega);
             if(s==='Entregue') entregues++;
             if(s==='Entrega Parcial') parciais++;
             if(['Notificar','Advertir','Multar'].includes(s)) sancoes++;
-            if(!isClosed(af)){ pendente += afPending(af); if(d!==null){ if(d<0){atrasadas++; priority.push({level:'danger',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Atrasada há ${Math.abs(d)} dia(s)`,tag:'Cobrar',id:af.id});} else if(d===0){hoje++; priority.push({level:'warning',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:'Prazo vence hoje',tag:s==='Regular'?'Acompanhar':s,id:af.id});} else if(d<=3){priority.push({level:'info',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Prazo em ${d} dia(s)`,tag:s,id:af.id});} } }
+            if(!isClosed(af)){ 
+                pendente += afPending(af); 
+                if(d!==null){ 
+                    if(d<0){atrasadas++; priority.push({level:'danger',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Atrasada há ${Math.abs(d)} dia(s)`,tag:'Cobrar',id:af.id});} 
+                    else if(d===0){hoje++; priority.push({level:'warning',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:'Prazo vence hoje',tag:s==='Regular'?'Acompanhar':s,id:af.id});} 
+                    else if(d<=3){priority.push({level:'info',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Prazo em ${d} dia(s)`,tag:s,id:af.id});} 
+                } 
+            }
             if(s==='Notificar'||s==='Advertir'||s==='Multar') priority.push({level:'danger',title:`${af.numaf||af.numAf||'AF'} — ${af.fornecedor||'Fornecedor'}`,meta:`Situação: ${s}`,tag:'Ação',id:af.id});
             if((af.vigenciaata||af.vigenciaAta) && !isClosed(af)){ const vd=daysFromToday(af.vigenciaata||af.vigenciaAta); if(vd!==null && vd>=0 && vd<=30) priority.push({level:'warning',title:`${af.numaf||af.numAf||'AF'} — vigência próxima`,meta:`Ata/contrato vence em ${vd} dia(s)`,tag:'Vigência',id:af.id}); }
         });
@@ -1355,6 +1396,7 @@ body { padding: 16px; }
         const badge=document.getElementById('notifBadge'); badge.textContent=totalAlerts; badge.style.display=totalAlerts?'inline-flex':'none';
         renderNotifications();
     }
+
     function renderNotifications(){
         const list=document.getElementById('notificationList'); if(!list) return;
         const items=[]; afs.forEach(af=>{
@@ -1367,32 +1409,50 @@ body { padding: 16px; }
         });
         list.innerHTML=items.slice(0,20).map(i=>`<div class="notification-item" onclick="focusAf(${i.id});closeNotifications()"><div class="notif-title">${i.kind==='danger'?'🔴':'🟡'} ${escapeHtml(i.title)}</div><div class="notif-meta">${escapeHtml(i.meta)}</div></div>`).join('') || '<div class="empty-state">Nenhum alerta no momento.</div>';
     }
+
     function focusAf(id){
         const af=afs.find(x=>x.id===id); if(!af) return;
         const search=document.getElementById('searchInput'); if(search){ search.value=af.numaf||af.numAf||''; }
         const sf=document.getElementById('filterSetor'); if(sf){ sf.value='TODOS'; }
         const st=document.getElementById('filterStatus'); if(st){ st.value='TODOS'; }
+        setLetterFilter('');
         renderTable(); scrollToSection('mainControls');
     }
+
     function applyStatusQuickFilter(status){
         const search=document.getElementById('searchInput'); if(search) search.value='';
         const sf=document.getElementById('filterSetor'); if(sf) sf.value='TODOS';
         const st=document.getElementById('filterStatus'); if(st) st.value='TODOS';
+        setLetterFilter('');
         renderTable();
-        const select=document.getElementById('statusSancao');
         scrollToSection('mainTable');
-        // filtro temporário por status sem alterar as opções existentes
         document.querySelectorAll('#afTableBody tr').forEach(tr=>{
             const text=tr.innerText||'';
             if(status==='Notificar') tr.style.display = text.includes('Notificar')||text.includes('Advertir')||text.includes('Multar')?'':'none';
             else tr.style.display = text.includes(status)?'':'none';
         });
     }
+
     function filterToday(){
-        document.getElementById('searchInput').value=''; document.getElementById('filterSetor').value='TODOS'; document.getElementById('filterStatus').value='TODOS'; renderTable();
+        document.getElementById('searchInput').value=''; document.getElementById('filterSetor').value='TODOS'; document.getElementById('filterStatus').value='TODOS'; 
+        setLetterFilter('');
+        renderTable();
         document.querySelectorAll('#afTableBody tr').forEach(tr=>{ tr.style.display = (tr.innerText||'').includes('Vence Hoje!')?'':'none'; });
         scrollToSection('mainTable');
     }
+
+    function setLetterFilter(letra) {
+        selectedLetter = letra.toUpperCase();
+        document.querySelectorAll('.alphabet-btn').forEach(btn => {
+            if ((letra === '' && btn.innerText === 'TODAS') || btn.innerText === letra) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        renderTable();
+    }
+
     function escapeHtml(value){ return String(value??'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 
     function saveAndRenderLocal() {
@@ -1441,12 +1501,22 @@ body { padding: 16px; }
         let filtered = afs.filter(af => {
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '';
-            const fornecedor = af.fornecedor || '';
+            const fornecedor = (af.fornecedor || '').trim();
             const produtos = af.produtos || '';
             const currentStatus = af.statussancao || af.statusSancao || 'Regular';
 
             const matchesSearch = fornecedor.toLowerCase().includes(search) || numAf.toLowerCase().includes(search) || numEmpenho.toLowerCase().includes(search) || produtos.toLowerCase().includes(search);
             const matchesSetor = (setorFilter === 'TODOS') || (af.setor === setorFilter);
+
+            let matchesLetter = true;
+            if (selectedLetter !== '') {
+                const primeiraLetra = fornecedor.charAt(0).toUpperCase();
+                if (selectedLetter === '0-9') {
+                    matchesLetter = /^[0-9]/.test(primeiraLetra);
+                } else {
+                    matchesLetter = (primeiraLetra === selectedLetter);
+                }
+            }
 
             const limiteHoras = configSys.horas_ocultar_entregue || 24;
             if (statusFilter === 'ATIVOS' && (currentStatus === 'Entregue' || currentStatus === 'Saldo Cancelado') && af.data_conclusao) {
@@ -1454,7 +1524,7 @@ body { padding: 16px; }
                 if (diffHoras >= limiteHoras) return false;
             }
 
-            return matchesSearch && matchesSetor;
+            return matchesSearch && matchesSetor && matchesLetter;
         });
 
         filtered.sort((a, b) => {
@@ -1502,7 +1572,6 @@ body { padding: 16px; }
                 cobrancasHtml = af.cobrancas.map(c => `<div>• ${c.data || c} ${c.usuario ? `(${c.usuario})` : ''} ${c.obs ? `- ${c.obs}` : ''}</div>`).join('');
             }
 
-            // Exibição da Entrega Parcial com Botões de Edição/Exclusão
             let parciaisHtml = '';
             if (af.parciais && af.parciais.length > 0) {
                 parciaisHtml = af.parciais.map((p, idx) => `
@@ -1595,7 +1664,7 @@ body { padding: 16px; }
             const workbook = XLSX.read(data, { type: 'array', cellDates: true });
             const jsonRows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { raw: false });
             let newRows = [];
-            jsonRows.forEach((row, index) => {
+            jsonRows.forEach((row) => {
                 if (row['Nº AF'] && row['Fornecedor']) {
                     newRows.push({
                         setor: row['Setor'] || 'Básica/Rede',
@@ -1619,8 +1688,6 @@ body { padding: 16px; }
     }
 
     if(usuarioLogado) initApp();
-
-    // Atualização inicial da interface V2 quando houver dados em memória
     window.addEventListener('load', () => { if (afs.length) updateV2Dashboard(); });
 </script>
 
