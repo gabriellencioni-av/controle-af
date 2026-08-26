@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -26,204 +25,192 @@
             --shadow: 0 8px 24px rgba(15,23,42,.07);
         }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; line-height: 1.5; }
-    
-    .container { max-width: 1400px; margin: 0 auto; }
-    
-    /* Modal de Login */
-    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-    .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-
-    /* Destaques de Linha por Status */
-    tr.row-entregue { background-color: #dcfce7 !important; } 
-    tr.row-parcial { background-color: #fef9c3 !important; }  
-    tr.row-cancelado { background-color: #e2e8f0 !important; } 
-
-    /* AF com vigência vencida */
-tr.row-vigencia-vencida {
-    background-color: #fecaca !important;
-    color: #991b1b !important;
-}
-
-tr.row-vigencia-vencida td {
-    background-color: #fecaca !important;
-    color: #991b1b !important;
-    border-bottom-color: #fca5a5 !important;
-}
-
-tr.row-vigencia-vencida td strong,
-tr.row-vigencia-vencida td b {
-    color: #7f1d1d !important;
-}
-
-tr.row-vigencia-vencida select {
-    background-color: #fee2e2 !important;
-    color: #991b1b !important;
-    border-color: #f87171 !important;
-}
-
-.badge-vigencia-vencida {
-    display: inline-block;
-    margin-top: 4px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: #dc2626;
-    color: white !important;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 16px; line-height: 1.5; }
         
-    /* Cabeçalho Oficial Web */
-    .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-    .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
-    .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
-
-    /* Dashboard de Alertas e Financeiro */
-    .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .alert-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border-left: 5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .alert-card.atraso { border-left-color: #f97316; background: #fff7ed; }
-    .alert-card.notificar { border-left-color: #ea580c; background: #ffedd5; }
-    .alert-card.advertir { border-left-color: #dc2626; background: #fef2f2; }
-    .alert-card.multar { border-left-color: #991b1b; background: #fee2e2; }
-    .alert-card.financeiro { border-left-color: var(--primary); background: #eff6ff; }
-    .alert-card h4 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
-    .alert-card .count { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
-
-    .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
-    
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
-    input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
-    
-    button, .btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; }
-    button:hover, .btn:hover { opacity: 0.9; }
-    .btn-success { background: var(--success); }
-    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .btn-outline:hover { background: #f1f5f9; }
-    .btn-cobranca { background: #0284c7; padding: 4px 8px; font-size: 0.75rem; }
-    .btn-parcial { background: #8b5cf6; padding: 4px 8px; font-size: 0.75rem; }
-    .btn-cancelar { background: #475569; padding: 4px 8px; font-size: 0.75rem; }
-    .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
-    .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
-    .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
-    .btn-mini { padding: 2px 5px; font-size: 0.7rem; border-radius: 4px; }
-
-    .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
-    .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-
-    .excel-actions { display: flex; gap: 10px; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-
-    table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-    th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-    th { background: #f1f5f9; font-weight: 600; color: #334155; }
-
-    .status-online { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 12px; }
-    .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
-
-    .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
-    
-    .badge-prazo { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
-    .badge-ok { background: #dcfce7; color: #16a34a; }
-    .badge-hoje { background: #fef9c3; color: #ca8a04; }
-    .badge-atrasado { background: #fee2e2; color: #dc2626; }
-
-    .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
-    .item-parcial-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px dashed #e2e8f0; }
-    .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
-    
-    .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-    .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-
-    /* Filtro Alfabético */
-    .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
-    .alphabet-btn { background: #f8fafc; border: 1px solid var(--border); color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.15s ease; }
-    .alphabet-btn:hover { background: #e2e8f0; }
-    .alphabet-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
-
-    /* IMPRESSÃO ISOLADA */
-    @media print {
-        body { background: white !important; padding: 0 !important; color: #000 !important; }
-        .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini, .alphabet-filter { display: none !important; }
-        .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+        .container { max-width: 1400px; margin: 0 auto; }
         
-        body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
-        body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
-        body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
-        body.printing-relatorio .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
-        body.printing-relatorio table { display: table !important; width: 100% !important; border: 1px solid #000 !important; margin-top: 10px; }
-        body.printing-relatorio th { background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #000 !important; font-size: 0.75rem !important; text-transform: uppercase; }
-        body.printing-relatorio td { border: 1px solid #000 !important; font-size: 0.75rem !important; padding: 6px !important; vertical-align: top; }
-        body.printing-relatorio .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
-        body.printing-relatorio .history-list { border: none; padding: 0; background: transparent; }
+        /* Modal de Login */
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
-        body.printing-oficio #mainHeader,
-        body.printing-oficio #mainAlerts,
-        body.printing-oficio #mainCardForm,
-        body.printing-oficio #mainExcelActions,
-        body.printing-oficio #mainControls,
-        body.printing-oficio #mainTable,
-        body.printing-oficio #printHeaderMinimal { display: none !important; }
+        /* Destaques de Linha por Status */
+        tr.row-entregue { background-color: #dcfce7 !important; } 
+        tr.row-parcial { background-color: #fef9c3 !important; }  
+        tr.row-cancelado { background-color: #e2e8f0 !important; } 
+
+        /* AF com vigência vencida */
+        tr.row-vigencia-vencida {
+            background-color: #fecaca !important;
+            color: #991b1b !important;
+        }
+
+        tr.row-vigencia-vencida td {
+            background-color: #fecaca !important;
+            color: #991b1b !important;
+            border-bottom-color: #fca5a5 !important;
+        }
+
+        tr.row-vigencia-vencida td strong,
+        tr.row-vigencia-vencida td b {
+            color: #7f1d1d !important;
+        }
+
+        tr.row-vigencia-vencida select {
+            background-color: #fee2e2 !important;
+            color: #991b1b !important;
+            border-color: #f87171 !important;
+        }
+
+        .badge-vigencia-vencida {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #dc2626;
+            color: white !important;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
         
-        body.printing-oficio .print-oficio-template { display: block !important; }
-    }
-    
-    .print-header-minimal, .print-oficio-template { display: none; }
+        /* Cabeçalho Oficial Web */
+        .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
+        .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
 
-    /* UX / Dashboard / Mobile */
-    .quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
-    .quick-nav .btn { font-size:.8rem; }
-    .dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
-    .metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
-    .metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
-    .metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
-    .metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
-    .metric-sub { font-size:.76rem; color:var(--muted); }
-    .metric-danger { border-top:4px solid #dc2626; }
-    .metric-warning { border-top:4px solid #f59e0b; }
-    .metric-info { border-top:4px solid #2563eb; }
-    .metric-success { border-top:4px solid #16a34a; }
-    .metric-purple { border-top:4px solid #7c3aed; }
-    .metric-dark { border-top:4px solid #475569; }
-    .home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
-    .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
-    .panel h3 { margin-bottom:12px; font-size:1rem; }
-    .priority-list { display:flex; flex-direction:column; gap:8px; }
-    .priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; cursor:pointer; }
-    .priority-main { min-width:0; }
-    .priority-title { font-weight:750; font-size:.88rem; }
-    .priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
-    .tag-danger { background:#fee2e2; color:#b91c1c; }
-    .tag-warning { background:#fef3c7; color:#a16207; }
-    .tag-info { background:#dbeafe; color:#1d4ed8; }
-    .tag-success { background:#dcfce7; color:#15803d; }
-    .empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
-    .notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
-    .notification-panel.open { display:block; }
-    .notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
-    .notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
-    .notification-item:hover { background:#f8fafc; }
-    .notification-item:last-child { border-bottom:none; }
-    .notif-title { font-weight:750; font-size:.84rem; }
-    .notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
-    .notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
-    .data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
-    .health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
+        /* Dashboard de Alertas e Financeiro */
+        .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .alert-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border-left: 5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .alert-card.atraso { border-left-color: #f97316; background: #fff7ed; }
+        .alert-card.notificar { border-left-color: #ea580c; background: #ffedd5; }
+        .alert-card.advertir { border-left-color: #dc2626; background: #fef2f2; }
+        .alert-card.multar { border-left-color: #991b1b; background: #fee2e2; }
+        .alert-card.financeiro { border-left-color: var(--primary); background: #eff6ff; }
+        .alert-card h4 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .alert-card .count { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
 
-    @media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
-    @media (max-width:700px){
-        body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
-        .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
-        #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
-    }
-</style>
+        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+        
+        button, .btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; text-decoration: none; }
+        button:hover, .btn:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); }
+        .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-cobranca { background: #0284c7; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-parcial { background: #8b5cf6; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-cancelar { background: #475569; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
+        .btn-mini { padding: 2px 5px; font-size: 0.7rem; border-radius: 4px; }
 
+        .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+        .excel-actions { display: flex; gap: 10px; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        th { background: #f1f5f9; font-weight: 600; color: #334155; }
+
+        .status-online { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 12px; }
+        .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
+
+        .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
+        
+        .badge-prazo { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
+        .badge-ok { background: #dcfce7; color: #16a34a; }
+        .badge-hoje { background: #fef9c3; color: #ca8a04; }
+        .badge-atrasado { background: #fee2e2; color: #dc2626; }
+
+        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .item-parcial-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px dashed #e2e8f0; }
+        .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
+        
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+
+        /* Filtro Alfabético */
+        .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+        .alphabet-btn { background: #f8fafc; border: 1px solid var(--border); color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.15s ease; }
+        .alphabet-btn:hover { background: #e2e8f0; }
+        .alphabet-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+        /* IMPRESSÃO ISOLADA */
+        @media print {
+            body { background: white !important; padding: 0 !important; color: #000 !important; }
+            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini, .alphabet-filter { display: none !important; }
+            .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            
+            body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
+            body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
+            body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
+            body.printing-relatorio .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+            body.printing-relatorio table { display: table !important; width: 100% !important; border: 1px solid #000 !important; margin-top: 10px; }
+            body.printing-relatorio th { background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #000 !important; font-size: 0.75rem !important; text-transform: uppercase; }
+            body.printing-relatorio td { border: 1px solid #000 !important; font-size: 0.75rem !important; padding: 6px !important; vertical-align: top; }
+            body.printing-relatorio .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
+            body.printing-relatorio .history-list { border: none; padding: 0; background: transparent; }
+        }
+        
+        .print-header-minimal { display: none; }
+
+        /* UX / Dashboard / Mobile */
+        .quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
+        .quick-nav .btn { font-size:.8rem; }
+        .dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+        .metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
+        .metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
+        .metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
+        .metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
+        .metric-sub { font-size:.76rem; color:var(--muted); }
+        .metric-danger { border-top:4px solid #dc2626; }
+        .metric-warning { border-top:4px solid #f59e0b; }
+        .metric-info { border-top:4px solid #2563eb; }
+        .metric-success { border-top:4px solid #16a34a; }
+        .metric-purple { border-top:4px solid #7c3aed; }
+        .metric-dark { border-top:4px solid #475569; }
+        .home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
+        .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+        .panel h3 { margin-bottom:12px; font-size:1rem; }
+        .priority-list { display:flex; flex-direction:column; gap:8px; }
+        .priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; cursor:pointer; }
+        .priority-main { min-width:0; }
+        .priority-title { font-weight:750; font-size:.88rem; }
+        .priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
+        .tag-danger { background:#fee2e2; color:#b91c1c; }
+        .tag-warning { background:#fef3c7; color:#a16207; }
+        .tag-info { background:#dbeafe; color:#1d4ed8; }
+        .tag-success { background:#dcfce7; color:#15803d; }
+        .empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
+        .notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
+        .notification-panel.open { display:block; }
+        .notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
+        .notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
+        .notification-item:hover { background:#f8fafc; }
+        .notification-item:last-child { border-bottom:none; }
+        .notif-title { font-weight:750; font-size:.84rem; }
+        .notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
+        .notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
+        .data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
+        .health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
+
+        @media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
+        @media (max-width:700px){
+            body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
+            .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
+            #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
+        }
+    </style>
 </head>
 <body>
 
 <!-- Tela de Login -->
-
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <h2 style="margin-bottom: 5px; color: #1e293b;">🏛️ Acesso ao Sistema</h2>
@@ -243,29 +230,6 @@ tr.row-vigencia-vencida select {
 </div>
 
 <div class="container">
-    <!-- MODELO DE NOTIFICAÇÃO -->
-    <div id="oficioTemplate" class="print-oficio-template" style="padding: 20px; font-family: 'Times New Roman', serif; color: #000;">
-        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 25px;">
-            <h2 id="oficioPrefNome" style="font-size: 1.25rem; text-transform: uppercase; margin-bottom: 4px; font-weight: bold;">PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ</h2>
-            <h3 id="oficioDeptoNome" style="font-size: 1.05rem; font-weight: bold; margin-bottom: 4px;">SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE</h3>
-            <p style="font-size: 0.85rem; color: #111;">Rua Minas Gerais, 1.742 - Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
-        </div>
-
-    <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
-
-    <p style="font-size: 1rem; font-weight: bold; margin-bottom: 20px;">OFÍCIO DE NOTIFICAÇÃO DE ATRASO Nº <span id="oficioNumero">-</span>/2026</p>
-
-    <div style="margin-bottom: 25px; line-height: 1.6; font-size: 1rem;">
-        <strong>À Empresa:</strong> <span id="oficioEmpresa">-</span><br>
-        <strong>Assunto:</strong> NOTIFICAÇÃO POR DESCUMPRIMENTO DE PRAZO DE ENTREGA<br>
-        <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
-    </div>
-
-    <div style="text-align: justify; line-height: 1.8; font-size: 1rem;">
-        Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
-        Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de adoção das medidas administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
-    </div>
-</div>
 
 <!-- Cabeçalho do Relatório Minimalista -->
 <div id="printHeaderMinimal" class="print-header-minimal">
@@ -498,7 +462,7 @@ tr.row-vigencia-vencida select {
 
     <div class="controls-group">
         <label>Ordenar por:</label>
-        <select id="sortSelect" onchange="()">
+        <select id="sortSelect" onchange="renderTable()">
             <option value="prazo">Prazo de Entrega (Próximos/Atrasados)</option>
             <option value="fornecedor">Fornecedor (A-Z)</option>
             <option value="vigencia">Vigência da Ata (Próximos do Vencimento)</option>
@@ -529,6 +493,27 @@ tr.row-vigencia-vencida select {
 </div>
 
 <!-- Modais do Sistema -->
+
+<!-- Modal Anexar Notificação em PDF -->
+<div id="modalAnexoNotificacao" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+        <h3>📎 Anexar Notificação (PDF)</h3>
+        <br>
+        <input type="hidden" id="anexoAfId">
+        <div style="margin-bottom: 15px;">
+            <label>Selecione o arquivo PDF</label>
+            <input type="file" id="arquivoNotificacaoInput" accept="application/pdf" style="padding: 6px;">
+        </div>
+        <div id="anexoAtualContainer" style="display:none; margin-bottom: 15px; font-size: 0.85rem;">
+            <span>Documento atual: </span>
+            <a id="anexoAtualLink" href="#" target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: underline;">📄 Ver PDF anexado</a>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn-outline" onclick="closeModalAnexo()">Cancelar</button>
+            <button type="button" class="btn btn-success" id="btnSalvarAnexo" onclick="salvarAnexoNotificacao()">Salvar PDF</button>
+        </div>
+    </div>
+</div>
 
 <div id="modalConfig" class="modal">
     <div class="modal-content" style="max-width: 550px;">
@@ -671,24 +656,23 @@ tr.row-vigencia-vencida select {
             </div>
         </form>
 
-    <h4>Setores Ativos:</h4>
-    <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
-        <table style="width: 100%;">
-            <thead>
-                <tr>
-                    <th>Identificador</th>
-                    <th>Cor</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="setoresTableBody"></tbody>
-        </table>
+        <h4>Setores Ativos:</h4>
+        <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Identificador</th>
+                        <th>Cor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="setoresTableBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="button" class="btn-outline" onclick="closeModalSetores()">Fechar</button>
+        </div>
     </div>
-    <div style="margin-top: 20px; text-align: right;">
-        <button type="button" class="btn-outline" onclick="closeModalSetores()">Fechar</button>
-    </div>
-</div>
-
 </div>
 
 <div id="modalUsuarios" class="modal">
@@ -717,24 +701,23 @@ tr.row-vigencia-vencida select {
             <button type="submit" class="btn btn-success" style="width: 100%; margin-top:10px;">+ Cadastrar Funcionário</button>
         </form>
 
-    <h4>Funcionários Cadastrados:</h4>
-    <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
-        <table style="width: 100%;">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Usuário</th>
-                    <th>Cargo</th>
-                </tr>
-            </thead>
-            <tbody id="usuariosTableBody"></tbody>
-        </table>
+        <h4>Funcionários Cadastrados:</h4>
+        <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Usuário</th>
+                        <th>Cargo</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosTableBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="button" class="btn-outline" onclick="closeModalUsuarios()">Fechar</button>
+        </div>
     </div>
-    <div style="margin-top: 20px; text-align: right;">
-        <button type="button" class="btn-outline" onclick="closeModalUsuarios()">Fechar</button>
-    </div>
-</div>
-
 </div>
 
 <div id="modalCobranca" class="modal">
@@ -758,7 +741,6 @@ tr.row-vigencia-vencida select {
 </div>
 
 <!-- Modal Registrar / Editar Entrega Parcial -->
-
 <div id="modalParcial" class="modal">
     <div class="modal-content">
         <h3 id="modalParcialTitle">📦 Registrar Entrega Parcial</h3>
@@ -784,27 +766,6 @@ tr.row-vigencia-vencida select {
     </div>
 </div>
 
-<!-- Modal Anexar Notificação em PDF -->
-<div id="modalAnexoNotificacao" class="modal">
-    <div class="modal-content" style="max-width: 450px;">
-        <h3>📎 Anexar Notificação (PDF)</h3>
-        <br>
-        <input type="hidden" id="anexoAfId">
-        <div style="margin-bottom: 15px;">
-            <label>Selecione o arquivo PDF</label>
-            <input type="file" id="arquivoNotificacaoInput" accept="application/pdf" style="padding: 6px;">
-        </div>
-        <div id="anexoAtualContainer" style="display:none; margin-bottom: 15px; font-size: 0.85rem;">
-            <span>Documento atual: </span>
-            <a id="anexoAtualLink" href="#" target="_blank" style="color: var(--primary); font-weight: bold;">📄 Ver PDF anexado</a>
-        </div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-            <button type="button" class="btn-outline" onclick="closeModalAnexo()">Cancelar</button>
-            <button type="button" class="btn btn-success" id="btnSalvarAnexo" onclick="salvarAnexoNotificacao()">Salvar PDF</button>
-        </div>
-    </div>
-</div>
-    
 <script>
     const SUPABASE_URL = "https://adunochvwwfynngzsszg.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wzosuw4QDpJfthg3pPpE3g_wv8GwNw6";
@@ -812,7 +773,7 @@ tr.row-vigencia-vencida select {
 
     let afs = [];
     let setores = [];
-    let selectedLetter = ''; // Armazena filtro de letra inicial
+    let selectedLetter = '';
     let configSys = {
         nome_prefeitura: 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ',
         cnpj_prefeitura: '46.634.168/0001-50',
@@ -981,6 +942,84 @@ tr.row-vigencia-vencida select {
         }
     }
 
+    /* Modal Anexar Notificação em PDF */
+    function openModalAnexoNotificacao(id) {
+        const af = afs.find(item => item.id === id);
+        if (!af) return;
+
+        document.getElementById('anexoAfId').value = id;
+        document.getElementById('arquivoNotificacaoInput').value = '';
+        
+        const anexoContainer = document.getElementById('anexoAtualContainer');
+        const anexoLink = document.getElementById('anexoAtualLink');
+
+        if (af.anexo_notificacao) {
+            anexoContainer.style.display = 'block';
+            anexoLink.href = af.anexo_notificacao;
+        } else {
+            anexoContainer.style.display = 'none';
+        }
+
+        document.getElementById('modalAnexoNotificacao').style.display = 'flex';
+    }
+
+    function closeModalAnexo() {
+        document.getElementById('modalAnexoNotificacao').style.display = 'none';
+    }
+
+    async function salvarAnexoNotificacao() {
+        const id = parseInt(document.getElementById('anexoAfId').value);
+        const fileInput = document.getElementById('arquivoNotificacaoInput');
+        const file = fileInput.files[0];
+        const btn = document.getElementById('btnSalvarAnexo');
+
+        if (!file) {
+            alert('Por favor, selecione um arquivo PDF.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = 'Enviando...';
+
+        const af = afs.find(item => item.id === id);
+        const fileExt = file.name.split('.').pop();
+        const fileName = `notificacao_af_${id}_${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await _supabase.storage
+            .from('notificacoes')
+            .upload(fileName, file, { upsert: true });
+
+        if (uploadError) {
+            alert('❌ Erro ao enviar PDF: ' + uploadError.message);
+            btn.disabled = false;
+            btn.innerText = 'Salvar PDF';
+            return;
+        }
+
+        const { data: publicUrlData } = _supabase.storage
+            .from('notificacoes')
+            .getPublicUrl(fileName);
+
+        const fileUrl = publicUrlData.publicUrl;
+
+        const { error: dbError } = await _supabase
+            .from('afs')
+            .update({ anexo_notificacao: fileUrl })
+            .eq('id', id);
+
+        btn.disabled = false;
+        btn.innerText = 'Salvar PDF';
+
+        if (dbError) {
+            alert('❌ Erro ao salvar anexo no banco: ' + dbError.message);
+        } else {
+            registrarLog(`Anexou notificação em PDF na AF: ${af ? (af.numaf || af.numAf) : id}`, af ? (af.numaf || af.numAf) : '-');
+            alert('✅ Notificação em PDF anexada com sucesso!');
+            closeModalAnexo();
+            fetchAfs();
+        }
+    }
+
     async function fetchSetores() {
         const { data } = await _supabase.from('setores').select('*');
         setores = data || [
@@ -1137,33 +1176,6 @@ tr.row-vigencia-vencida select {
             `;
             tbody.appendChild(tr);
         });
-    }
-
-    function gerarOficioNotificacao(id) {
-        const af = afs.find(item => item.id === id);
-        if(!af) return;
-
-        const dataHojeStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-        
-        document.getElementById('oficioPrefNome').innerText = (configSys.nome_prefeitura || 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ').toUpperCase();
-        document.getElementById('oficioDeptoNome').innerText = (configSys.departamento || 'SECRETARIA MUNICIPAL DA SAÚDE — ALMOXARIFADO DA SAÚDE').toUpperCase();
-        document.getElementById('oficioCnpj').innerText = configSys.cnpj_prefeitura || '46.634.168/0001-50';
-
-        document.getElementById('oficioDataHoje').innerText = dataHojeStr;
-        document.getElementById('oficioNumero').innerText = Math.floor(100 + Math.random() * 900).toString().padStart(3, '0');
-        document.getElementById('oficioEmpresa').innerText = af.fornecedor || '-';
-        document.getElementById('oficioAf').innerText = af.numaf || af.numAf || '-';
-        document.getElementById('oficioEmpenho').innerText = af.numempenho || af.numEmpenho || 'N/A';
-        document.getElementById('oficioPrazo').innerText = formatDate(af.prazoentrega || af.prazoEntrega);
-
-        registrarLog(`Emitiu Ofício de Notificação para ${af.fornecedor}`, af.numaf || af.numAf);
-
-        document.body.className = 'printing-oficio';
-        window.print();
-
-        setTimeout(() => {
-            document.body.className = '';
-        }, 500);
     }
 
     async function openModalUsuarios() { document.getElementById('modalUsuarios').style.display = 'flex'; fetchUsuarios(); }
@@ -1394,7 +1406,7 @@ tr.row-vigencia-vencida select {
         }
     }
 
-    /* ===== Dashboard, notificações e filtros rápidos ===== */
+    /* Dashboard e filtros */
     function scrollToSection(id) {
         const el = document.getElementById(id); if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
     }
@@ -1598,30 +1610,28 @@ tr.row-vigencia-vencida select {
         });
 
         filtered.forEach(af => {
-    const tr = document.createElement('tr');
-    const currentStatus = af.statussancao || af.statusSancao || 'Regular';
+            const tr = document.createElement('tr');
+            const currentStatus = af.statussancao || af.statusSancao || 'Regular';
 
-    // Status visual atual
-    if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
-    if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
-    if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
+            // Status visual atual
+            if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
+            if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
+            if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
 
-    // Verifica se a AF ainda está em aberto e se a vigência venceu
-    const isEmAberto = currentStatus !== 'Entregue' && currentStatus !== 'Saldo Cancelado';
-    const vigenciaStr = af.vigenciaata || af.vigenciaAta;
-    let vigenciaVencida = false;
+            // Verifica se a vigência venceu SOMENTE para pedidos em aberto
+            const isEmAberto = currentStatus !== 'Entregue' && currentStatus !== 'Saldo Cancelado';
+            const vigenciaStr = af.vigenciaata || af.vigenciaAta;
+            let vigenciaVencida = false;
 
-    if (isEmAberto && vigenciaStr) {
-        const dataVigencia = new Date(vigenciaStr + 'T23:59:59');
-        const agoraVigencia = new Date();
+            if (isEmAberto && vigenciaStr) {
+                const dataVigencia = new Date(vigenciaStr + 'T23:59:59');
+                const agoraVigencia = new Date();
+                vigenciaVencida = dataVigencia < agoraVigencia;
+            }
 
-        vigenciaVencida = dataVigencia < agoraVigencia;
-    }
-
-    // Se estiver em aberto e com vigência vencida, aplica o destaque vermelho
-    if (vigenciaVencida) {
-        tr.classList.add('row-vigencia-vencida');
-    }
+            if (vigenciaVencida) {
+                tr.classList.add('row-vigencia-vencida');
+            }
 
             const setorObj = setores.find(s => s.nome === af.setor);
             const setorCor = setorObj ? setorObj.cor : '#2563eb';
@@ -1666,6 +1676,19 @@ tr.row-vigencia-vencida select {
                 `).join('');
             }
 
+            // Bloco de anexo PDF na coluna de Ações
+            let anexoHtml = '';
+            if (af.anexo_notificacao) {
+                anexoHtml = `
+                    <a href="${af.anexo_notificacao}" target="_blank" class="btn btn-success btn-mini" title="Abrir PDF anexado">📄 Ver PDF</a>
+                    <button class="btn btn-oficio btn-mini" onclick="openModalAnexoNotificacao(${af.id})" title="Substituir PDF">📎 Trocar PDF</button>
+                `;
+            } else {
+                anexoHtml = `
+                    <button class="btn btn-oficio" onclick="openModalAnexoNotificacao(${af.id})">📎 Anexar PDF</button>
+                `;
+            }
+
             tr.innerHTML = `
                 <td><span class="setor-badge" style="background-color: ${setorCor};">${escapeHtml(af.setor || 'Geral')}</span></td>
                 <td><strong>${escapeHtml(af.numaf || af.numAf || '')}</strong>${af.numempenho ? `<br><small style="color:#64748b;">Emp: ${escapeHtml(af.numempenho)}</small>` : ''}</td>
@@ -1677,12 +1700,9 @@ tr.row-vigencia-vencida select {
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
                 <td>
-    ${formatDate(af.vigenciaata || af.vigenciaAta)}
-    ${vigenciaVencida 
-        ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' 
-        : ''
-    }
-</td>
+                    ${formatDate(af.vigenciaata || af.vigenciaAta)}
+                    ${vigenciaVencida ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' : ''}
+                </td>
                 <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id}, -1)">📦 + Reg. Parcial</button>
@@ -1699,12 +1719,7 @@ tr.row-vigencia-vencida select {
                     <select onchange="tratarMudancaStatusSelect(${af.id}, this.value)" style="width: auto; font-weight: bold;">
                         <option value="Regular" ${currentStatus === 'Regular' ? 'selected' : ''}>Regular</option>
                         <option value="Cobrar" ${currentStatus === 'Cobrar' ? 'selected' : ''}>Cobrar</option>
-                        <option value="Notificar" // NOVO CÓDIGO (Anexar / Ver PDF):
-${af.anexo_notificacao 
-    ? `<a href="${af.anexo_notificacao}" target="_blank" class="btn btn-mini" style="background:#16a34a; text-decoration:none;">📄 Ver PDF</a>
-       <button class="btn btn-oficio btn-mini" onclick="openModalAnexoNotificacao(${af.id})">📎 Trocar PDF</button>` 
-    : `<button class="btn btn-oficio" onclick="openModalAnexoNotificacao(${af.id})">📎 Anexar PDF</button>`
-}>Notificar</option>
+                        <option value="Notificar" ${currentStatus === 'Notificar' ? 'selected' : ''}>Notificar</option>
                         <option value="Advertir" ${currentStatus === 'Advertir' ? 'selected' : ''}>Advertir</option>
                         <option value="Multar" ${currentStatus === 'Multar' ? 'selected' : ''}>Multar</option>
                         <option value="Entrega Parcial" ${currentStatus === 'Entrega Parcial' ? 'selected' : ''}>Entrega Parcial</option>
@@ -1715,7 +1730,7 @@ ${af.anexo_notificacao
                 </td>
                 <td class="actions-cell no-print">
                     <button class="btn btn-edit" onclick="editAf(${af.id})">✏️ Editar</button>
-                    ${(currentStatus === 'Notificar' || currentStatus === 'Advertir' || currentStatus === 'Multar' || currentStatus === 'Cobrar') ? `<button class="btn btn-oficio" onclick="gerarOficioNotificacao(${af.id})">📄 Gerar Notificação</button>` : ''}
+                    ${anexoHtml}
                     <button class="btn-delete" onclick="deleteAf(${af.id})">Excluir</button>
                 </td>
             `;
@@ -1781,88 +1796,6 @@ ${af.anexo_notificacao
 
     if(usuarioLogado) initApp();
     window.addEventListener('load', () => { if (afs.length) updateV2Dashboard(); });
-
-    function openModalAnexoNotificacao(id) {
-    const af = afs.find(item => item.id === id);
-    if (!af) return;
-
-    document.getElementById('anexoAfId').value = id;
-    document.getElementById('arquivoNotificacaoInput').value = '';
-    
-    const anexoContainer = document.getElementById('anexoAtualContainer');
-    const anexoLink = document.getElementById('anexoAtualLink');
-
-    if (af.anexo_notificacao) {
-        anexoContainer.style.display = 'block';
-        anexoLink.href = af.anexo_notificacao;
-    } else {
-        anexoContainer.style.display = 'none';
-    }
-
-    document.getElementById('modalAnexoNotificacao').style.display = 'flex';
-}
-
-function closeModalAnexo() {
-    document.getElementById('modalAnexoNotificacao').style.display = 'none';
-}
-
-async function salvarAnexoNotificacao() {
-    const id = parseInt(document.getElementById('anexoAfId').value);
-    const fileInput = document.getElementById('arquivoNotificacaoInput');
-    const file = fileInput.files[0];
-    const btn = document.getElementById('btnSalvarAnexo');
-
-    if (!file) {
-        alert('Por favor, selecione um arquivo PDF.');
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = 'Enviando...';
-
-    const af = afs.find(item => item.id === id);
-    const fileExt = file.name.split('.').pop();
-    const fileName = `notificacao_af_${id}_${Date.now()}.${fileExt}`;
-
-    // Upload no Supabase Storage (Bucket: notificacoes)
-    const { error: uploadError } = await _supabase.storage
-        .from('notificacoes')
-        .upload(fileName, file, { upsert: true });
-
-    if (uploadError) {
-        alert('❌ Erro ao enviar PDF: ' + uploadError.message);
-        btn.disabled = false;
-        btn.innerText = 'Salvar PDF';
-        return;
-    }
-
-    // Obter URL pública do arquivo
-    const { data: publicUrlData } = _supabase.storage
-        .from('notificacoes')
-        .getPublicUrl(fileName);
-
-    const fileUrl = publicUrlData.publicUrl;
-
-    // Atualizar no banco de dados
-    const { error: dbError } = await _supabase
-        .from('afs')
-        .update({ anexo_notificacao: fileUrl })
-        .eq('id', id);
-
-    btn.disabled = false;
-    btn.innerText = 'Salvar PDF';
-
-    if (dbError) {
-        alert('❌ Erro ao salvar anexo no banco: ' + dbError.message);
-    } else {
-        registrarLog(`Anexou notificação em PDF na AF: ${af ? (af.numaf || af.numAf) : id}`, af ? (af.numaf || af.numAf) : '-');
-        alert('✅ Notificação em PDF anexada com sucesso!');
-        closeModalAnexo();
-        fetchAfs();
-    }
-}
-    
 </script>
-
 </body>
 </html>
