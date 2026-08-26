@@ -1719,7 +1719,7 @@
                     <select onchange="tratarMudancaStatusSelect(${af.id}, this.value)" style="width: auto; font-weight: bold;">
                         <option value="Regular" ${currentStatus === 'Regular' ? 'selected' : ''}>Regular</option>
                         <option value="Cobrar" ${currentStatus === 'Cobrar' ? 'selected' : ''}>Cobrar</option>
-                        <option value="Notificar" ${currentStatus === 'Notificar' ? 'selected' : ''}>Notificar</option>
+                        <option value="Notificar" ${af.anexo_notificacao ? `<a href="${af.anexo_notificacao}" target="_blank" class="btn btn-mini" style="background:#16a34a; text-decoration:none;">📄 Ver PDF</a><button type="button" class="btn btn-oficio btn-mini" onclick="openModalAnexoNotificacao(${af.id})">📎 Trocar PDF</button>` : `<button type="button" class="btn btn-oficio" onclick="openModalAnexoNotificacao(${af.id})">📎 Anexar PDF</button>`}>Notificar</option>
                         <option value="Advertir" ${currentStatus === 'Advertir' ? 'selected' : ''}>Advertir</option>
                         <option value="Multar" ${currentStatus === 'Multar' ? 'selected' : ''}>Multar</option>
                         <option value="Entrega Parcial" ${currentStatus === 'Entrega Parcial' ? 'selected' : ''}>Entrega Parcial</option>
