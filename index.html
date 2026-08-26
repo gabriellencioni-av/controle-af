@@ -26,10 +26,24 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 16px; line-height: 1.5; }
         
+        body {
+            background-color: #f1f5f9;
+            /* Padrão sutil com comprimidos, cápsulas, cruz da saúde e caixas */
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2364748b' fill-opacity='0.045' fill-rule='evenodd'%3E%3Cpath d='M10 15 a5 5 0 0 1 10 0 v8 a5 5 0 0 1 -10 0 z' /%3E%3Cline x1='10' y1='19' x2='20' y2='19' stroke='%2364748b' stroke-opacity='0.045' stroke-width='1'/%3E%3Ccircle cx='60' cy='20' r='7' /%3E%3Cline x1='55' y1='20' x2='65' y2='20' stroke='%23f1f5f9' stroke-width='1.2'/%3E%3Cpath d='M18 55 h4 v-4 h4 v4 h4 v4 h-4 v4 h-4 v-4 h-4 z' /%3E%3Crect x='50' y='50' width='14' height='12' rx='2' /%3E%3Cpath d='M50 54 h14' stroke='%23f1f5f9' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            color: var(--text);
+            padding: 16px;
+            line-height: 1.5;
+        }
+
         .container { max-width: 1400px; margin: 0 auto; }
         
+        .card, .panel, .metric-card, .header-official, table {
+            background: rgba(255, 255, 255, 0.96) !important;
+            backdrop-filter: blur(4px);
+        }
+
         /* Modal de Login */
         .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
@@ -74,7 +88,7 @@
         }
         
         /* Cabeçalho Oficial Web */
-        .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-official { padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
         .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
 
@@ -89,7 +103,7 @@
         .alert-card h4 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
         .alert-card .count { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
 
-        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card { padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
         
         label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
@@ -111,9 +125,9 @@
         .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
         .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
-        .excel-actions { display: flex; gap: 10px; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .excel-actions { display: flex; gap: 10px; background: rgba(255,255,255,0.95); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
         th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
         th { background: #f1f5f9; font-weight: 600; color: #334155; }
 
@@ -127,7 +141,7 @@
         .badge-hoje { background: #fef9c3; color: #ca8a04; }
         .badge-atrasado { background: #fee2e2; color: #dc2626; }
 
-        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
+        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.85); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
         .item-parcial-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px dashed #e2e8f0; }
         .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
         
@@ -135,7 +149,7 @@
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
         /* Filtro Alfabético */
-        .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+        .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: rgba(255,255,255,0.95); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
         .alphabet-btn { background: #f8fafc; border: 1px solid var(--border); color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.15s ease; }
         .alphabet-btn:hover { background: #e2e8f0; }
         .alphabet-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
@@ -163,7 +177,7 @@
         .quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
         .quick-nav .btn { font-size:.8rem; }
         .dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
-        .metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
+        .metric-card { border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
         .metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
         .metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
         .metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
@@ -175,7 +189,7 @@
         .metric-purple { border-top:4px solid #7c3aed; }
         .metric-dark { border-top:4px solid #475569; }
         .home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
-        .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+        .panel { border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
         .panel h3 { margin-bottom:12px; font-size:1rem; }
         .priority-list { display:flex; flex-direction:column; gap:8px; }
         .priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; cursor:pointer; }
@@ -794,6 +808,7 @@
         const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const passIn = document.getElementById('loginSenha').value.trim();
 
+        // Login de Administrador Fallback
         if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
@@ -803,21 +818,26 @@
             return;
         }
 
-        const { data } = await _supabase.from('usuarios').select('*');
-        let found = false;
-        if (data && data.length > 0) {
-            const userMatch = data.find(u => String(u.usuario || '').trim().toLowerCase() === userIn && String(u.senha || '').trim() === passIn);
-            if (userMatch) {
-                usuarioLogado = userMatch;
-                sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
-                found = true;
-                initApp();
+        try {
+            const { data, error } = await _supabase.from('usuarios').select('*');
+            let found = false;
+            if (data && data.length > 0) {
+                const userMatch = data.find(u => String(u.usuario || '').trim().toLowerCase() === userIn && String(u.senha || '').trim() === passIn);
+                if (userMatch) {
+                    usuarioLogado = userMatch;
+                    sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+                    found = true;
+                    initApp();
+                }
             }
-        }
 
-        if (!found) alert("❌ Usuário ou senha incorretos!");
+            if (!found) alert("❌ Usuário ou senha incorretos!");
+        } catch (err) {
+            console.error(err);
+            alert("❌ Erro ao conectar ao banco de dados.");
+        }
     });
 
     function logout() {
@@ -933,13 +953,34 @@
         const novoStatus = document.getElementById('obsSancaoNovoStatus').value;
         const textoObs = document.getElementById('obsSancaoTexto').value.trim();
 
-        const af = afs.find(item => item.id === id);
-        if(af) {
-            await _supabase.from('afs').update({ statussancao: novoStatus, obs_sancao: textoObs }).eq('id', id);
-            registrarLog(`Atualizou sanção para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
-            closeModalObsSancao();
-            fetchAfs();
+        const af = afs.find(item => Number(item.id) === id);
+        
+        const payload = { 
+            statussancao: novoStatus, 
+            obs_sancao: textoObs 
+        };
+
+        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+            payload.data_conclusao = new Date().toISOString();
         }
+
+        const { error } = await _supabase
+            .from('afs')
+            .update(payload)
+            .eq('id', id);
+
+        if (error) {
+            alert("❌ Erro ao salvar sanção: " + error.message);
+            console.error("Erro ao salvar sanção:", error);
+            return;
+        }
+
+        if (af) {
+            registrarLog(`Atualizou sanção para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+        }
+        
+        closeModalObsSancao();
+        await fetchAfs();
     }
 
     /* Modal Anexar Notificação em PDF */
@@ -1381,63 +1422,22 @@
     }
 
     function tratarMudancaStatusSelect(id, novoStatus) {
-    alterarStatusManual(id, novoStatus);
-} else {
-            alterarStatusManual(id, novoStatus);
-        }
+        alterarStatusManual(id, novoStatus);
     }
 
-  async function alterarStatusManual(id, novoStatus) {
-    const idNum = parseInt(id);
-    const af = afs.find(item => Number(item.id) === idNum);
-    
-    // Atualiza imediatamente na memória local para não dar recuo visual
-    if (af) {
-        af.statussancao = novoStatus;
-        af.statusSancao = novoStatus;
-        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
-            af.data_conclusao = new Date().toISOString();
-        }
-    }
-
-    const payload = { statussancao: novoStatus };
-    if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
-        payload.data_conclusao = new Date().toISOString();
-    }
-
-    const { error } = await _supabase
-        .from('afs')
-        .update(payload)
-        .eq('id', idNum);
-
-    if (error) {
-        alert("❌ Erro ao atualizar status no banco: " + error.message);
-        console.error("Erro no update de status:", error);
-    } else {
+    async function alterarStatusManual(id, novoStatus) {
+        const idNum = parseInt(id);
+        const af = afs.find(item => Number(item.id) === idNum);
+        
         if (af) {
-            registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            af.statussancao = novoStatus;
+            af.statusSancao = novoStatus;
+            if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+                af.data_conclusao = new Date().toISOString();
+            }
         }
-    }
 
-    // Re-renderiza a tabela e atualiza os dashboards
-    saveAndRenderLocal();
-}
-        
-        await fetchAfs();
-    }
-
-    async function saveObsSancao() {
-        const id = parseInt(document.getElementById('obsSancaoAfId').value);
-        const novoStatus = document.getElementById('obsSancaoNovoStatus').value;
-        const textoObs = document.getElementById('obsSancaoTexto').value.trim();
-
-        const af = afs.find(item => Number(item.id) === id);
-        
-        const payload = { 
-            statussancao: novoStatus, 
-            obs_sancao: textoObs 
-        };
-
+        const payload = { statussancao: novoStatus };
         if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
             payload.data_conclusao = new Date().toISOString();
         }
@@ -1445,20 +1445,18 @@
         const { error } = await _supabase
             .from('afs')
             .update(payload)
-            .eq('id', id);
+            .eq('id', idNum);
 
         if (error) {
-            alert("❌ Erro ao salvar sanção: " + error.message);
-            console.error("Erro ao salvar sanção:", error);
-            return;
+            alert("❌ Erro ao atualizar status no banco: " + error.message);
+            console.error("Erro no update de status:", error);
+        } else {
+            if (af) {
+                registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            }
         }
 
-        if (af) {
-            registrarLog(`Atualizou sanção para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
-        }
-        
-        closeModalObsSancao();
-        await fetchAfs();
+        saveAndRenderLocal();
     }
 
     async function deleteAf(id) {
@@ -1677,12 +1675,10 @@
             const tr = document.createElement('tr');
             const currentStatus = af.statussancao || af.statusSancao || 'Regular';
 
-            // Status visual atual
             if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
             if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
             if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
 
-            // Verifica se a vigência venceu SOMENTE para pedidos em aberto
             const isEmAberto = currentStatus !== 'Entregue' && currentStatus !== 'Saldo Cancelado';
             const vigenciaStr = af.vigenciaata || af.vigenciaAta;
             let vigenciaVencida = false;
@@ -1740,19 +1736,6 @@
                 `).join('');
             }
 
-            // Bloco de anexo PDF na coluna de Ações
-            let anexoHtml = '';
-            if (af.anexo_notificacao) {
-                anexoHtml = `
-                    <a href="${af.anexo_notificacao}" target="_blank" class="btn btn-success btn-mini" title="Abrir PDF anexado">📄 Ver PDF</a>
-                    <button class="btn btn-oficio btn-mini" onclick="openModalAnexoNotificacao(${af.id})" title="Substituir PDF">📎 Trocar PDF</button>
-                `;
-            } else {
-                anexoHtml = `
-                    <button class="btn btn-oficio" onclick="openModalAnexoNotificacao(${af.id})">📎 Anexar PDF</button>
-                `;
-            }
-
             tr.innerHTML = `
                 <td><span class="setor-badge" style="background-color: ${setorCor};">${escapeHtml(af.setor || 'Geral')}</span></td>
                 <td><strong>${escapeHtml(af.numaf || af.numAf || '')}</strong>${af.numempenho ? `<br><small style="color:#64748b;">Emp: ${escapeHtml(af.numempenho)}</small>` : ''}</td>
@@ -1779,7 +1762,7 @@
                     ${cobrancasHtml ? `<div class="history-list">${cobrancasHtml}</div>` : ''}
                     ${af.observacoes ? `<div style="font-size:0.75rem; color:#475569; margin-top:4px;"><b>Obs:</b> ${escapeHtml(af.observacoes)}</div>` : ''}
                 </td>
-               <td>
+                <td>
                     <select onchange="tratarMudancaStatusSelect(${af.id}, this.value)" style="width: auto; font-weight: bold;">
                         <option value="Regular" ${currentStatus === 'Regular' ? 'selected' : ''}>Regular</option>
                         <option value="Cobrar" ${currentStatus === 'Cobrar' ? 'selected' : ''}>Cobrar</option>
@@ -1866,24 +1849,4 @@
     window.addEventListener('load', () => { if (afs.length) updateV2Dashboard(); });
 </script>
 </body>
-    body {
-    background-color: #f1f5f9;
-    /* Padrão sutil com ícones de comprimidos, cápsulas e caixas */
-    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2364748b' fill-opacity='0.045' fill-rule='evenodd'%3E%3C!-- Cápsula --%3E%3Cpath d='M10 15 a5 5 0 0 1 10 0 v8 a5 5 0 0 1 -10 0 z' /%3E%3Cline x1='10' y1='19' x2='20' y2='19' stroke='%2364748b' stroke-opacity='0.045' stroke-width='1'/%3E%3C!-- Comprimido Circular --%3E%3Ccircle cx='60' cy='20' r='7' /%3E%3Cline x1='55' y1='20' x2='65' y2='20' stroke='%23f1f5f9' stroke-width='1.2'/%3E%3C!-- Cruz da Saúde --%3E%3Cpath d='M18 55 h4 v-4 h4 v4 h4 v4 h-4 v4 h-4 v-4 h-4 z' /%3E%3C!-- Caixa de Remédio --%3E%3Crect x='50' y='50' width='14' height='12' rx='2' /%3E%3Cpath d='M50 54 h14' stroke='%23f1f5f9' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
-    background-attachment: fixed;
-    color: var(--text);
-    padding: 16px;
-    line-height: 1.5;
-}
-
-/* Deixar os cards com fundo branco sólido para manter a leitura 100% nítida */
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.card, .panel, .metric-card, .header-official, table {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(4px);
-}
 </html>
