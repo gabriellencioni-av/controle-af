@@ -40,6 +40,40 @@
     tr.row-parcial { background-color: #fef9c3 !important; }  
     tr.row-cancelado { background-color: #e2e8f0 !important; } 
 
+    /* AF com vigência vencida */
+tr.row-vigencia-vencida {
+    background-color: #fecaca !important;
+    color: #991b1b !important;
+}
+
+tr.row-vigencia-vencida td {
+    background-color: #fecaca !important;
+    color: #991b1b !important;
+    border-bottom-color: #fca5a5 !important;
+}
+
+tr.row-vigencia-vencida td strong,
+tr.row-vigencia-vencida td b {
+    color: #7f1d1d !important;
+}
+
+tr.row-vigencia-vencida select {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    border-color: #f87171 !important;
+}
+
+.badge-vigencia-vencida {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #dc2626;
+    color: white !important;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+        
     /* Cabeçalho Oficial Web */
     .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
     .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
@@ -1543,12 +1577,29 @@
         });
 
         filtered.forEach(af => {
-            const tr = document.createElement('tr');
-            const currentStatus = af.statussancao || af.statusSancao || 'Regular';
+    const tr = document.createElement('tr');
+    const currentStatus = af.statussancao || af.statusSancao || 'Regular';
 
-            if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
-            if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
-            if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
+    // Status visual atual
+    if (currentStatus === 'Entregue') tr.classList.add('row-entregue');
+    if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
+    if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
+
+    // Verifica se a vigência da Ata/Contrato venceu
+    const vigenciaStr = af.vigenciaata || af.vigenciaAta;
+    let vigenciaVencida = false;
+
+    if (vigenciaStr) {
+        const dataVigencia = new Date(vigenciaStr + 'T23:59:59');
+        const agoraVigencia = new Date();
+
+        vigenciaVencida = dataVigencia < agoraVigencia;
+    }
+
+    // Se venceu, deixa a linha inteira vermelha
+    if (vigenciaVencida) {
+        tr.classList.add('row-vigencia-vencida');
+    }
 
             const setorObj = setores.find(s => s.nome === af.setor);
             const setorCor = setorObj ? setorObj.cor : '#2563eb';
@@ -1603,7 +1654,13 @@
                     ${saldoCancelado > 0 ? `<small style="color: #64748b;">Cancelado: ${saldoCancelado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>` : ''}
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
-                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
+                <td>
+    ${formatDate(af.vigenciaata || af.vigenciaAta)}
+    ${vigenciaVencida 
+        ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' 
+        : ''
+    }
+</td>
                 <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id}, -1)">📦 + Reg. Parcial</button>
