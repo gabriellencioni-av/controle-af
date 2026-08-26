@@ -1585,18 +1585,19 @@ tr.row-vigencia-vencida select {
     if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
     if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
 
-    // Verifica se a vigência da Ata/Contrato venceu
+    // Verifica se a AF ainda está em aberto e se a vigência venceu
+    const isEmAberto = currentStatus !== 'Entregue' && currentStatus !== 'Saldo Cancelado';
     const vigenciaStr = af.vigenciaata || af.vigenciaAta;
     let vigenciaVencida = false;
 
-    if (vigenciaStr) {
+    if (isEmAberto && vigenciaStr) {
         const dataVigencia = new Date(vigenciaStr + 'T23:59:59');
         const agoraVigencia = new Date();
 
         vigenciaVencida = dataVigencia < agoraVigencia;
     }
 
-    // Se venceu, deixa a linha inteira vermelha
+    // Se estiver em aberto e com vigência vencida, aplica o destaque vermelho
     if (vigenciaVencida) {
         tr.classList.add('row-vigencia-vencida');
     }
