@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -25,202 +26,170 @@
             --shadow: 0 8px 24px rgba(15,23,42,.07);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 16px; line-height: 1.5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; line-height: 1.5; }
+    
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    /* Modal de Login */
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+    /* Destaques de Linha por Status */
+    tr.row-entregue { background-color: #dcfce7 !important; } 
+    tr.row-parcial { background-color: #fef9c3 !important; }  
+    tr.row-cancelado { background-color: #e2e8f0 !important; } 
+
+    /* Cabeçalho Oficial Web */
+    .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
+    .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
+
+    /* Dashboard de Alertas e Financeiro */
+    .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .alert-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border-left: 5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .alert-card.atraso { border-left-color: #f97316; background: #fff7ed; }
+    .alert-card.notificar { border-left-color: #ea580c; background: #ffedd5; }
+    .alert-card.advertir { border-left-color: #dc2626; background: #fef2f2; }
+    .alert-card.multar { border-left-color: #991b1b; background: #fee2e2; }
+    .alert-card.financeiro { border-left-color: var(--primary); background: #eff6ff; }
+    .alert-card h4 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+    .alert-card .count { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
+
+    .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
+    input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+    
+    button, .btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; }
+    button:hover, .btn:hover { opacity: 0.9; }
+    .btn-success { background: var(--success); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: #f1f5f9; }
+    .btn-cobranca { background: #0284c7; padding: 4px 8px; font-size: 0.75rem; }
+    .btn-parcial { background: #8b5cf6; padding: 4px 8px; font-size: 0.75rem; }
+    .btn-cancelar { background: #475569; padding: 4px 8px; font-size: 0.75rem; }
+    .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
+    .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
+    .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
+    .btn-mini { padding: 2px 5px; font-size: 0.7rem; border-radius: 4px; }
+
+    .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+    .excel-actions { display: flex; gap: 10px; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+    table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+    th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #f1f5f9; font-weight: 600; color: #334155; }
+
+    .status-online { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 12px; }
+    .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
+
+    .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
+    
+    .badge-prazo { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
+    .badge-ok { background: #dcfce7; color: #16a34a; }
+    .badge-hoje { background: #fef9c3; color: #ca8a04; }
+    .badge-atrasado { background: #fee2e2; color: #dc2626; }
+
+    .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
+    .item-parcial-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px dashed #e2e8f0; }
+    .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
+    
+    .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+    .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+
+    /* Filtro Alfabético */
+    .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+    .alphabet-btn { background: #f8fafc; border: 1px solid var(--border); color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.15s ease; }
+    .alphabet-btn:hover { background: #e2e8f0; }
+    .alphabet-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+    /* IMPRESSÃO ISOLADA */
+    @media print {
+        body { background: white !important; padding: 0 !important; color: #000 !important; }
+        .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini, .alphabet-filter { display: none !important; }
+        .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
         
-        .container { max-width: 1400px; margin: 0 auto; }
+        body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
+        body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
+        body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
+        body.printing-relatorio .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+        body.printing-relatorio table { display: table !important; width: 100% !important; border: 1px solid #000 !important; margin-top: 10px; }
+        body.printing-relatorio th { background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #000 !important; font-size: 0.75rem !important; text-transform: uppercase; }
+        body.printing-relatorio td { border: 1px solid #000 !important; font-size: 0.75rem !important; padding: 6px !important; vertical-align: top; }
+        body.printing-relatorio .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
+        body.printing-relatorio .history-list { border: none; padding: 0; background: transparent; }
+
+        body.printing-oficio #mainHeader,
+        body.printing-oficio #mainAlerts,
+        body.printing-oficio #mainCardForm,
+        body.printing-oficio #mainExcelActions,
+        body.printing-oficio #mainControls,
+        body.printing-oficio #mainTable,
+        body.printing-oficio #printHeaderMinimal { display: none !important; }
         
-        /* Modal de Login */
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        body.printing-oficio .print-oficio-template { display: block !important; }
+    }
+    
+    .print-header-minimal, .print-oficio-template { display: none; }
 
-        /* Destaques de Linha por Status */
-        tr.row-entregue { background-color: #dcfce7 !important; } 
-        tr.row-parcial { background-color: #fef9c3 !important; }  
-        tr.row-cancelado { background-color: #e2e8f0 !important; }
-/* AF com vigência vencida */
-tr.row-vigencia-vencida {
-    background-color: #fecaca !important;
-    color: #991b1b !important;
-}
+    /* UX / Dashboard / Mobile */
+    .quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
+    .quick-nav .btn { font-size:.8rem; }
+    .dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+    .metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
+    .metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
+    .metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
+    .metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
+    .metric-sub { font-size:.76rem; color:var(--muted); }
+    .metric-danger { border-top:4px solid #dc2626; }
+    .metric-warning { border-top:4px solid #f59e0b; }
+    .metric-info { border-top:4px solid #2563eb; }
+    .metric-success { border-top:4px solid #16a34a; }
+    .metric-purple { border-top:4px solid #7c3aed; }
+    .metric-dark { border-top:4px solid #475569; }
+    .home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
+    .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+    .panel h3 { margin-bottom:12px; font-size:1rem; }
+    .priority-list { display:flex; flex-direction:column; gap:8px; }
+    .priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; cursor:pointer; }
+    .priority-main { min-width:0; }
+    .priority-title { font-weight:750; font-size:.88rem; }
+    .priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
+    .tag-danger { background:#fee2e2; color:#b91c1c; }
+    .tag-warning { background:#fef3c7; color:#a16207; }
+    .tag-info { background:#dbeafe; color:#1d4ed8; }
+    .tag-success { background:#dcfce7; color:#15803d; }
+    .empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
+    .notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
+    .notification-panel.open { display:block; }
+    .notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
+    .notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
+    .notification-item:hover { background:#f8fafc; }
+    .notification-item:last-child { border-bottom:none; }
+    .notif-title { font-weight:750; font-size:.84rem; }
+    .notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
+    .notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
+    .data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
+    .health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
 
-tr.row-vigencia-vencida td {
-    background-color: #fecaca !important;
-    color: #991b1b !important;
-    border-bottom-color: #fca5a5 !important;
-}
+    @media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
+    @media (max-width:700px){
+        body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
+        .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
+        #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
+    }
+</style>
 
-tr.row-vigencia-vencida td strong,
-tr.row-vigencia-vencida td b {
-    color: #7f1d1d !important;
-}
-
-tr.row-vigencia-vencida select {
-    background-color: #fee2e2 !important;
-    color: #991b1b !important;
-    border-color: #f87171 !important;
-}
-
-.badge-vigencia-vencida {
-    display: inline-block;
-    margin-top: 4px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: #dc2626;
-    color: white !important;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
- 
-
-        /* Cabeçalho Oficial Web */
-        .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
-        .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
-
-        /* Dashboard de Alertas e Financeiro */
-        .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .alert-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border-left: 5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .alert-card.atraso { border-left-color: #f97316; background: #fff7ed; }
-        .alert-card.notificar { border-left-color: #ea580c; background: #ffedd5; }
-        .alert-card.advertir { border-left-color: #dc2626; background: #fef2f2; }
-        .alert-card.multar { border-left-color: #991b1b; background: #fee2e2; }
-        .alert-card.financeiro { border-left-color: var(--primary); background: #eff6ff; }
-        .alert-card h4 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
-        .alert-card .count { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
-
-        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        
-        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
-        input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
-        
-        button, .btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; }
-        button:hover, .btn:hover { opacity: 0.9; }
-        .btn-success { background: var(--success); }
-        .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-        .btn-outline:hover { background: #f1f5f9; }
-        .btn-cobranca { background: #0284c7; padding: 4px 8px; font-size: 0.75rem; }
-        .btn-parcial { background: #8b5cf6; padding: 4px 8px; font-size: 0.75rem; }
-        .btn-cancelar { background: #475569; padding: 4px 8px; font-size: 0.75rem; }
-        .btn-oficio { background: #dc2626; padding: 4px 8px; font-size: 0.75rem; }
-        .btn-edit { background: #f59e0b; padding: 4px 8px; font-size: 0.75rem; }
-        .btn-delete { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
-        .btn-mini { padding: 2px 5px; font-size: 0.7rem; border-radius: 4px; }
-
-        .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .controls-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-
-        .excel-actions { display: flex; gap: 10px; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-        th, td { padding: 10px 12px; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-        th { background: #f1f5f9; font-weight: 600; color: #334155; }
-
-        .status-online { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 12px; }
-        .status-dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block; }
-
-        .setor-badge { padding: 4px 10px; border-radius: 12px; color: white; font-weight: 700; font-size: 0.75rem; display: inline-block; }
-        
-        .badge-prazo { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
-        .badge-ok { background: #dcfce7; color: #16a34a; }
-        .badge-hoje { background: #fef9c3; color: #ca8a04; }
-        .badge-atrasado { background: #fee2e2; color: #dc2626; }
-
-        .history-list { font-size: 0.75rem; color: #475569; margin-top: 4px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; }
-        .item-parcial-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px dashed #e2e8f0; }
-        .actions-cell { white-space: nowrap; display: flex; flex-direction: column; gap: 4px; }
-        
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-
-        /* Filtro Alfabético */
-        .alphabet-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
-        .alphabet-btn { background: #f8fafc; border: 1px solid var(--border); color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.15s ease; }
-        .alphabet-btn:hover { background: #e2e8f0; }
-        .alphabet-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
-
-        /* IMPRESSÃO ISOLADA */
-        @media print {
-            body { background: white !important; padding: 0 !important; color: #000 !important; }
-            .no-print, .excel-actions, .controls, .card, button, .actions-cell, .login-overlay, .modal, .btn-mini, .alphabet-filter { display: none !important; }
-            .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            
-            body.printing-relatorio .print-header-minimal { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
-            body.printing-relatorio .print-header-minimal h1 { font-size: 1.2rem; text-transform: uppercase; color: #0f172a; }
-            body.printing-relatorio .print-header-minimal h2 { font-size: 0.9rem; color: #475569; font-weight: 500; }
-            body.printing-relatorio .print-meta { font-size: 0.75rem; color: #64748b; margin-top: 8px; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
-            body.printing-relatorio table { display: table !important; width: 100% !important; border: 1px solid #000 !important; margin-top: 10px; }
-            body.printing-relatorio th { background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #000 !important; font-size: 0.75rem !important; text-transform: uppercase; }
-            body.printing-relatorio td { border: 1px solid #000 !important; font-size: 0.75rem !important; padding: 6px !important; vertical-align: top; }
-            body.printing-relatorio .setor-badge { border: 1px solid #000; color: #000 !important; background: transparent !important; font-weight: normal; }
-            body.printing-relatorio .history-list { border: none; padding: 0; background: transparent; }
-
-            body.printing-oficio #mainHeader,
-            body.printing-oficio #mainAlerts,
-            body.printing-oficio #mainCardForm,
-            body.printing-oficio #mainExcelActions,
-            body.printing-oficio #mainControls,
-            body.printing-oficio #mainTable,
-            body.printing-oficio #printHeaderMinimal { display: none !important; }
-            
-            body.printing-oficio .print-oficio-template { display: block !important; }
-        }
-        
-        .print-header-minimal, .print-oficio-template { display: none; }
-
-        /* UX / Dashboard / Mobile */
-        .quick-nav { display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; }
-        .quick-nav .btn { font-size:.8rem; }
-        .dashboard-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
-        .metric-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; box-shadow:var(--shadow); cursor:pointer; transition:.18s; min-height:105px; }
-        .metric-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
-        .metric-label { font-size:.76rem; text-transform:uppercase; color:var(--muted); font-weight:700; }
-        .metric-value { font-size:1.7rem; line-height:1.15; font-weight:850; margin:8px 0 4px; }
-        .metric-sub { font-size:.76rem; color:var(--muted); }
-        .metric-danger { border-top:4px solid #dc2626; }
-        .metric-warning { border-top:4px solid #f59e0b; }
-        .metric-info { border-top:4px solid #2563eb; }
-        .metric-success { border-top:4px solid #16a34a; }
-        .metric-purple { border-top:4px solid #7c3aed; }
-        .metric-dark { border-top:4px solid #475569; }
-        .home-grid { display:grid; grid-template-columns:1.3fr .7fr; gap:16px; margin-bottom:18px; }
-        .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
-        .panel h3 { margin-bottom:12px; font-size:1rem; }
-        .priority-list { display:flex; flex-direction:column; gap:8px; }
-        .priority-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 12px; border:1px solid var(--border); border-radius:9px; background:#fbfdff; cursor:pointer; }
-        .priority-main { min-width:0; }
-        .priority-title { font-weight:750; font-size:.88rem; }
-        .priority-meta { color:var(--muted); font-size:.75rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .priority-tag { flex:0 0 auto; font-size:.72rem; font-weight:800; padding:5px 8px; border-radius:999px; }
-        .tag-danger { background:#fee2e2; color:#b91c1c; }
-        .tag-warning { background:#fef3c7; color:#a16207; }
-        .tag-info { background:#dbeafe; color:#1d4ed8; }
-        .tag-success { background:#dcfce7; color:#15803d; }
-        .empty-state { padding:24px; text-align:center; color:var(--muted); font-size:.85rem; }
-        .notification-panel { position:fixed; top:72px; right:18px; width:min(420px,calc(100vw - 28px)); max-height:70vh; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 22px 50px rgba(15,23,42,.18); z-index:150; display:none; }
-        .notification-panel.open { display:block; }
-        .notification-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; }
-        .notification-item { padding:12px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer; }
-        .notification-item:hover { background:#f8fafc; }
-        .notification-item:last-child { border-bottom:none; }
-        .notif-title { font-weight:750; font-size:.84rem; }
-        .notif-meta { margin-top:3px; font-size:.75rem; color:var(--muted); }
-        .notif-badge { min-width:21px; height:21px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; background:#dc2626; color:#fff; font-size:.7rem; font-weight:800; }
-        .data-health { display:flex; gap:8px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
-        .health-pill { background:#f1f5f9; padding:6px 9px; border-radius:999px; }
-
-        @media (max-width:1050px){ .dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));} .home-grid{grid-template-columns:1fr;} }
-        @media (max-width:700px){
-            body{padding:10px;} .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .metric-card{min-height:95px;padding:12px;} .metric-value{font-size:1.45rem;} .home-grid{gap:10px;} .panel{padding:14px;} .quick-nav{overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;} .quick-nav .btn{flex:0 0 auto;}
-            .header-official{padding:14px;} .header-official > div:last-child{width:100%;} .header-official > div:last-child .btn{flex:1;}
-            #mainTable{display:block; overflow-x:auto; white-space:nowrap;} #mainTable th,#mainTable td{min-width:120px;} #mainTable th:nth-child(3),#mainTable td:nth-child(3){min-width:220px;} #mainTable th:nth-child(9),#mainTable td:nth-child(9){min-width:170px;}
-        }
-    </style>
 </head>
 <body>
 
 <!-- Tela de Login -->
+
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <h2 style="margin-bottom: 5px; color: #1e293b;">🏛️ Acesso ao Sistema</h2>
@@ -248,283 +217,285 @@ tr.row-vigencia-vencida select {
             <p style="font-size: 0.85rem; color: #111;">Rua Minas Gerais, 1.742 - Avaré/SP — CNPJ: <span id="oficioCnpj">46.634.168/0001-50</span></p>
         </div>
 
-        <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
+    <p style="text-align: right; font-size: 0.95rem; margin-bottom: 30px;">Avaré/SP, <span id="oficioDataHoje">-</span></p>
 
-        <p style="font-size: 1rem; font-weight: bold; margin-bottom: 20px;">OFÍCIO DE NOTIFICAÇÃO DE ATRASO Nº <span id="oficioNumero">-</span>/2026</p>
+    <p style="font-size: 1rem; font-weight: bold; margin-bottom: 20px;">OFÍCIO DE NOTIFICAÇÃO DE ATRASO Nº <span id="oficioNumero">-</span>/2026</p>
 
-        <div style="margin-bottom: 25px; line-height: 1.6; font-size: 1rem;">
-            <strong>À Empresa:</strong> <span id="oficioEmpresa">-</span><br>
-            <strong>Assunto:</strong> NOTIFICAÇÃO POR DESCUMPRIMENTO DE PRAZO DE ENTREGA<br>
-            <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
-        </div>
-
-        <div style="text-align: justify; line-height: 1.8; font-size: 1rem;">
-            Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
-            Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de adoção das medidas administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
-        </div>
+    <div style="margin-bottom: 25px; line-height: 1.6; font-size: 1rem;">
+        <strong>À Empresa:</strong> <span id="oficioEmpresa">-</span><br>
+        <strong>Assunto:</strong> NOTIFICAÇÃO POR DESCUMPRIMENTO DE PRAZO DE ENTREGA<br>
+        <strong>Ref. Autorização de Fornecimento (AF):</strong> <span id="oficioAf">-</span> | <strong>Empenho:</strong> <span id="oficioEmpenho">-</span>
     </div>
 
-    <!-- Cabeçalho do Relatório Minimalista -->
-    <div id="printHeaderMinimal" class="print-header-minimal">
+    <div style="text-align: justify; line-height: 1.8; font-size: 1rem;">
+        Vimos por meio deste notificar formalmente esta empresa referente ao atraso na entrega dos produtos/serviços constantes na Autorização de Fornecimento acima citada, cujo prazo limite de entrega expirou em <strong><span id="oficioPrazo">-</span></strong>.<br><br>
+        Solicitamos o comparecimento ou a regularização imediata da entrega dos insumos no Almoxarifado da Saúde no prazo máximo de <strong>48 (quarenta e oito) horas</strong>, sob pena de adoção das medidas administrativas, multas e advertências previstas na legislação municipal vigente e no instrumento convocatório.
+    </div>
+</div>
+
+<!-- Cabeçalho do Relatório Minimalista -->
+<div id="printHeaderMinimal" class="print-header-minimal">
+    <h1>Prefeitura da Estância Turística de Avaré</h1>
+    <h2>Relatório Gerencial de Autorizações de Fornecimento (AF) — Almoxarifado da Saúde</h2>
+    <div class="print-meta">
+        <span>Filtro Aplicado: <strong id="printFiltroNome">Todas as AFs</strong></span>
+        <span>Emitido por: <strong id="printUsuario">-</strong> | <span id="printDataHora">-</span></span>
+    </div>
+</div>
+
+<!-- Cabeçalho Oficial Web -->
+<div id="mainHeader" class="header-official">
+    <div>
         <h1>Prefeitura da Estância Turística de Avaré</h1>
-        <h2>Relatório Gerencial de Autorizações de Fornecimento (AF) — Almoxarifado da Saúde</h2>
-        <div class="print-meta">
-            <span>Filtro Aplicado: <strong id="printFiltroNome">Todas as AFs</strong></span>
-            <span>Emitido por: <strong id="printUsuario">-</strong> | <span id="printDataHora">-</span></span>
+        <h2>Almoxarifado da Saúde — Controle Interno de AFs</h2>
+    </div>
+    <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <span class="status-online"><span class="status-dot"></span> <span id="loggedUserName">Usuário</span></span>
+        <button type="button" class="btn" style="background: #334155;" onclick="openModalConfig()">⚙️ Configurações</button>
+        <button type="button" class="btn" style="background: #475569;" onclick="openModalLogs()">📜 Histórico / Logs</button>
+        <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Setores</button>
+        <button type="button" class="btn" style="background: #8b5cf6;" onclick="openModalUsuarios()">👥 Funcionários</button>
+        <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Relatórios</button>
+        <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
+    </div>
+</div>
+
+<div class="quick-nav no-print" id="quickNav">
+    <button class="btn" type="button" onclick="scrollToSection('mainCardForm')">➕ Nova AF</button>
+    <button class="btn btn-outline" type="button" onclick="focusSearch()">🔎 Buscar AF</button>
+    <button class="btn btn-outline" type="button" onclick="openNotifications()">🔔 Notificações <span id="notifBadge" class="notif-badge" style="display:none;margin-left:3px;">0</span></button>
+    <button class="btn btn-outline" type="button" onclick="openModalRelatorio()">📊 Relatórios</button>
+</div>
+
+<div id="notificationPanel" class="notification-panel no-print">
+    <div class="notification-head"><strong>🔔 Alertas e próximas ações</strong><button class="btn btn-outline btn-mini" type="button" onclick="closeNotifications()">✕</button></div>
+    <div id="notificationList"></div>
+</div>
+
+<div class="dashboard-grid no-print" id="v2Dashboard">
+    <div class="metric-card metric-danger" onclick="applyStatusQuickFilter('Cobrar')">
+        <div class="metric-label">🔴 Atrasadas</div><div class="metric-value" id="v2Atrasadas">0</div><div class="metric-sub">Precisam de cobrança</div>
+    </div>
+    <div class="metric-card metric-warning" onclick="filterToday()">
+        <div class="metric-label">🟡 Vencem hoje</div><div class="metric-value" id="v2Hoje">0</div><div class="metric-sub">Prazo final hoje</div>
+    </div>
+    <div class="metric-card metric-info" onclick="applyStatusQuickFilter('Entrega Parcial')">
+        <div class="metric-label">📦 Parciais</div><div class="metric-value" id="v2Parciais">0</div><div class="metric-sub">Aguardam conclusão</div>
+    </div>
+    <div class="metric-card metric-purple" onclick="applyStatusQuickFilter('Notificar')">
+        <div class="metric-label">⚠️ Sanções</div><div class="metric-value" id="v2Sancoes">0</div><div class="metric-sub">Notificar/advertir/multar</div>
+    </div>
+    <div class="metric-card metric-success" onclick="applyStatusQuickFilter('Entregue')">
+        <div class="metric-label">✅ Concluídas</div><div class="metric-value" id="v2Entregues">0</div><div class="metric-sub">AFs entregues</div>
+    </div>
+    <div class="metric-card metric-dark">
+        <div class="metric-label">💰 Saldo pendente</div><div class="metric-value" id="v2Pendente">R$ 0,00</div><div class="metric-sub">Valor ainda não entregue</div>
+    </div>
+</div>
+
+<div class="home-grid no-print">
+    <div class="panel">
+        <h3>🎯 O que precisa de atenção?</h3>
+        <div id="priorityList" class="priority-list"></div>
+    </div>
+    <div class="panel">
+        <h3>📊 Resumo da base</h3>
+        <div id="dataHealth" class="data-health"></div>
+        <div style="margin-top:14px; font-size:.8rem; color:#475569; line-height:1.6;">
+            O painel é atualizado sempre que os registros do Supabase são recarregados. Use os indicadores acima como atalhos para os filtros.
         </div>
     </div>
+</div>
 
-    <!-- Cabeçalho Oficial Web -->
-    <div id="mainHeader" class="header-official">
-        <div>
-            <h1>Prefeitura da Estância Turística de Avaré</h1>
-            <h2>Almoxarifado da Saúde — Controle Interno de AFs</h2>
-        </div>
-        <div class="no-print" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <span class="status-online"><span class="status-dot"></span> <span id="loggedUserName">Usuário</span></span>
-            <button type="button" class="btn" style="background: #334155;" onclick="openModalConfig()">⚙️ Configurações</button>
-            <button type="button" class="btn" style="background: #475569;" onclick="openModalLogs()">📜 Histórico / Logs</button>
-            <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Setores</button>
-            <button type="button" class="btn" style="background: #8b5cf6;" onclick="openModalUsuarios()">👥 Funcionários</button>
-            <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Relatórios</button>
-            <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
-        </div>
+<!-- Dashboard de Alertas e Financeiro Antigo -->
+<div id="mainAlerts" class="alerts-grid no-print">
+    <div class="alert-card atraso">
+        <h4>🚚 Entregas Atrasadas</h4>
+        <div class="count" id="countAtrasadas">0</div>
     </div>
-
-    <div class="quick-nav no-print" id="quickNav">
-        <button class="btn" type="button" onclick="scrollToSection('mainCardForm')">➕ Nova AF</button>
-        <button class="btn btn-outline" type="button" onclick="focusSearch()">🔎 Buscar AF</button>
-        <button class="btn btn-outline" type="button" onclick="openNotifications()">🔔 Notificações <span id="notifBadge" class="notif-badge" style="display:none;margin-left:3px;">0</span></button>
-        <button class="btn btn-outline" type="button" onclick="openModalRelatorio()">📊 Relatórios</button>
+    <div class="alert-card notificar">
+        <h4>✉️ Requer Notificação</h4>
+        <div class="count" id="countNotificar">0</div>
     </div>
-
-    <div id="notificationPanel" class="notification-panel no-print">
-        <div class="notification-head"><strong>🔔 Alertas e próximas ações</strong><button class="btn btn-outline btn-mini" type="button" onclick="closeNotifications()">✕</button></div>
-        <div id="notificationList"></div>
+    <div class="alert-card advertir">
+        <h4>⚠️ Requer Advertência</h4>
+        <div class="count" id="countAdvertir">0</div>
     </div>
-
-    <div class="dashboard-grid no-print" id="v2Dashboard">
-        <div class="metric-card metric-danger" onclick="applyStatusQuickFilter('Cobrar')">
-            <div class="metric-label">🔴 Atrasadas</div><div class="metric-value" id="v2Atrasadas">0</div><div class="metric-sub">Precisam de cobrança</div>
-        </div>
-        <div class="metric-card metric-warning" onclick="filterToday()">
-            <div class="metric-label">🟡 Vencem hoje</div><div class="metric-value" id="v2Hoje">0</div><div class="metric-sub">Prazo final hoje</div>
-        </div>
-        <div class="metric-card metric-info" onclick="applyStatusQuickFilter('Entrega Parcial')">
-            <div class="metric-label">📦 Parciais</div><div class="metric-value" id="v2Parciais">0</div><div class="metric-sub">Aguardam conclusão</div>
-        </div>
-        <div class="metric-card metric-purple" onclick="applyStatusQuickFilter('Notificar')">
-            <div class="metric-label">⚠️ Sanções</div><div class="metric-value" id="v2Sancoes">0</div><div class="metric-sub">Notificar/advertir/multar</div>
-        </div>
-        <div class="metric-card metric-success" onclick="applyStatusQuickFilter('Entregue')">
-            <div class="metric-label">✅ Concluídas</div><div class="metric-value" id="v2Entregues">0</div><div class="metric-sub">AFs entregues</div>
-        </div>
-        <div class="metric-card metric-dark">
-            <div class="metric-label">💰 Saldo pendente</div><div class="metric-value" id="v2Pendente">R$ 0,00</div><div class="metric-sub">Valor ainda não entregue</div>
-        </div>
+    <div class="alert-card multar">
+        <h4>🚫 Requer Multa</h4>
+        <div class="count" id="countMultar">0</div>
     </div>
+    <div class="alert-card financeiro">
+        <h4>💰 Total Pendente (R$)</h4>
+        <div class="count" id="valPendente">R$ 0,00</div>
+    </div>
+</div>
 
-    <div class="home-grid no-print">
-        <div class="panel">
-            <h3>🎯 O que precisa de atenção?</h3>
-            <div id="priorityList" class="priority-list"></div>
-        </div>
-        <div class="panel">
-            <h3>📊 Resumo da base</h3>
-            <div id="dataHealth" class="data-health"></div>
-            <div style="margin-top:14px; font-size:.8rem; color:#475569; line-height:1.6;">
-                O painel é atualizado sempre que os registros do Supabase são recarregados. Use os indicadores acima como atalhos para os filtros.
+<!-- Formulário de Cadastro / Edição -->
+<div id="mainCardForm" class="card no-print">
+    <h3 id="formTitle">Cadastrar Nova Autorização</h3>
+    <br>
+    <form id="afForm">
+        <input type="hidden" id="editAfId" value="">
+        <div class="form-grid">
+            <div>
+                <label>Nº da AF / Processo</label>
+                <input type="text" id="numAf" required placeholder="Ex: AF 11919/26">
+            </div>
+            <div>
+                <label>Nº do Empenho (Opcional)</label>
+                <input type="text" id="numEmpenho" placeholder="Ex: 00402/26">
+            </div>
+            <div>
+                <label>Setor Responsável</label>
+                <select id="setor" required></select>
+            </div>
+            <div>
+                <label>Fornecedor</label>
+                <input type="text" id="fornecedor" required placeholder="Razão Social">
+            </div>
+            <div>
+                <label>Valor Total da AF (R$)</label>
+                <input type="number" step="0.01" id="valorTotal" placeholder="0.00">
+            </div>
+            <div>
+                <label>Vigência da Ata/Contrato (Opcional)</label>
+                <input type="date" id="vigenciaAta">
+            </div>
+            <div>
+                <label>Prazo de Entrega Limite</label>
+                <input type="date" id="prazoEntrega" required>
+            </div>
+            <div>
+                <label>Status Inicial</label>
+                <select id="statusSancao">
+                    <option value="Regular">Em Dia / Regular</option>
+                    <option value="Cobrar">Cobrar Fornecedor</option>
+                    <option value="Notificar">Notificar</option>
+                    <option value="Advertir">Advertir</option>
+                    <option value="Multar">Multar</option>
+                    <option value="Entrega Parcial">Entrega Parcial</option>
+                    <option value="Saldo Cancelado">Saldo Cancelado</option>
+                    <option value="Entregue">Concluído / Entregue</option>
+                </select>
             </div>
         </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label>Produtos / Serviços que compõem a AF</label>
+            <textarea id="produtosText" rows="3" placeholder="Descrição do produto ou prestação de serviço..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Observações / Motivo da Sanção (Opcional)</label>
+            <textarea id="observacoes" rows="2" placeholder="Histórico de ligações, falta de insumos no fabricante, ofícios..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" id="btnSubmitForm">Salvar AF</button>
+            <button type="button" id="btnCancelEdit" class="btn-outline" style="display: none;" onclick="resetForm()">Cancelar Edição</button>
+        </div>
+    </form>
+</div>
+
+<!-- Seção de Importação e Exportação Excel -->
+<div id="mainExcelActions" class="excel-actions no-print">
+    <div class="controls-group">
+        <strong>📥 Importar / Exportar:</strong>
+        <input type="file" id="excelFileInput" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv" style="display: none;" onchange="importExcel(event)">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('excelFileInput').click()">📁 Selecionar Planilha</button>
+        <button type="button" class="btn btn-outline" onclick="downloadModelo()">📄 Modelo Excel</button>
+    </div>
+    <div class="controls-group">
+        <button type="button" class="btn btn-success" onclick="exportExcel()">📊 Exportar para Excel</button>
+    </div>
+</div>
+
+<!-- Barra de Filtro Alfabético -->
+<div id="alphabetContainer" class="alphabet-filter no-print">
+    <span style="font-size: 0.8rem; font-weight: bold; color: #475569; margin-right: 4px;">Letra:</span>
+    <button type="button" class="alphabet-btn active" onclick="setLetterFilter('')">TODAS</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('A')">A</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('B')">B</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('C')">C</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('D')">D</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('E')">E</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('F')">F</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('G')">G</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('H')">H</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('I')">I</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('J')">J</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('K')">K</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('L')">L</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('M')">M</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('N')">N</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('O')">O</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('P')">P</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('Q')">Q</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('R')">R</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('S')">S</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('T')">T</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('U')">U</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('V')">V</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('W')">W</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('X')">X</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('Y')">Y</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('Z')">Z</button>
+    <button type="button" class="alphabet-btn" onclick="setLetterFilter('0-9')">0-9</button>
+</div>
+
+<!-- Controles de Filtro e Ordenação -->
+<div id="mainControls" class="controls no-print">
+    <div class="controls-group">
+        <label>Filtrar Setor:</label>
+        <select id="filterSetor" onchange="renderTable()">
+            <option value="TODOS">Todos os Setores</option>
+        </select>
+
+        <label>Status:</label>
+        <select id="filterStatus" onchange="renderTable()">
+            <option value="ATIVOS">Apenas AFs Ativas (Oculta Entregues > 24h)</option>
+            <option value="TODOS">Todas (Incluindo Histórico de Entregues)</option>
+        </select>
+
+        <label>Buscar:</label>
+        <input type="text" id="searchInput" placeholder="Fornecedor, Nº AF, Produto..." oninput="renderTable()">
     </div>
 
-    <!-- Dashboard de Alertas e Financeiro Antigo -->
-    <div id="mainAlerts" class="alerts-grid no-print">
-        <div class="alert-card atraso">
-            <h4>🚚 Entregas Atrasadas</h4>
-            <div class="count" id="countAtrasadas">0</div>
-        </div>
-        <div class="alert-card notificar">
-            <h4>✉️ Requer Notificação</h4>
-            <div class="count" id="countNotificar">0</div>
-        </div>
-        <div class="alert-card advertir">
-            <h4>⚠️ Requer Advertência</h4>
-            <div class="count" id="countAdvertir">0</div>
-        </div>
-        <div class="alert-card multar">
-            <h4>🚫 Requer Multa</h4>
-            <div class="count" id="countMultar">0</div>
-        </div>
-        <div class="alert-card financeiro">
-            <h4>💰 Total Pendente (R$)</h4>
-            <div class="count" id="valPendente">R$ 0,00</div>
-        </div>
+    <div class="controls-group">
+        <label>Ordenar por:</label>
+        <select id="sortSelect" onchange="renderTable()">
+            <option value="prazo">Prazo de Entrega (Próximos/Atrasados)</option>
+            <option value="fornecedor">Fornecedor (A-Z)</option>
+            <option value="vigencia">Vigência da Ata (Próximos do Vencimento)</option>
+            <option value="criacao">Data de Criação (Recentes)</option>
+        </select>
     </div>
+</div>
 
-    <!-- Formulário de Cadastro / Edição -->
-    <div id="mainCardForm" class="card no-print">
-        <h3 id="formTitle">Cadastrar Nova Autorização</h3>
-        <br>
-        <form id="afForm">
-            <input type="hidden" id="editAfId" value="">
-            <div class="form-grid">
-                <div>
-                    <label>Nº da AF / Processo</label>
-                    <input type="text" id="numAf" required placeholder="Ex: AF 11919/26">
-                </div>
-                <div>
-                    <label>Nº do Empenho (Opcional)</label>
-                    <input type="text" id="numEmpenho" placeholder="Ex: 00402/26">
-                </div>
-                <div>
-                    <label>Setor Responsável</label>
-                    <select id="setor" required></select>
-                </div>
-                <div>
-                    <label>Fornecedor</label>
-                    <input type="text" id="fornecedor" required placeholder="Razão Social">
-                </div>
-                <div>
-                    <label>Valor Total da AF (R$)</label>
-                    <input type="number" step="0.01" id="valorTotal" placeholder="0.00">
-                </div>
-                <div>
-                    <label>Vigência da Ata/Contrato (Opcional)</label>
-                    <input type="date" id="vigenciaAta">
-                </div>
-                <div>
-                    <label>Prazo de Entrega Limite</label>
-                    <input type="date" id="prazoEntrega" required>
-                </div>
-                <div>
-                    <label>Status Inicial</label>
-                    <select id="statusSancao">
-                        <option value="Regular">Em Dia / Regular</option>
-                        <option value="Cobrar">Cobrar Fornecedor</option>
-                        <option value="Notificar">Notificar</option>
-                        <option value="Advertir">Advertir</option>
-                        <option value="Multar">Multar</option>
-                        <option value="Entrega Parcial">Entrega Parcial</option>
-                        <option value="Saldo Cancelado">Saldo Cancelado</option>
-                        <option value="Entregue">Concluído / Entregue</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label>Produtos / Serviços que compõem a AF</label>
-                <textarea id="produtosText" rows="3" placeholder="Descrição do produto ou prestação de serviço..."></textarea>
-            </div>
+<!-- Tabela de Registros -->
+<table id="mainTable">
+    <thead>
+        <tr>
+            <th>Setor</th>
+            <th>Nº AF / Empenho</th>
+            <th>Fornecedor / Produtos</th>
+            <th>Valores (R$)</th>
+            <th>Vigência Ata</th>
+            <th>Prazo Entrega / Alerta</th>
+            <th>Entregas Parciais / Saldo</th>
+            <th>Histórico & Cobranças</th>
+            <th>Situação & Obs Sanção</th>
+            <th class="no-print">Ações</th>
+        </tr>
+    </thead>
+    <tbody id="afTableBody"></tbody>
+</table>
 
-            <div style="margin-bottom: 15px;">
-                <label>Observações / Motivo da Sanção (Opcional)</label>
-                <textarea id="observacoes" rows="2" placeholder="Histórico de ligações, falta de insumos no fabricante, ofícios..."></textarea>
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" id="btnSubmitForm">Salvar AF</button>
-                <button type="button" id="btnCancelEdit" class="btn-outline" style="display: none;" onclick="resetForm()">Cancelar Edição</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Seção de Importação e Exportação Excel -->
-    <div id="mainExcelActions" class="excel-actions no-print">
-        <div class="controls-group">
-            <strong>📥 Importar / Exportar:</strong>
-            <input type="file" id="excelFileInput" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv" style="display: none;" onchange="importExcel(event)">
-            <button type="button" class="btn btn-outline" onclick="document.getElementById('excelFileInput').click()">📁 Selecionar Planilha</button>
-            <button type="button" class="btn btn-outline" onclick="downloadModelo()">📄 Modelo Excel</button>
-        </div>
-        <div class="controls-group">
-            <button type="button" class="btn btn-success" onclick="exportExcel()">📊 Exportar para Excel</button>
-        </div>
-    </div>
-
-    <!-- Barra de Filtro Alfabético -->
-    <div id="alphabetContainer" class="alphabet-filter no-print">
-        <span style="font-size: 0.8rem; font-weight: bold; color: #475569; margin-right: 4px;">Letra:</span>
-        <button type="button" class="alphabet-btn active" onclick="setLetterFilter('')">TODAS</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('A')">A</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('B')">B</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('C')">C</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('D')">D</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('E')">E</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('F')">F</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('G')">G</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('H')">H</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('I')">I</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('J')">J</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('K')">K</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('L')">L</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('M')">M</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('N')">N</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('O')">O</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('P')">P</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('Q')">Q</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('R')">R</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('S')">S</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('T')">T</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('U')">U</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('V')">V</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('W')">W</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('X')">X</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('Y')">Y</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('Z')">Z</button>
-        <button type="button" class="alphabet-btn" onclick="setLetterFilter('0-9')">0-9</button>
-    </div>
-
-    <!-- Controles de Filtro e Ordenação -->
-    <div id="mainControls" class="controls no-print">
-        <div class="controls-group">
-            <label>Filtrar Setor:</label>
-            <select id="filterSetor" onchange="renderTable()">
-                <option value="TODOS">Todos os Setores</option>
-            </select>
-
-            <label>Status:</label>
-            <select id="filterStatus" onchange="renderTable()">
-                <option value="ATIVOS">Apenas AFs Ativas (Oculta Entregues > 24h)</option>
-                <option value="TODOS">Todas (Incluindo Histórico de Entregues)</option>
-            </select>
-
-            <label>Buscar:</label>
-            <input type="text" id="searchInput" placeholder="Fornecedor, Nº AF, Produto..." oninput="renderTable()">
-        </div>
-
-        <div class="controls-group">
-            <label>Ordenar por:</label>
-            <select id="sortSelect" onchange="renderTable()">
-                <option value="prazo">Prazo de Entrega (Próximos/Atrasados)</option>
-                <option value="fornecedor">Fornecedor (A-Z)</option>
-                <option value="vigencia">Vigência da Ata (Próximos do Vencimento)</option>
-                <option value="criacao">Data de Criação (Recentes)</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Tabela de Registros -->
-    <table id="mainTable">
-        <thead>
-            <tr>
-                <th>Setor</th>
-                <th>Nº AF / Empenho</th>
-                <th>Fornecedor / Produtos</th>
-                <th>Valores (R$)</th>
-                <th>Vigência Ata</th>
-                <th>Prazo Entrega / Alerta</th>
-                <th>Entregas Parciais / Saldo</th>
-                <th>Histórico & Cobranças</th>
-                <th>Situação & Obs Sanção</th>
-                <th class="no-print">Ações</th>
-            </tr>
-        </thead>
-        <tbody id="afTableBody"></tbody>
-    </table>
 </div>
 
 <!-- Modais do Sistema -->
+
 <div id="modalConfig" class="modal">
     <div class="modal-content" style="max-width: 550px;">
         <h3>⚙️ Configurações Gerais do Sistema</h3>
@@ -666,23 +637,24 @@ tr.row-vigencia-vencida select {
             </div>
         </form>
 
-        <h4>Setores Ativos:</h4>
-        <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
-            <table style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Identificador</th>
-                        <th>Cor</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="setoresTableBody"></tbody>
-            </table>
-        </div>
-        <div style="margin-top: 20px; text-align: right;">
-            <button type="button" class="btn-outline" onclick="closeModalSetores()">Fechar</button>
-        </div>
+    <h4>Setores Ativos:</h4>
+    <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Identificador</th>
+                    <th>Cor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="setoresTableBody"></tbody>
+        </table>
     </div>
+    <div style="margin-top: 20px; text-align: right;">
+        <button type="button" class="btn-outline" onclick="closeModalSetores()">Fechar</button>
+    </div>
+</div>
+
 </div>
 
 <div id="modalUsuarios" class="modal">
@@ -711,23 +683,24 @@ tr.row-vigencia-vencida select {
             <button type="submit" class="btn btn-success" style="width: 100%; margin-top:10px;">+ Cadastrar Funcionário</button>
         </form>
 
-        <h4>Funcionários Cadastrados:</h4>
-        <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
-            <table style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Usuário</th>
-                        <th>Cargo</th>
-                    </tr>
-                </thead>
-                <tbody id="usuariosTableBody"></tbody>
-            </table>
-        </div>
-        <div style="margin-top: 20px; text-align: right;">
-            <button type="button" class="btn-outline" onclick="closeModalUsuarios()">Fechar</button>
-        </div>
+    <h4>Funcionários Cadastrados:</h4>
+    <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Usuário</th>
+                    <th>Cargo</th>
+                </tr>
+            </thead>
+            <tbody id="usuariosTableBody"></tbody>
+        </table>
     </div>
+    <div style="margin-top: 20px; text-align: right;">
+        <button type="button" class="btn-outline" onclick="closeModalUsuarios()">Fechar</button>
+    </div>
+</div>
+
 </div>
 
 <div id="modalCobranca" class="modal">
@@ -751,6 +724,7 @@ tr.row-vigencia-vencida select {
 </div>
 
 <!-- Modal Registrar / Editar Entrega Parcial -->
+
 <div id="modalParcial" class="modal">
     <div class="modal-content">
         <h3 id="modalParcialTitle">📦 Registrar Entrega Parcial</h3>
@@ -1077,9 +1051,6 @@ tr.row-vigencia-vencida select {
             const valTotal = af.valortotal || af.valorTotal || 0;
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '-';
-            const vigenciaPrintStr = af.vigenciaata || af.vigenciaAta;
-            const vigenciaPrintVencida = isVigenciaVencida(vigenciaPrintStr);
-            if (vigenciaPrintVencida) tr.classList.add('row-vigencia-vencida');
 
             let parciaisPrint = '-';
             if (af.parciais && af.parciais.length > 0) {
@@ -1102,10 +1073,7 @@ tr.row-vigencia-vencida select {
                     ${af.produtos ? `<div style="font-size:0.75rem; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}
                 </td>
                 <td>R$ ${valTotal.toFixed(2)}</td>
-                <td>
-                    ${formatDate(vigenciaStr)}
-                    ${vigenciaVencida ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' : ''}
-                </td>
+                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
                 <td>${parciaisPrint}</td>
                 <td>${cobrancasPrint}</td>
@@ -1582,12 +1550,6 @@ tr.row-vigencia-vencida select {
             if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
             if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
 
-            // Se a vigência terminou, pinta a linha inteira de vermelho.
-            // A data de vencimento continua válida durante todo o dia informado.
-            const vigenciaStr = af.vigenciaata || af.vigenciaAta;
-            const vigenciaVencida = isVigenciaVencida(vigenciaStr);
-            if (vigenciaVencida) tr.classList.add('row-vigencia-vencida');
-
             const setorObj = setores.find(s => s.nome === af.setor);
             const setorCor = setorObj ? setorObj.cor : '#2563eb';
 
@@ -1641,10 +1603,7 @@ tr.row-vigencia-vencida select {
                     ${saldoCancelado > 0 ? `<small style="color: #64748b;">Cancelado: ${saldoCancelado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>` : ''}
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
-                <td>
-                    ${formatDate(vigenciaPrintStr)}
-                    ${vigenciaPrintVencida ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' : ''}
-                </td>
+                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
                 <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id}, -1)">📦 + Reg. Parcial</button>
@@ -1678,19 +1637,6 @@ tr.row-vigencia-vencida select {
             `;
             tbody.appendChild(tr);
         });
-    }
-
-    function isVigenciaVencida(dateStr) {
-        if(!dateStr) return false;
-        const parts = String(dateStr).split('-');
-        if(parts.length !== 3) return false;
-        const dataVigencia = new Date(
-            Number(parts[0]),
-            Number(parts[1]) - 1,
-            Number(parts[2]),
-            23, 59, 59, 999
-        );
-        return dataVigencia < new Date();
     }
 
     function formatDate(dateStr) {
