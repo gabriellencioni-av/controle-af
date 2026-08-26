@@ -1388,13 +1388,67 @@
         }
     }
 
-    async function alterarStatusManual(id, novoStatus) {
-        const af = afs.find(item => item.id === id);
+   async function alterarStatusManual(id, novoStatus) {
+        const idNum = parseInt(id);
+        const af = afs.find(item => Number(item.id) === idNum);
         const payload = { statussancao: novoStatus };
-        if(novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') payload.data_conclusao = new Date().toISOString();
-        await _supabase.from('afs').update(payload).eq('id', id);
-        if(af) registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
-        fetchAfs();
+        
+        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+            payload.data_conclusao = new Date().toISOString();
+        }
+
+        const { error } = await _supabase
+            .from('afs')
+            .update(payload)
+            .eq('id', idNum);
+
+        if (error) {
+            alert("❌ Erro ao atualizar status: " + error.message);
+            console.error("Erro no update de status:", error);
+            renderTable(); // Restaura o visual
+            return;
+        }
+
+        if (af) {
+            registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+        }
+        
+        await fetchAfs();
+    }
+
+    async function saveObsSancao() {
+        const id = parseInt(document.getElementById('obsSancaoAfId').value);
+        const novoStatus = document.getElementById('obsSancaoNovoStatus').value;
+        const textoObs = document.getElementById('obsSancaoTexto').value.trim();
+
+        const af = afs.find(item => Number(item.id) === id);
+        
+        const payload = { 
+            statussancao: novoStatus, 
+            obs_sancao: textoObs 
+        };
+
+        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+            payload.data_conclusao = new Date().toISOString();
+        }
+
+        const { error } = await _supabase
+            .from('afs')
+            .update(payload)
+            .eq('id', id);
+
+        if (error) {
+            alert("❌ Erro ao salvar sanção: " + error.message);
+            console.error("Erro ao salvar sanção:", error);
+            return;
+        }
+
+        if (af) {
+            registrarLog(`Atualizou sanção para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+        }
+        
+        closeModalObsSancao();
+        await fetchAfs();
     }
 
     async function deleteAf(id) {
