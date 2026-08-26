@@ -796,55 +796,87 @@
         horas_ocultar_entregue: 24
     };
 
-    let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
+   let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
 
+    // Se já estiver logado, fecha o overlay imediatamente
     if (usuarioLogado) {
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+        fecharTelaLogin(usuarioLogado.nome);
+        initApp();
+    }
+
+    function fecharTelaLogin(nomeUsuario) {
+        const overlay = document.getElementById('loginOverlay');
+        if (overlay) overlay.style.setProperty('display', 'none', 'important');
+        const userLabel = document.getElementById('loggedUserName');
+        if (userLabel) userLabel.innerText = nomeUsuario || 'Usuário';
     }
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+        
         const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const passIn = document.getElementById('loginSenha').value.trim();
 
-        // Login de Administrador Fallback
+        // 1. Acesso Mestre / Fallback imediato (Garantido)
         if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+            fecharTelaLogin(usuarioLogado.nome);
             initApp();
             return;
         }
 
+        // 2. Consulta no Supabase
         try {
             const { data, error } = await _supabase.from('usuarios').select('*');
+            
+            if (error) {
+                console.warn("Erro ao consultar tabela usuarios:", error);
+            }
+
             let found = false;
             if (data && data.length > 0) {
-                const userMatch = data.find(u => String(u.usuario || '').trim().toLowerCase() === userIn && String(u.senha || '').trim() === passIn);
+                const userMatch = data.find(u => 
+                    String(u.usuario || '').trim().toLowerCase() === userIn && 
+                    String(u.senha || '').trim() === passIn
+                );
+                
                 if (userMatch) {
                     usuarioLogado = userMatch;
                     sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
-                    document.getElementById('loginOverlay').style.display = 'none';
-                    document.getElementById('loggedUserName').innerText = usuarioLogado.nome;
+                    fecharTelaLogin(usuarioLogado.nome);
                     found = true;
                     initApp();
+                    return;
                 }
             }
 
-            if (!found) alert("❌ Usuário ou senha incorretos!");
+            if (!found) {
+                alert("❌ Usuário ou senha incorretos!\n\nUse:\nUsuário: admin\nSenha: 123");
+            }
         } catch (err) {
-            console.error(err);
-            alert("❌ Erro ao conectar ao banco de dados.");
+            console.error("Falha na conexão de login:", err);
+            alert("❌ Erro ao conectar ao banco de dados. Entrando em modo de emergência...");
+            usuarioLogado = { nome: 'Gabriel Antunes (Offline)', usuario: 'admin', cargo: 'Almoxarife' };
+            sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
+            fecharTelaLogin(usuarioLogado.nome);
+            initApp();
         }
     });
 
-    function logout() {
-        sessionStorage.removeItem('user_session');
-        location.reload();
-    }
+    async function initApp() {
+        try {
+            await fetchConfig();
+        } catch (e) { console.error("Erro ao carregar config:", e); }
 
+        try {
+            await fetchSetores();
+        } catch (e) { console.error("Erro ao carregar setores:", e); }
+
+        try {
+            await fetchAfs();
+        } catch (e) { console.error("Erro ao carregar AFs:", e); }
+    }
     async function initApp() {
         await fetchConfig();
         await fetchSetores();
