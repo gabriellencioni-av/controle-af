@@ -800,13 +800,9 @@
 
     function fecharTelaLogin(nomeUsuario) {
         const overlay = document.getElementById('loginOverlay');
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
+        if (overlay) overlay.style.display = 'none';
         const userLabel = document.getElementById('loggedUserName');
-        if (userLabel) {
-            userLabel.innerText = nomeUsuario || 'Usuário';
-        }
+        if (userLabel) userLabel.innerText = nomeUsuario || 'Usuário';
     }
 
     if (usuarioLogado) {
@@ -820,7 +816,7 @@
         const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const passIn = document.getElementById('loginSenha').value.trim();
 
-        // 1. Acesso Administrador Imediato
+        // 1. Acesso Admin Imediato
         if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
@@ -850,12 +846,9 @@
                 }
             }
 
-            if (!found) {
-                alert("❌ Usuário ou senha incorretos!");
-            }
+            if (!found) alert("❌ Usuário ou senha incorretos!");
         } catch (err) {
-            console.error("Erro na consulta de login:", err);
-            // Fallback de emergência
+            console.error("Erro no login:", err);
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
             fecharTelaLogin(usuarioLogado.nome);
@@ -869,9 +862,9 @@
     }
 
     async function initApp() {
-        try { await fetchConfig(); } catch(e) { console.error("Erro em config:", e); }
-        try { await fetchSetores(); } catch(e) { console.error("Erro em setores:", e); }
-        try { await fetchAfs(); } catch(e) { console.error("Erro em afs:", e); }
+        try { await fetchConfig(); } catch(e) { console.error(e); }
+        try { await fetchSetores(); } catch(e) { console.error(e); }
+        try { await fetchAfs(); } catch(e) { console.error(e); }
     }
 
     async function fetchConfig() {
@@ -987,14 +980,10 @@
             payload.data_conclusao = new Date().toISOString();
         }
 
-        const { error } = await _supabase
-            .from('afs')
-            .update(payload)
-            .eq('id', id);
+        const { error } = await _supabase.from('afs').update(payload).eq('id', id);
 
         if (error) {
             alert("❌ Erro ao salvar sanção: " + error.message);
-            console.error("Erro ao salvar sanção:", error);
             return;
         }
 
@@ -1006,7 +995,6 @@
         await fetchAfs();
     }
 
-    /* Modal Anexar Notificação em PDF */
     function openModalAnexoNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if (!af) return;
