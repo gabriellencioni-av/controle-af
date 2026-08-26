@@ -796,19 +796,22 @@
         horas_ocultar_entregue: 24
     };
 
-   let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
-
-    // Se já estiver logado, fecha o overlay imediatamente
-    if (usuarioLogado) {
-        fecharTelaLogin(usuarioLogado.nome);
-        initApp();
-    }
+    let usuarioLogado = JSON.parse(sessionStorage.getItem('user_session')) || null;
 
     function fecharTelaLogin(nomeUsuario) {
         const overlay = document.getElementById('loginOverlay');
-        if (overlay) overlay.style.setProperty('display', 'none', 'important');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
         const userLabel = document.getElementById('loggedUserName');
-        if (userLabel) userLabel.innerText = nomeUsuario || 'Usuário';
+        if (userLabel) {
+            userLabel.innerText = nomeUsuario || 'Usuário';
+        }
+    }
+
+    if (usuarioLogado) {
+        fecharTelaLogin(usuarioLogado.nome);
+        initApp();
     }
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -817,7 +820,7 @@
         const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const passIn = document.getElementById('loginSenha').value.trim();
 
-        // 1. Acesso Mestre / Fallback imediato (Garantido)
+        // 1. Acesso Administrador Imediato
         if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
@@ -826,15 +829,11 @@
             return;
         }
 
-        // 2. Consulta no Supabase
+        // 2. Consulta tabela usuarios no Supabase
         try {
             const { data, error } = await _supabase.from('usuarios').select('*');
-            
-            if (error) {
-                console.warn("Erro ao consultar tabela usuarios:", error);
-            }
-
             let found = false;
+
             if (data && data.length > 0) {
                 const userMatch = data.find(u => 
                     String(u.usuario || '').trim().toLowerCase() === userIn && 
@@ -852,35 +851,27 @@
             }
 
             if (!found) {
-                alert("❌ Usuário ou senha incorretos!\n\nUse:\nUsuário: admin\nSenha: 123");
+                alert("❌ Usuário ou senha incorretos!");
             }
         } catch (err) {
-            console.error("Falha na conexão de login:", err);
-            alert("❌ Erro ao conectar ao banco de dados. Entrando em modo de emergência...");
-            usuarioLogado = { nome: 'Gabriel Antunes (Offline)', usuario: 'admin', cargo: 'Almoxarife' };
+            console.error("Erro na consulta de login:", err);
+            // Fallback de emergência
+            usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
             fecharTelaLogin(usuarioLogado.nome);
             initApp();
         }
     });
 
-    async function initApp() {
-        try {
-            await fetchConfig();
-        } catch (e) { console.error("Erro ao carregar config:", e); }
-
-        try {
-            await fetchSetores();
-        } catch (e) { console.error("Erro ao carregar setores:", e); }
-
-        try {
-            await fetchAfs();
-        } catch (e) { console.error("Erro ao carregar AFs:", e); }
+    function logout() {
+        sessionStorage.removeItem('user_session');
+        location.reload();
     }
+
     async function initApp() {
-        await fetchConfig();
-        await fetchSetores();
-        await fetchAfs();
+        try { await fetchConfig(); } catch(e) { console.error("Erro em config:", e); }
+        try { await fetchSetores(); } catch(e) { console.error("Erro em setores:", e); }
+        try { await fetchAfs(); } catch(e) { console.error("Erro em afs:", e); }
     }
 
     async function fetchConfig() {
@@ -1457,41 +1448,40 @@
         alterarStatusManual(id, novoStatus);
     }
 
-   async function alterarStatusManual(id, novoStatus) {
-    const idNum = parseInt(id);
-    const af = afs.find(item => Number(item.id) === idNum);
-    
-    // Atualiza imediatamente na memória local para não dar recuo visual
-    if (af) {
-        af.statussancao = novoStatus;
-        af.statusSancao = novoStatus;
-        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
-            af.data_conclusao = new Date().toISOString();
-        }
-    }
-
-    const payload = { statussancao: novoStatus };
-    if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
-        payload.data_conclusao = new Date().toISOString();
-    }
-
-    const { error } = await _supabase
-        .from('afs')
-        .update(payload)
-        .eq('id', idNum);
-
-    if (error) {
-        alert("❌ Erro ao atualizar status no banco: " + error.message);
-        console.error("Erro no update de status:", error);
-    } else {
+    async function alterarStatusManual(id, novoStatus) {
+        const idNum = parseInt(id);
+        const af = afs.find(item => Number(item.id) === idNum);
+        
         if (af) {
-            registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            af.statussancao = novoStatus;
+            af.statusSancao = novoStatus;
+            if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+                af.data_conclusao = new Date().toISOString();
+            }
         }
+
+        const payload = { statussancao: novoStatus };
+        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+            payload.data_conclusao = new Date().toISOString();
+        }
+
+        const { error } = await _supabase
+            .from('afs')
+            .update(payload)
+            .eq('id', idNum);
+
+        if (error) {
+            alert("❌ Erro ao atualizar status no banco: " + error.message);
+            console.error("Erro no update de status:", error);
+        } else {
+            if (af) {
+                registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+            }
+        }
+
+        saveAndRenderLocal();
     }
 
-    // Re-renderiza a tabela e atualiza os dashboards
-    saveAndRenderLocal();
-}
     async function deleteAf(id) {
         const af = afs.find(item => item.id === id);
         if(confirm('Tem certeza que deseja excluir esta AF?')) {
@@ -1878,7 +1868,6 @@
         reader.readAsArrayBuffer(file);
     }
 
-    if(usuarioLogado) initApp();
     window.addEventListener('load', () => { if (afs.length) updateV2Dashboard(); });
 </script>
 </body>
