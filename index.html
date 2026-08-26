@@ -498,7 +498,7 @@ tr.row-vigencia-vencida select {
 
     <div class="controls-group">
         <label>Ordenar por:</label>
-        <select id="sortSelect" onchange="renderTable()">
+        <select id="sortSelect" onchange="()">
             <option value="prazo">Prazo de Entrega (Próximos/Atrasados)</option>
             <option value="fornecedor">Fornecedor (A-Z)</option>
             <option value="vigencia">Vigência da Ata (Próximos do Vencimento)</option>
@@ -784,6 +784,27 @@ tr.row-vigencia-vencida select {
     </div>
 </div>
 
+<!-- Modal Anexar Notificação em PDF -->
+<div id="modalAnexoNotificacao" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3>📎 Anexar Notificação (PDF)</h3>
+        <br>
+        <input type="hidden" id="anexoAfId">
+        <div style="margin-bottom: 15px;">
+            <label>Selecione o arquivo PDF</label>
+            <input type="file" id="arquivoNotificacaoInput" accept="application/pdf" style="padding: 6px;">
+        </div>
+        <div id="anexoAtualContainer" style="display:none; margin-bottom: 15px; font-size: 0.85rem;">
+            <span>Documento atual: </span>
+            <a id="anexoAtualLink" href="#" target="_blank" style="color: var(--primary); font-weight: bold;">📄 Ver PDF anexado</a>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" class="btn-outline" onclick="closeModalAnexo()">Cancelar</button>
+            <button type="button" class="btn btn-success" id="btnSalvarAnexo" onclick="salvarAnexoNotificacao()">Salvar PDF</button>
+        </div>
+    </div>
+</div>
+    
 <script>
     const SUPABASE_URL = "https://adunochvwwfynngzsszg.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wzosuw4QDpJfthg3pPpE3g_wv8GwNw6";
@@ -1678,7 +1699,12 @@ tr.row-vigencia-vencida select {
                     <select onchange="tratarMudancaStatusSelect(${af.id}, this.value)" style="width: auto; font-weight: bold;">
                         <option value="Regular" ${currentStatus === 'Regular' ? 'selected' : ''}>Regular</option>
                         <option value="Cobrar" ${currentStatus === 'Cobrar' ? 'selected' : ''}>Cobrar</option>
-                        <option value="Notificar" ${currentStatus === 'Notificar' ? 'selected' : ''}>Notificar</option>
+                        <option value="Notificar" // NOVO CÓDIGO (Anexar / Ver PDF):
+${af.anexo_notificacao 
+    ? `<a href="${af.anexo_notificacao}" target="_blank" class="btn btn-mini" style="background:#16a34a; text-decoration:none;">📄 Ver PDF</a>
+       <button class="btn btn-oficio btn-mini" onclick="openModalAnexoNotificacao(${af.id})">📎 Trocar PDF</button>` 
+    : `<button class="btn btn-oficio" onclick="openModalAnexoNotificacao(${af.id})">📎 Anexar PDF</button>`
+}>Notificar</option>
                         <option value="Advertir" ${currentStatus === 'Advertir' ? 'selected' : ''}>Advertir</option>
                         <option value="Multar" ${currentStatus === 'Multar' ? 'selected' : ''}>Multar</option>
                         <option value="Entrega Parcial" ${currentStatus === 'Entrega Parcial' ? 'selected' : ''}>Entrega Parcial</option>
@@ -1755,6 +1781,87 @@ tr.row-vigencia-vencida select {
 
     if(usuarioLogado) initApp();
     window.addEventListener('load', () => { if (afs.length) updateV2Dashboard(); });
+
+    function openModalAnexoNotificacao(id) {
+    const af = afs.find(item => item.id === id);
+    if (!af) return;
+
+    document.getElementById('anexoAfId').value = id;
+    document.getElementById('arquivoNotificacaoInput').value = '';
+    
+    const anexoContainer = document.getElementById('anexoAtualContainer');
+    const anexoLink = document.getElementById('anexoAtualLink');
+
+    if (af.anexo_notificacao) {
+        anexoContainer.style.display = 'block';
+        anexoLink.href = af.anexo_notificacao;
+    } else {
+        anexoContainer.style.display = 'none';
+    }
+
+    document.getElementById('modalAnexoNotificacao').style.display = 'flex';
+}
+
+function closeModalAnexo() {
+    document.getElementById('modalAnexoNotificacao').style.display = 'none';
+}
+
+async function salvarAnexoNotificacao() {
+    const id = parseInt(document.getElementById('anexoAfId').value);
+    const fileInput = document.getElementById('arquivoNotificacaoInput');
+    const file = fileInput.files[0];
+    const btn = document.getElementById('btnSalvarAnexo');
+
+    if (!file) {
+        alert('Por favor, selecione um arquivo PDF.');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = 'Enviando...';
+
+    const af = afs.find(item => item.id === id);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `notificacao_af_${id}_${Date.now()}.${fileExt}`;
+
+    // Upload no Supabase Storage (Bucket: notificacoes)
+    const { error: uploadError } = await _supabase.storage
+        .from('notificacoes')
+        .upload(fileName, file, { upsert: true });
+
+    if (uploadError) {
+        alert('❌ Erro ao enviar PDF: ' + uploadError.message);
+        btn.disabled = false;
+        btn.innerText = 'Salvar PDF';
+        return;
+    }
+
+    // Obter URL pública do arquivo
+    const { data: publicUrlData } = _supabase.storage
+        .from('notificacoes')
+        .getPublicUrl(fileName);
+
+    const fileUrl = publicUrlData.publicUrl;
+
+    // Atualizar no banco de dados
+    const { error: dbError } = await _supabase
+        .from('afs')
+        .update({ anexo_notificacao: fileUrl })
+        .eq('id', id);
+
+    btn.disabled = false;
+    btn.innerText = 'Salvar PDF';
+
+    if (dbError) {
+        alert('❌ Erro ao salvar anexo no banco: ' + dbError.message);
+    } else {
+        registrarLog(`Anexou notificação em PDF na AF: ${af ? (af.numaf || af.numAf) : id}`, af ? (af.numaf || af.numAf) : '-');
+        alert('✅ Notificação em PDF anexada com sucesso!');
+        closeModalAnexo();
+        fetchAfs();
+    }
+}
+    
 </script>
 
 </body>
