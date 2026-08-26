@@ -37,7 +37,41 @@
         /* Destaques de Linha por Status */
         tr.row-entregue { background-color: #dcfce7 !important; } 
         tr.row-parcial { background-color: #fef9c3 !important; }  
-        tr.row-cancelado { background-color: #e2e8f0 !important; } 
+        tr.row-cancelado { background-color: #e2e8f0 !important; }
+/* AF com vigência vencida */
+tr.row-vigencia-vencida {
+    background-color: #fecaca !important;
+    color: #991b1b !important;
+}
+
+tr.row-vigencia-vencida td {
+    background-color: #fecaca !important;
+    color: #991b1b !important;
+    border-bottom-color: #fca5a5 !important;
+}
+
+tr.row-vigencia-vencida td strong,
+tr.row-vigencia-vencida td b {
+    color: #7f1d1d !important;
+}
+
+tr.row-vigencia-vencida select {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    border-color: #f87171 !important;
+}
+
+.badge-vigencia-vencida {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #dc2626;
+    color: white !important;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+ 
 
         /* Cabeçalho Oficial Web */
         .header-official { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
@@ -1043,6 +1077,9 @@
             const valTotal = af.valortotal || af.valorTotal || 0;
             const numAf = af.numaf || af.numAf || '';
             const numEmpenho = af.numempenho || af.numEmpenho || '-';
+            const vigenciaPrintStr = af.vigenciaata || af.vigenciaAta;
+            const vigenciaPrintVencida = isVigenciaVencida(vigenciaPrintStr);
+            if (vigenciaPrintVencida) tr.classList.add('row-vigencia-vencida');
 
             let parciaisPrint = '-';
             if (af.parciais && af.parciais.length > 0) {
@@ -1065,7 +1102,10 @@
                     ${af.produtos ? `<div style="font-size:0.75rem; margin-top:2px;"><b>Itens:</b> ${af.produtos}</div>` : ''}
                 </td>
                 <td>R$ ${valTotal.toFixed(2)}</td>
-                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
+                <td>
+                    ${formatDate(vigenciaStr)}
+                    ${vigenciaVencida ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' : ''}
+                </td>
                 <td>${formatDate(af.prazoentrega || af.prazoEntrega)}</td>
                 <td>${parciaisPrint}</td>
                 <td>${cobrancasPrint}</td>
@@ -1542,6 +1582,12 @@
             if (currentStatus === 'Entrega Parcial') tr.classList.add('row-parcial');
             if (currentStatus === 'Saldo Cancelado') tr.classList.add('row-cancelado');
 
+            // Se a vigência terminou, pinta a linha inteira de vermelho.
+            // A data de vencimento continua válida durante todo o dia informado.
+            const vigenciaStr = af.vigenciaata || af.vigenciaAta;
+            const vigenciaVencida = isVigenciaVencida(vigenciaStr);
+            if (vigenciaVencida) tr.classList.add('row-vigencia-vencida');
+
             const setorObj = setores.find(s => s.nome === af.setor);
             const setorCor = setorObj ? setorObj.cor : '#2563eb';
 
@@ -1595,7 +1641,10 @@
                     ${saldoCancelado > 0 ? `<small style="color: #64748b;">Cancelado: ${saldoCancelado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small><br>` : ''}
                     <small style="color: #dc2626; font-weight: bold;">Saldo: ${valPendente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>
                 </td>
-                <td>${formatDate(af.vigenciaata || af.vigenciaAta)}</td>
+                <td>
+                    ${formatDate(vigenciaPrintStr)}
+                    ${vigenciaPrintVencida ? '<br><span class="badge-vigencia-vencida">🔴 VIGÊNCIA VENCIDA</span>' : ''}
+                </td>
                 <td>${formatDate(dtPrazoStr)}${prazoBadgeHtml}</td>
                 <td>
                     <button class="btn btn-parcial no-print" onclick="openModalParcial(${af.id}, -1)">📦 + Reg. Parcial</button>
@@ -1629,6 +1678,19 @@
             `;
             tbody.appendChild(tr);
         });
+    }
+
+    function isVigenciaVencida(dateStr) {
+        if(!dateStr) return false;
+        const parts = String(dateStr).split('-');
+        if(parts.length !== 3) return false;
+        const dataVigencia = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2]),
+            23, 59, 59, 999
+        );
+        return dataVigencia < new Date();
     }
 
     function formatDate(dateStr) {
