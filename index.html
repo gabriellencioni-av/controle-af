@@ -1381,37 +1381,47 @@
     }
 
     function tratarMudancaStatusSelect(id, novoStatus) {
-        if(novoStatus === 'Notificar' || novoStatus === 'Advertir' || novoStatus === 'Multar') {
-            openModalObsSancao(id, novoStatus);
-        } else {
+    alterarStatusManual(id, novoStatus);
+} else {
             alterarStatusManual(id, novoStatus);
         }
     }
 
-   async function alterarStatusManual(id, novoStatus) {
-        const idNum = parseInt(id);
-        const af = afs.find(item => Number(item.id) === idNum);
-        const payload = { statussancao: novoStatus };
-        
+  async function alterarStatusManual(id, novoStatus) {
+    const idNum = parseInt(id);
+    const af = afs.find(item => Number(item.id) === idNum);
+    
+    // Atualiza imediatamente na memória local para não dar recuo visual
+    if (af) {
+        af.statussancao = novoStatus;
+        af.statusSancao = novoStatus;
         if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
-            payload.data_conclusao = new Date().toISOString();
+            af.data_conclusao = new Date().toISOString();
         }
+    }
 
-        const { error } = await _supabase
-            .from('afs')
-            .update(payload)
-            .eq('id', idNum);
+    const payload = { statussancao: novoStatus };
+    if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+        payload.data_conclusao = new Date().toISOString();
+    }
 
-        if (error) {
-            alert("❌ Erro ao atualizar status: " + error.message);
-            console.error("Erro no update de status:", error);
-            renderTable(); // Restaura o visual
-            return;
-        }
+    const { error } = await _supabase
+        .from('afs')
+        .update(payload)
+        .eq('id', idNum);
 
+    if (error) {
+        alert("❌ Erro ao atualizar status no banco: " + error.message);
+        console.error("Erro no update de status:", error);
+    } else {
         if (af) {
             registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
         }
+    }
+
+    // Re-renderiza a tabela e atualiza os dashboards
+    saveAndRenderLocal();
+}
         
         await fetchAfs();
     }
