@@ -29,7 +29,6 @@
         
         body {
             background-color: #f1f5f9;
-            /* Padrão sutil com comprimidos, cápsulas, cruz da saúde e caixas */
             background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2364748b' fill-opacity='0.045' fill-rule='evenodd'%3E%3Cpath d='M10 15 a5 5 0 0 1 10 0 v8 a5 5 0 0 1 -10 0 z' /%3E%3Cline x1='10' y1='19' x2='20' y2='19' stroke='%2364748b' stroke-opacity='0.045' stroke-width='1'/%3E%3Ccircle cx='60' cy='20' r='7' /%3E%3Cline x1='55' y1='20' x2='65' y2='20' stroke='%23f1f5f9' stroke-width='1.2'/%3E%3Cpath d='M18 55 h4 v-4 h4 v4 h4 v4 h-4 v4 h-4 v-4 h-4 z' /%3E%3Crect x='50' y='50' width='14' height='12' rx='2' /%3E%3Cpath d='M50 54 h14' stroke='%23f1f5f9' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
             background-attachment: fixed;
             color: var(--text);
@@ -229,17 +228,15 @@
     <div class="login-card">
         <h2 style="margin-bottom: 5px; color: #1e293b;">🏛️ Acesso ao Sistema</h2>
         <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 20px;">Almoxarifado da Saúde — Avaré</p>
-        <form id="loginForm">
-            <div style="margin-bottom: 15px;">
-                <label>Usuário</label>
-                <input type="text" id="loginUsuario" required placeholder="Ex: admin">
-            </div>
-            <div style="margin-bottom: 20px;">
-                <label>Senha</label>
-                <input type="password" id="loginSenha" required placeholder="••••••••">
-            </div>
-            <button type="submit" style="width: 100%; padding: 10px;">Entrar no Sistema</button>
-        </form>
+        <div style="margin-bottom: 15px;">
+            <label>Usuário</label>
+            <input type="text" id="loginUsuario" value="admin" placeholder="Ex: admin">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label>Senha</label>
+            <input type="password" id="loginSenha" value="123" placeholder="••••••••">
+        </div>
+        <button type="button" onclick="fazerLoginManual()" style="width: 100%; padding: 10px;">Entrar no Sistema</button>
     </div>
 </div>
 
@@ -506,8 +503,6 @@
 
 </div>
 
-<!-- Modais do Sistema -->
-
 <!-- Modal Anexar Notificação em PDF -->
 <div id="modalAnexoNotificacao" class="modal">
     <div class="modal-content" style="max-width: 480px;">
@@ -572,7 +567,7 @@
         <input type="hidden" id="obsSancaoNovoStatus">
         <div style="margin-bottom: 15px;">
             <label>Observação da Penalidade / Tramitação</label>
-            <textarea id="obsSancaoTexto" rows="3" placeholder="Ex: Ofício enviado dia 03/08; ou Pedido de cancelamento de multa enviado ao Secretário..."></textarea>
+            <textarea id="obsSancaoTexto" rows="3" placeholder="Ex: Ofício enviado dia 03/08..."></textarea>
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button type="button" class="btn-outline" onclick="closeModalObsSancao()">Cancelar</button>
@@ -592,7 +587,7 @@
         </div>
         <div style="margin-bottom: 15px;">
             <label>Motivo do Cancelamento de Saldo</label>
-            <textarea id="cancelSaldoMotivo" rows="2" required placeholder="Ex: Falta de matéria-prima no fabricante / Rescisão amigável da ata..."></textarea>
+            <textarea id="cancelSaldoMotivo" rows="2" required placeholder="Ex: Falta de matéria-prima..."></textarea>
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button type="button" class="btn-outline" onclick="closeModalCancelarSaldo()">Voltar</button>
@@ -745,7 +740,7 @@
         </div>
         <div style="margin-bottom: 15px;">
             <label>Observação do Contato (Opcional)</label>
-            <input type="text" id="cobrancaObs" placeholder="Ex: Falei com Fátima, prometeu para sexta">
+            <input type="text" id="cobrancaObs" placeholder="Ex: Falei com fornecedor">
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button type="button" class="btn-outline" onclick="closeModalCobranca()">Cancelar</button>
@@ -800,9 +795,13 @@
 
     function fecharTelaLogin(nomeUsuario) {
         const overlay = document.getElementById('loginOverlay');
-        if (overlay) overlay.style.display = 'none';
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
         const userLabel = document.getElementById('loggedUserName');
-        if (userLabel) userLabel.innerText = nomeUsuario || 'Usuário';
+        if (userLabel) {
+            userLabel.innerText = nomeUsuario || 'Usuário';
+        }
     }
 
     if (usuarioLogado) {
@@ -810,13 +809,11 @@
         initApp();
     }
 
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const userIn = document.getElementById('loginUsuario').value.trim().toLowerCase();
-        const passIn = document.getElementById('loginSenha').value.trim();
+    async function fazerLoginManual() {
+        const userIn = (document.getElementById('loginUsuario').value || '').trim().toLowerCase();
+        const passIn = (document.getElementById('loginSenha').value || '').trim();
 
-        // 1. Acesso Admin Imediato
+        // 1. Bypass Admin (Garantido)
         if (userIn === 'admin' && (passIn === '123' || passIn === 'admin')) {
             usuarioLogado = { nome: 'Gabriel Antunes', usuario: 'admin', cargo: 'Almoxarife' };
             sessionStorage.setItem('user_session', JSON.stringify(usuarioLogado));
@@ -854,7 +851,7 @@
             fecharTelaLogin(usuarioLogado.nome);
             initApp();
         }
-    });
+    }
 
     function logout() {
         sessionStorage.removeItem('user_session');
@@ -862,9 +859,9 @@
     }
 
     async function initApp() {
-        try { await fetchConfig(); } catch(e) { console.error(e); }
-        try { await fetchSetores(); } catch(e) { console.error(e); }
-        try { await fetchAfs(); } catch(e) { console.error(e); }
+        try { await fetchConfig(); } catch(e) { console.error("Erro config:", e); }
+        try { await fetchSetores(); } catch(e) { console.error("Erro setores:", e); }
+        try { await fetchAfs(); } catch(e) { console.error("Erro AFs:", e); }
     }
 
     async function fetchConfig() {
@@ -995,6 +992,7 @@
         await fetchAfs();
     }
 
+    /* Modal Anexar Notificação em PDF */
     function openModalAnexoNotificacao(id) {
         const af = afs.find(item => item.id === id);
         if (!af) return;
