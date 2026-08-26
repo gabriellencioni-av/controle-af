@@ -1417,11 +1417,41 @@
     }
 
     // Re-renderiza a tabela e atualiza os dashboards
+  async function alterarStatusManual(id, novoStatus) {
+    const idNum = parseInt(id);
+    const af = afs.find(item => Number(item.id) === idNum);
+    
+    // Atualiza imediatamente na memória local para não dar recuo visual
+    if (af) {
+        af.statussancao = novoStatus;
+        af.statusSancao = novoStatus;
+        if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+            af.data_conclusao = new Date().toISOString();
+        }
+    }
+
+    const payload = { statussancao: novoStatus };
+    if (novoStatus === 'Entregue' || novoStatus === 'Saldo Cancelado') {
+        payload.data_conclusao = new Date().toISOString();
+    }
+
+    const { error } = await _supabase
+        .from('afs')
+        .update(payload)
+        .eq('id', idNum);
+
+    if (error) {
+        alert("❌ Erro ao atualizar status no banco: " + error.message);
+        console.error("Erro no update de status:", error);
+    } else {
+        if (af) {
+            registrarLog(`Alterou status para "${novoStatus}" na AF: ${af.numaf || af.numAf}`, af.numaf || af.numAf);
+        }
+    }
+
+    // Re-renderiza a tabela e atualiza os dashboards
     saveAndRenderLocal();
 }
-        
-        await fetchAfs();
-    }
 
     async function saveObsSancao() {
         const id = parseInt(document.getElementById('obsSancaoAfId').value);
