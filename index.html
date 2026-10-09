@@ -91,17 +91,6 @@
         .header-official h1 { font-size: 1.4rem; color: #1e293b; text-transform: uppercase; }
         .header-official h2 { font-size: 1rem; color: #475569; font-weight: 600; margin-top: 2px; }
 
-        /* Dashboard de Alertas e Financeiro */
-        .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .alert-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border-left: 5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .alert-card.atraso { border-left-color: #f97316; background: #fff7ed; }
-        .alert-card.notificar { border-left-color: #ea580c; background: #ffedd5; }
-        .alert-card.advertir { border-left-color: #dc2626; background: #fef2f2; }
-        .alert-card.multar { border-left-color: #991b1b; background: #fee2e2; }
-        .alert-card.financeiro { border-left-color: var(--primary); background: #eff6ff; }
-        .alert-card h4 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
-        .alert-card .count { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
-
         .card { padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
         
@@ -317,30 +306,6 @@
         <div style="margin-top:14px; font-size:.8rem; color:#475569; line-height:1.6;">
             O painel é atualizado sempre que os registros do Supabase são recarregados. Use os indicadores acima como atalhos para os filtros.
         </div>
-    </div>
-</div>
-
-<!-- Dashboard de Alertas e Financeiro Antigo -->
-<div id="mainAlerts" class="alerts-grid no-print">
-    <div class="alert-card atraso">
-        <h4>🚚 Entregas Atrasadas</h4>
-        <div class="count" id="countAtrasadas">0</div>
-    </div>
-    <div class="alert-card notificar">
-        <h4>✉️ Notificadas</h4>
-        <div class="count" id="countNotificar">0</div>
-    </div>
-    <div class="alert-card advertir">
-        <h4>⚠️ Requer Advertência</h4>
-        <div class="count" id="countAdvertir">0</div>
-    </div>
-    <div class="alert-card multar">
-        <h4>🚫 Requer Multa</h4>
-        <div class="count" id="countMultar">0</div>
-    </div>
-    <div class="alert-card financeiro">
-        <h4>💰 Total Pendente (R$)</h4>
-        <div class="count" id="valPendente">R$ 0,00</div>
     </div>
 </div>
 
@@ -1818,34 +1783,8 @@
     function escapeHtml(value){ return String(value??'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 
     function saveAndRenderLocal() {
-        verificarRegrasEAlertas();
         renderTable();
         updateV2Dashboard();
-    }
-
-    function verificarRegrasEAlertas() {
-        let countAtrasadas = 0, countNotificar = 0, countAdvertir = 0, countMultar = 0, totalPendenteRs = 0;
-
-        afs.forEach(af => {
-            const status = af.statussancao || af.statusSancao;
-            if(status === 'Entregue' || status === 'Saldo Cancelado') return;
-
-            const valTot = af.valortotal || af.valorTotal || 0;
-            const entregueRs = af.parciais ? af.parciais.reduce((acc, p) => acc + (p.valor || 0), 0) : 0;
-            const canceladoRs = af.saldo_cancelado || 0;
-            totalPendenteRs += Math.max(0, valTot - entregueRs - canceladoRs);
-
-            if (status === 'Cobrar') countAtrasadas++;
-            if (status === 'Notificar') countNotificar++;
-            if (status === 'Advertir') countAdvertir++;
-            if (status === 'Multar') countMultar++;
-        });
-
-        document.getElementById('countAtrasadas').innerText = countAtrasadas;
-        document.getElementById('countNotificar').innerText = countNotificar;
-        document.getElementById('countAdvertir').innerText = countAdvertir;
-        document.getElementById('countMultar').innerText = countMultar;
-        document.getElementById('valPendente').innerText = totalPendenteRs.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
     function renderTable() {
