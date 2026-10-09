@@ -265,6 +265,7 @@
         <button type="button" class="btn" style="background: #334155;" onclick="openModalConfig()">⚙️ Configurações</button>
         <button type="button" class="btn" style="background: #475569;" onclick="openModalLogs()">📜 Histórico / Logs</button>
         <button type="button" class="btn" style="background: #0284c7;" onclick="openModalSetores()">🎨 Setores</button>
+        <button type="button" class="btn" style="background: #0d9488;" onclick="openModalFornecedores()">📖 Fornecedores</button>
         <button type="button" class="btn" style="background: #8b5cf6;" onclick="openModalUsuarios()">👥 Funcionários</button>
         <button type="button" class="btn btn-outline" onclick="openModalRelatorio()">🖨️ Relatórios</button>
         <button type="button" class="btn btn-outline" style="color: #ef4444;" onclick="logout()">Sair</button>
@@ -274,6 +275,7 @@
 <div class="quick-nav no-print" id="quickNav">
     <button class="btn" type="button" onclick="scrollToSection('mainCardForm')">➕ Nova AF</button>
     <button class="btn btn-outline" type="button" onclick="focusSearch()">🔎 Buscar AF</button>
+    <button class="btn btn-outline" type="button" onclick="openModalFornecedores()">📖 Contatos</button>
     <button class="btn btn-outline" type="button" onclick="openNotifications()">🔔 Notificações <span id="notifBadge" class="notif-badge" style="display:none;margin-left:3px;">0</span></button>
     <button class="btn btn-outline" type="button" onclick="openModalRelatorio()">📊 Relatórios</button>
 </div>
@@ -362,8 +364,9 @@
                 <select id="setor" required></select>
             </div>
             <div>
-                <label>Fornecedor</label>
-                <input type="text" id="fornecedor" required placeholder="Razão Social">
+                <label>Fornecedor (Sugestão da agenda)</label>
+                <input type="text" id="fornecedor" list="fornecedoresDatalist" required placeholder="Razão Social ou Nome Fantasia">
+                <datalist id="fornecedoresDatalist"></datalist>
             </div>
             <div>
                 <label>Valor Total da AF (R$)</label>
@@ -506,6 +509,71 @@
 </div>
 
 <!-- Modais do Sistema -->
+<div id="modalFornecedores" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3>📖 Agenda de Contatos de Fornecedores</h3>
+            <button type="button" class="btn btn-outline btn-mini" onclick="closeModalFornecedores()">✕</button>
+        </div>
+
+        <form id="fornecedorForm" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
+            <input type="hidden" id="editFornId" value="">
+            <div class="form-grid">
+                <div>
+                    <label>Razão Social / Nome Fantasia *</label>
+                    <input type="text" id="fornRazao" required placeholder="Ex: Farmacêutica Alpha LTDA">
+                </div>
+                <div>
+                    <label>CNPJ</label>
+                    <input type="text" id="fornCnpj" placeholder="00.000.000/0000-00">
+                </div>
+                <div>
+                    <label>Representante / Vendedor</label>
+                    <input type="text" id="fornContato" placeholder="Ex: Carlos (Comercial)">
+                </div>
+                <div>
+                    <label>Telefone / WhatsApp</label>
+                    <input type="text" id="fornTelefone" placeholder="(14) 99999-9999">
+                </div>
+                <div>
+                    <label>E-mail de Contato</label>
+                    <input type="email" id="fornEmail" placeholder="vendas@fornecedor.com.br">
+                </div>
+                <div>
+                    <label>Observações / Insumos Principais</label>
+                    <input type="text" id="fornObs" placeholder="Ex: Medicamentos básicos, prazo bom">
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button type="submit" class="btn btn-success" id="btnSalvarForn">Salvar Fornecedor</button>
+                <button type="button" id="btnCancelForn" class="btn-outline" style="display:none;" onclick="resetFornForm()">Cancelar</button>
+            </div>
+        </form>
+
+        <div style="margin-bottom: 12px;">
+            <input type="text" id="buscaFornecedor" placeholder="🔎 Filtrar fornecedor, CNPJ, representante ou insumo..." oninput="renderFornecedoresTable()">
+        </div>
+
+        <div style="max-height: 350px; overflow-y: auto;">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Fornecedor</th>
+                        <th>Contato</th>
+                        <th>Canais Diretos</th>
+                        <th>Observações</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="fornecedoresTableBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top: 15px; text-align: right;">
+            <button type="button" class="btn-outline" onclick="closeModalFornecedores()">Fechar</button>
+        </div>
+    </div>
+</div>
+
 <div id="modalAnexoNotificacao" class="modal">
     <div class="modal-content" style="max-width: 480px;">
         <h3>📎 Anexar Notificação (PDF)</h3>
@@ -784,6 +852,7 @@
 
     let afs = [];
     let setores = [];
+    let fornecedoresList = [];
     let selectedLetter = '';
     let configSys = {
         nome_prefeitura: 'PREFEITURA DA ESTÂNCIA TURÍSTICA DE AVARÉ',
@@ -861,6 +930,7 @@
     async function initApp() {
         try { await fetchConfig(); } catch(e) { console.error("Erro config:", e); }
         try { await fetchSetores(); } catch(e) { console.error("Erro setores:", e); }
+        try { await fetchFornecedores(); } catch(e) { console.error("Erro fornecedores:", e); }
         try { await fetchAfs(); } catch(e) { console.error("Erro AFs:", e); }
     }
 
@@ -916,6 +986,153 @@
     }
     function closeModalLogs() { document.getElementById('modalLogs').style.display = 'none'; }
 
+    /* ====== MÓDULO DE FORNECEDORES ====== */
+    function openModalFornecedores() {
+        document.getElementById('modalFornecedores').style.display = 'flex';
+        fetchFornecedores();
+    }
+
+    function closeModalFornecedores() {
+        document.getElementById('modalFornecedores').style.display = 'none';
+        resetFornForm();
+    }
+
+    async function fetchFornecedores() {
+        const { data, error } = await _supabase
+            .from('fornecedores')
+            .select('*')
+            .order('razao_social', { ascending: true });
+
+        if (error) {
+            console.warn("Aviso: tabela fornecedores ainda não foi criada no Supabase:", error.message);
+            return;
+        }
+
+        fornecedoresList = data || [];
+        updateFornecedoresDatalist();
+        renderFornecedoresTable();
+    }
+
+    function updateFornecedoresDatalist() {
+        const dl = document.getElementById('fornecedoresDatalist');
+        if (!dl) return;
+        dl.innerHTML = '';
+        fornecedoresList.forEach(f => {
+            if (f.razao_social) {
+                dl.innerHTML += `<option value="${escapeHtml(f.razao_social)}">${f.contato_nome ? `Contato: ${escapeHtml(f.contato_nome)}` : ''}</option>`;
+            }
+        });
+    }
+
+    function renderFornecedoresTable() {
+        const tbody = document.getElementById('fornecedoresTableBody');
+        const filtro = (document.getElementById('buscaFornecedor').value || '').toLowerCase();
+        tbody.innerHTML = '';
+
+        const filtrados = fornecedoresList.filter(f => 
+            (f.razao_social || '').toLowerCase().includes(filtro) ||
+            (f.cnpj || '').toLowerCase().includes(filtro) ||
+            (f.contato_nome || '').toLowerCase().includes(filtro) ||
+            (f.observacoes || '').toLowerCase().includes(filtro)
+        );
+
+        if (filtrados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#64748b; padding:18px;">Nenhum fornecedor encontrado.</td></tr>';
+            return;
+        }
+
+        filtrados.forEach(f => {
+            const limpoTel = (f.telefone || '').replace(/\D/g, '');
+            const linkWhats = limpoTel ? `https://wa.me/55${limpoTel}` : null;
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>
+                        <b>${escapeHtml(f.razao_social)}</b>
+                        ${f.cnpj ? `<br><small style="color:#64748b;">CNPJ: ${escapeHtml(f.cnpj)}</small>` : ''}
+                    </td>
+                    <td>${escapeHtml(f.contato_nome || '-')}</td>
+                    <td>
+                        ${f.telefone ? `
+                            <div>📞 <a href="tel:${limpoTel}" style="color:var(--primary); text-decoration:none; font-weight:600;">${escapeHtml(f.telefone)}</a></div>
+                            ${linkWhats ? `<div>💬 <a href="${linkWhats}" target="_blank" style="color:#16a34a; font-weight:700; text-decoration:none;">WhatsApp</a></div>` : ''}
+                        ` : '-'}
+                        ${f.email ? `<div>✉️ <a href="mailto:${escapeHtml(f.email)}" style="color:#475569; text-decoration:underline;">${escapeHtml(f.email)}</a></div>` : ''}
+                    </td>
+                    <td><small>${escapeHtml(f.observacoes || '-')}</small></td>
+                    <td style="white-space:nowrap;">
+                        <button type="button" class="btn btn-edit btn-mini" title="Editar Contato" onclick="editFornecedor(${f.id})">✏️</button>
+                        <button type="button" class="btn-delete btn-mini" title="Excluir Contato" onclick="deleteFornecedor(${f.id})">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function resetFornForm() {
+        document.getElementById('fornecedorForm').reset();
+        document.getElementById('editFornId').value = '';
+        document.getElementById('btnCancelForn').style.display = 'none';
+        document.getElementById('btnSalvarForn').innerText = 'Salvar Fornecedor';
+    }
+
+    function editFornecedor(id) {
+        const f = fornecedoresList.find(x => x.id === id);
+        if (!f) return;
+        document.getElementById('editFornId').value = f.id;
+        document.getElementById('fornRazao').value = f.razao_social || '';
+        document.getElementById('fornCnpj').value = f.cnpj || '';
+        document.getElementById('fornContato').value = f.contato_nome || '';
+        document.getElementById('fornTelefone').value = f.telefone || '';
+        document.getElementById('fornEmail').value = f.email || '';
+        document.getElementById('fornObs').value = f.observacoes || '';
+
+        document.getElementById('btnSalvarForn').innerText = 'Atualizar Fornecedor';
+        document.getElementById('btnCancelForn').style.display = 'inline-flex';
+    }
+
+    document.getElementById('fornecedorForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const editId = document.getElementById('editFornId').value;
+        const payload = {
+            razao_social: document.getElementById('fornRazao').value.trim(),
+            cnpj: document.getElementById('fornCnpj').value.trim() || null,
+            contato_nome: document.getElementById('fornContato').value.trim() || null,
+            telefone: document.getElementById('fornTelefone').value.trim() || null,
+            email: document.getElementById('fornEmail').value.trim() || null,
+            observacoes: document.getElementById('fornObs').value.trim() || null
+        };
+
+        let res;
+        if (editId) {
+            res = await _supabase.from('fornecedores').update(payload).eq('id', parseInt(editId));
+        } else {
+            res = await _supabase.from('fornecedores').insert([payload]);
+        }
+
+        if (res.error) {
+            alert("❌ Erro ao salvar fornecedor: " + res.error.message);
+        } else {
+            registrarLog((editId ? "Atualizou" : "Cadastrou") + ` fornecedor: ${payload.razao_social}`);
+            resetFornForm();
+            fetchFornecedores();
+        }
+    });
+
+    async function deleteFornecedor(id) {
+        const f = fornecedoresList.find(x => x.id === id);
+        if (confirm(`Tem certeza que deseja excluir "${f ? f.razao_social : 'este fornecedor'}"?`)) {
+            const { error } = await _supabase.from('fornecedores').delete().eq('id', id);
+            if (error) {
+                alert("Erro ao excluir: " + error.message);
+            } else {
+                registrarLog(`Excluiu contato do fornecedor: ${f ? f.razao_social : id}`);
+                fetchFornecedores();
+            }
+        }
+    }
+
+    /* ====== MÓDULO DE CANCELAMENTO / SANÇÕES ====== */
     function openModalCancelarSaldo(id) {
         const af = afs.find(item => item.id === id);
         if(!af) return;
