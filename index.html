@@ -501,8 +501,8 @@
                     <input type="text" id="fornTelefone" placeholder="(14) 99999-9999">
                 </div>
                 <div>
-                    <label>E-mail de Contato</label>
-                    <input type="email" id="fornEmail" placeholder="vendas@fornecedor.com.br">
+                    <label>E-mails de Contato (separe por vírgula)</label>
+                    <input type="text" id="fornEmail" placeholder="vendas@empresa.com, financeiro@empresa.com">
                 </div>
                 <div>
                     <label>Observações / Insumos Principais</label>
@@ -998,6 +998,7 @@
             (f.razao_social || '').toLowerCase().includes(filtro) ||
             (f.cnpj || '').toLowerCase().includes(filtro) ||
             (f.contato_nome || '').toLowerCase().includes(filtro) ||
+            (f.email || '').toLowerCase().includes(filtro) ||
             (f.observacoes || '').toLowerCase().includes(filtro)
         );
 
@@ -1010,6 +1011,17 @@
             const limpoTel = (f.telefone || '').replace(/\D/g, '');
             const linkWhats = limpoTel ? `https://wa.me/55${limpoTel}` : null;
             
+            // Tratamento para múltiplos e-mails separados por vírgula ou ponto e vírgula
+            let emailsHtml = '-';
+            if (f.email) {
+                const arrEmails = f.email.split(/[,;]+/).map(e => e.trim()).filter(Boolean);
+                if (arrEmails.length > 0) {
+                    emailsHtml = arrEmails.map(mail => 
+                        `<div>✉️ <a href="mailto:${escapeHtml(mail)}" style="color:#2563eb; text-decoration:underline;">${escapeHtml(mail)}</a></div>`
+                    ).join('');
+                }
+            }
+            
             tbody.innerHTML += `
                 <tr>
                     <td>
@@ -1021,8 +1033,8 @@
                         ${f.telefone ? `
                             <div>📞 <a href="tel:${limpoTel}" style="color:var(--primary); text-decoration:none; font-weight:600;">${escapeHtml(f.telefone)}</a></div>
                             ${linkWhats ? `<div>💬 <a href="${linkWhats}" target="_blank" style="color:#16a34a; font-weight:700; text-decoration:none;">WhatsApp</a></div>` : ''}
-                        ` : '-'}
-                        ${f.email ? `<div>✉️ <a href="mailto:${escapeHtml(f.email)}" style="color:#475569; text-decoration:underline;">${escapeHtml(f.email)}</a></div>` : ''}
+                        ` : ''}
+                        ${emailsHtml !== '-' ? emailsHtml : (f.telefone ? '' : '-')}
                     </td>
                     <td><small>${escapeHtml(f.observacoes || '-')}</small></td>
                     <td style="white-space:nowrap;">
